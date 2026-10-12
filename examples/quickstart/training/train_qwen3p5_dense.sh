@@ -57,7 +57,11 @@ val_top_p=${VAL_TOP_P:-0.95}
 val_top_k=${VAL_TOP_K:--1}
 
 # Performance Related Parameter
-use_dynamic_bsz=${USE_DYNAMIC_BSZ:-True}
+# GDN (Gated DeltaNet SSM) layers in this hybrid model do NOT support
+# packed sequences; force use_dynamic_bsz=False so the actor + log-prob
+# forwards use padded fixed-size micro-batches instead. Override with
+# USE_DYNAMIC_BSZ=True only for models whose every layer supports packing.
+use_dynamic_bsz=${USE_DYNAMIC_BSZ:-False}
 offload=${OFFLOAD:-True}
 gen_tp=${GEN_TP:-2}
 train_tp=${TP:-4}
@@ -68,10 +72,22 @@ infer_ppo_max_token_len=$(((max_prompt_length + max_response_length) / train_cp)
 
 optimizer_offload_fraction=${OFFLOAD_FRACTION:-1.0}
 
-# install mbridge
-# pip3 install git+https://github.com/ISEEKYAN/mbridge
+# The Megatron bridge: use_mbridge must be True (assert in transformer_impl).
+# vanilla_mbridge selects WHICH bridge:
+#   False (default) -> NeMo "megatron.bridge" (installed in the image via
+#      git+.../NVIDIA-NeMo/Megatron-Bridge.git). This is the path the
+#      Bristen image supports.
+#   True            -> vanilla "mbridge" (github.com/ISEEKYAN/mbridge), NOT in
+#      the image (would need a runtime pip install).
 USE_MBRIDGE=${USE_MBRIDGE:-True}
-USE_DIST_CKPT=${USE_DIST_CKPT:-False}
+VANILLA_MBRIDGE=${VANILLA_MBRIDGE:-False}
+USE_DIST_CKPT=${USE_DIST_CKPT:-True}
+# Keep the default checkpoint path on the resumable Megatron dist-checkpoint
+# backend. HF export remains opt-in via CHECKPOINT_SAVE_CONTENTS.
+checkpoint_save_contents=${CHECKPOINT_SAVE_CONTENTS:-"[model,optimizer,extra]"}
+checkpoint_load_contents=${CHECKPOINT_LOAD_CONTENTS:-"${checkpoint_save_contents}"}
+save_freq=${SAVE_FREQ:-10}
+total_epochs=${TOTAL_EPOCHS:-10}
 
 # V1 colocate_async topology. colocate_async colocates actor + rollout on the same
 # GPUs (rollout replicas sleep during the train step), so NNODES is the TOTAL node
@@ -102,6 +118,15 @@ rollout_is_batch_normalize=${ROLLOUT_IS_BATCH_NORMALIZE:-False}  # normalize IS 
 rollout_rs=${ROLLOUT_RS:-null}                                   # no rejection sampling
 rollout_rs_threshold=${ROLLOUT_RS_THRESHOLD:-null}
 
+# GDN (Gated DeltaNet SSM) layers in this hybrid model raise on packed
+# sequences. With CP=1 (set at launch) Megatron-Bridge does NOT auto-enable
+# calculate_per_token_loss, so use_remove_padding=False (BSHD, no packing)
+# is the sanctioned path. Also disable use_fused_kernels: it patches
+# model.forward to a fused path that calls linear_cross_entropy(labels)
+# unconditionally; the log-prob (forward_only) path passes labels=None,
+# so the fused path crashes with AttributeError. Disabling keeps Megatron's
+# original GPTModel.forward which handles labels=None. NO '#' comments may
+# appear between the backslash-continued lines below.
 ray job submit --no-wait --runtime-env $RUNTIME_ENV \
     -- env RAY_OVERRIDE_JOB_RUNTIME_ENV=1 \
     python3 -m verl.trainer.main_ppo \
@@ -131,8 +156,12 @@ ray job submit --no-wait --runtime-env $RUNTIME_ENV \
     actor_rollout_ref.actor.clip_ratio_high=${clip_ratio_high} \
     actor_rollout_ref.actor.clip_ratio_c=${clip_ratio_c} \
     +actor_rollout_ref.model.override_config.model_config.max_position_embeddings=$((max_prompt_length + max_response_length)) \
-    actor_rollout_ref.model.use_fused_kernels=True \
+    +actor_rollout_ref.model.override_config.model_config.use_remove_padding=False \
+    actor_rollout_ref.model.use_remove_padding=False \
+    actor_rollout_ref.model.use_fused_kernels=False \
     actor_rollout_ref.actor.use_dynamic_bsz=${use_dynamic_bsz} \
+    actor_rollout_ref.rollout.log_prob_use_dynamic_bsz=${use_dynamic_bsz} \
+    actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=${PPO_MICRO_BATCH_SIZE_PER_GPU:-1} \
     actor_rollout_ref.actor.ppo_mini_batch_size=${train_prompt_mini_bsz} \
     actor_rollout_ref.actor.ppo_max_token_len_per_gpu=${actor_ppo_max_token_len} \
     actor_rollout_ref.actor.optim.lr=1e-6 \
@@ -144,7 +173,7 @@ ray job submit --no-wait --runtime-env $RUNTIME_ENV \
     +actor_rollout_ref.actor.optim.override_optimizer_config.use_precision_aware_optimizer=True \
     +actor_rollout_ref.actor.optim.override_optimizer_config.optimizer_cpu_offload=True \
     actor_rollout_ref.actor.megatron.use_mbridge=$USE_MBRIDGE \
-    actor_rollout_ref.actor.megatron.vanilla_mbridge=$USE_MBRIDGE \
+    actor_rollout_ref.actor.megatron.vanilla_mbridge=$VANILLA_MBRIDGE \
     actor_rollout_ref.actor.megatron.use_dist_checkpointing=$USE_DIST_CKPT \
     actor_rollout_ref.actor.megatron.param_offload=${offload} \
     actor_rollout_ref.actor.megatron.grad_offload=${offload} \
@@ -162,6 +191,7 @@ ray job submit --no-wait --runtime-env $RUNTIME_ENV \
     +actor_rollout_ref.actor.megatron.override_transformer_config.recompute_method=uniform \
     +actor_rollout_ref.actor.megatron.override_transformer_config.recompute_granularity=full \
     +actor_rollout_ref.actor.megatron.override_transformer_config.recompute_num_layers=1 \
+    +actor_rollout_ref.actor.megatron.override_transformer_config.calculate_per_token_loss=False \
     algorithm.rollout_correction.bypass_mode=${bypass_mode} \
     algorithm.rollout_correction.rollout_is=${rollout_is} \
     algorithm.rollout_correction.rollout_is_threshold=${rollout_is_threshold} \
@@ -178,8 +208,10 @@ ray job submit --no-wait --runtime-env $RUNTIME_ENV \
     ++actor_rollout_ref.actor.policy_loss.rollout_correction.loss_type=${bypass_loss_type} \
     actor_rollout_ref.actor.entropy_coeff=0 \
     actor_rollout_ref.actor.loss_agg_mode=${loss_agg_mode} \
-    +actor_rollout_ref.actor.checkpoint.save_contents=['model','hf_model'] \
+    +actor_rollout_ref.actor.checkpoint.save_contents=${checkpoint_save_contents} \
+    ++actor_rollout_ref.actor.checkpoint.load_contents=${checkpoint_load_contents} \
     actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=${infer_ppo_max_token_len} \
+    actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=${LOG_PROB_MICRO_BATCH_SIZE_PER_GPU:-1} \
     actor_rollout_ref.rollout.multi_turn.enable=True \
     actor_rollout_ref.rollout.multi_turn.max_parallel_calls=1 \
     ++actor_rollout_ref.rollout.multi_turn.format=${TOOL_PARSER} \
@@ -200,7 +232,7 @@ ray job submit --no-wait --runtime-env $RUNTIME_ENV \
     actor_rollout_ref.rollout.prompt_length=${max_prompt_length} \
     actor_rollout_ref.rollout.response_length=${max_response_length} \
     actor_rollout_ref.rollout.enable_chunked_prefill=True \
-    actor_rollout_ref.rollout.max_num_batched_tokens=$((max_prompt_length + max_response_length)) \
+    actor_rollout_ref.rollout.max_num_batched_tokens=${MAX_NUM_BATCHED_TOKENS:-$((max_prompt_length + max_response_length))} \
     actor_rollout_ref.rollout.max_model_len=$((max_prompt_length + max_response_length)) \
     actor_rollout_ref.rollout.temperature=${temperature} \
     actor_rollout_ref.rollout.top_p=${top_p} \
@@ -217,6 +249,7 @@ ray job submit --no-wait --runtime-env $RUNTIME_ENV \
     actor_rollout_ref.rollout.enforce_eager=False \
     actor_rollout_ref.rollout.free_cache_engine=True \
     actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=${infer_ppo_max_token_len} \
+    actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=${LOG_PROB_MICRO_BATCH_SIZE_PER_GPU:-1} \
     actor_rollout_ref.ref.megatron.use_dist_checkpointing=${USE_DIST_CKPT} \
     actor_rollout_ref.ref.megatron.param_offload=${offload} \
     actor_rollout_ref.ref.megatron.tensor_model_parallel_size=${train_tp} \
@@ -230,12 +263,12 @@ ray job submit --no-wait --runtime-env $RUNTIME_ENV \
     +reward.reward_kwargs.overlong_buffer_cfg.penalty_factor=${overlong_penalty_factor} \
     +reward.reward_kwargs.overlong_buffer_cfg.log=False \
     +reward.reward_kwargs.max_resp_len=${max_response_length} \
-    trainer.logger=['console','wandb'] \
+    trainer.logger=${LOGGER:-['console','wandb']} \
     trainer.project_name="${project_name}" \
     trainer.experiment_name="${exp_name}" \
     trainer.val_before_train=False \
-    trainer.save_freq=10 \
-    trainer.total_epochs=10 \
+    trainer.save_freq=${save_freq} \
+    trainer.total_epochs=${total_epochs} \
     trainer.resume_mode=auto \
     trainer.log_val_generations=10 \
     trainer.default_local_dir="${CKPTS_DIR}" \

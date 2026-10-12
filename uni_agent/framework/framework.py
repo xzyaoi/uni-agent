@@ -25,6 +25,11 @@ from tensordict.tensorclass import NonTensorData, NonTensorStack
 from uni_agent.gateway.session import SessionHandle, Trajectory
 from uni_agent.logging import LogContext, sample_logging
 from uni_agent.rl_insight.adapter import agent_loop_session
+from uni_agent.sandbox.exec_context import (
+    bind_exec_metadata,
+    reset_exec_metadata,
+    set_exec_metadata,
+)
 from uni_agent.tasks import TaskResult
 from verl.tools.tool_registry import initialize_tools_from_config
 from verl.utils import tensordict_utils as tu
@@ -109,6 +114,91 @@ def _log_scope(log_context: LogContext | None):
     return sample_logging.from_context(log_context)
 
 
+def _sample_runtime_timeout(sample_fields: dict[str, object]) -> float | None:
+    """Best-effort: the serialized task's per-episode sandbox runtime (seconds).
+
+    ``sample_fields["tools_kwargs"]["task"]["sandbox"]["runtime_timeout"]`` is the
+    canonical source (each row's TaskConfig carries the sandbox budget); anything
+    missing -> ``None`` so the RLVR deadline is simply omitted rather than guessed.
+    """
+    tools_kwargs = sample_fields.get("tools_kwargs")
+    if not isinstance(tools_kwargs, dict):
+        return None
+    task = tools_kwargs.get("task")
+    if not isinstance(task, dict):
+        return None
+    sandbox = task.get("sandbox")
+    if not isinstance(sandbox, dict):
+        return None
+    runtime = sandbox.get("runtime_timeout")
+    try:
+        return float(runtime) if runtime is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _rlvr_base_metadata(
+    sample_fields: dict[str, object],
+    session_id: str,
+    num_sessions: int,
+    global_steps: int | None = None,
+) -> dict[str, object]:
+    """Build the session-level RLVR metadata bag threaded to sandbox providers.
+
+    Maps the framework's rollout identifiers onto the coordinator's RLVR value
+    signal (flash-sandbox ``docs/design/rlvr-group-completion-scheduler.md``):
+
+    * ``group``      = ``uid``          -- one prompt owns ``rollout.n`` sessions;
+                                           the learner consumes a group once it
+                                           has ``q_g = |L_g|`` infra-valid outcomes.
+    * ``rollout``    = ``session_id``   -- one agent episode within the group.
+    * ``q``          = ``num_sessions`` -- the group's required valid-outcome count.
+    * ``deadline_ms`` = the task's per-episode ``sandbox.runtime_timeout`` (as
+                        ms-from-now), omitted when the serialized task config
+                        does not advertise one.
+
+    The top-level metadata bag also carries the training-facing identifiers
+    requested by the exec trace consumer:
+
+    * ``group_id``  = ``uid`` (an explicit alias of ``rlvr.group``).
+    * ``step``      = the trainer's current ``global_steps`` value.
+    * ``staleness`` = the trajectory lag at dispatch. When the prompt carries
+                      a ``max_global_steps`` policy-version tag, use the same
+                      ``(step - 1) - max_global_steps`` definition as VERL's
+                      trainer metrics; otherwise a newly dispatched rollout
+                      starts at zero staleness.
+
+    ``value`` / ``next_use_ms`` / ``confidence`` are intentionally omitted (they
+    are optional training-loop signals layered on later without changing this
+    surface). ``terminal`` is flipped per-exec by the task's eval via
+    :func:`uni_agent.sandbox.exec_context.terminal_exec`.
+    """
+    group_id = str(sample_fields.get("uid") or "")
+    rlvr: dict[str, object] = {
+        "group": group_id,
+        "rollout": session_id,
+        "q": int(num_sessions),
+    }
+    runtime_timeout = _sample_runtime_timeout(sample_fields)
+    if runtime_timeout and runtime_timeout > 0:
+        rlvr["deadline_ms"] = int(runtime_timeout * 1000)
+
+    metadata: dict[str, object] = {"group_id": group_id, "rlvr": rlvr}
+    if global_steps is not None:
+        step = int(global_steps)
+        max_global_steps = sample_fields.get("max_global_steps")
+        try:
+            staleness = (
+                max(0, (step - 1) - int(max_global_steps))
+                if max_global_steps is not None
+                else 0
+            )
+        except (TypeError, ValueError):
+            staleness = 0
+        metadata.update(step=step, staleness=staleness)
+    return metadata
+
+
 @ray.remote
 def _run_agent_runner_ray_task(
     *,
@@ -119,18 +209,36 @@ def _run_agent_runner_ray_task(
     sample_index: int,
     tools_kwargs: object | None,
     log_context: LogContext | None,
+    exec_metadata: dict | None = None,
 ) -> TaskResult | None:
-    """Run only the user runner in Ray; parent owns session lifecycle outputs."""
+    """Run only the user runner in Ray; parent owns session lifecycle outputs.
+
+    ``exec_metadata`` (the session-level RLVR base: group/rollout/q/deadline) is
+    re-bound in this worker's context before ``asyncio.run`` so the flash-sandbox
+    provider the runner drives observes it on create/exec -- the parent's
+    contextvar does not cross the Ray task boundary.
+    """
     runner = _materialize_runner(runner_fqn, runner_kwargs)
-    with _log_scope(log_context):
-        return asyncio.run(
-            runner(
-                raw_prompt=raw_prompt,
-                session=session,
-                sample_index=sample_index,
-                **({"tools_kwargs": tools_kwargs} if tools_kwargs is not None else {}),
+    token = set_exec_metadata(exec_metadata) if exec_metadata else None
+    logger.info(
+        "_run_agent_runner_ray_task ENTER: exec_metadata=%s rlvr=%s (token set=%s)",
+        bool(exec_metadata),
+        (exec_metadata or {}).get("rlvr") if exec_metadata else None,
+        token is not None,
+    )
+    try:
+        with _log_scope(log_context):
+            return asyncio.run(
+                runner(
+                    raw_prompt=raw_prompt,
+                    session=session,
+                    sample_index=sample_index,
+                    **({"tools_kwargs": tools_kwargs} if tools_kwargs is not None else {}),
+                )
             )
-        )
+    finally:
+        if token is not None:
+            reset_exec_metadata(token)
 
 
 def _short_failure_reason(error: BaseException) -> str:
@@ -635,6 +743,7 @@ class GatewayAgentFramework(AgentFramework):
                 session_index=session_index,
                 global_steps=global_steps,
                 sampling_params=sampling_params,
+                num_sessions=num_sessions,
             )
             for session_index in range(num_sessions)
         ]
@@ -706,6 +815,7 @@ class GatewayAgentFramework(AgentFramework):
         session_index: int,
         global_steps: int | None,
         sampling_params: dict[str, object],
+        num_sessions: int,
     ) -> tuple[list[Trajectory], dict[str, object]]:
         # Lazy-init semaphores on first use and rebind if the running loop
         # changed: asyncio.Semaphore binds to the loop at construction, but
@@ -739,6 +849,7 @@ class GatewayAgentFramework(AgentFramework):
                 runner_name=runner_name,
                 runner_config=runner_config,
                 sampling_params=sampling_params,
+                num_sessions=num_sessions,
             )
 
         runner_semaphore = self._runner_semaphores.get(runner_name)
@@ -755,6 +866,7 @@ class GatewayAgentFramework(AgentFramework):
                 runner_name=runner_name,
                 runner_config=runner_config,
                 sampling_params=sampling_params,
+                num_sessions=num_sessions,
             )
 
     async def _run_agent_episode(
@@ -767,6 +879,7 @@ class GatewayAgentFramework(AgentFramework):
         runner_name: str,
         runner_config: _RunnerConfig,
         sampling_params: dict[str, object],
+        num_sessions: int,
     ) -> tuple[list[Trajectory], dict[str, object]]:
         """Run one AgentRunner episode inside a Framework-created Gateway session."""
         session_id = f"session-sample-{sample_index}-rollout-{session_index}-{uuid4().hex}"
@@ -779,6 +892,11 @@ class GatewayAgentFramework(AgentFramework):
             session_id=session_id,
         )
         trace_identity = session_trace.identity
+        # Session-level RLVR base (group=uid, rollout=session_id, q=num_sessions,
+        # deadline_ms from the task's per-episode sandbox budget). Threaded to the
+        # flash-sandbox provider via exec_context so the coordinator can place and
+        # order this rollout's sandboxes/execs by value; re-bound in Ray workers.
+        base = _rlvr_base_metadata(sample_fields, session_id, num_sessions, global_steps)
         if self._log_dir:
             log_root = Path(self._log_dir)
             run_dir = (log_root if global_steps is None else log_root / f"step_{int(global_steps)}") / session_id
@@ -821,6 +939,7 @@ class GatewayAgentFramework(AgentFramework):
                         sample_index=sample_index,
                         tools_kwargs=tools_kwargs,
                         log_context=task_log,
+                        exec_metadata=base,
                     )
                     # Guard against runners that hang without raising (e.g. a
                     # remote sandbox that OOM-killed the kernel and never returns).
@@ -841,12 +960,17 @@ class GatewayAgentFramework(AgentFramework):
                         raise
                 else:
                     runner = self._inline_runners[runner_name]
-                    task_result = await runner(
-                        raw_prompt=raw_prompt,
-                        session=session,
-                        sample_index=sample_index,
-                        **({"tools_kwargs": tools_kwargs} if tools_kwargs is not None else {}),
-                    )
+                    # Bind the session-level RLVR base in this task so the
+                    # flash-sandbox provider the runner drives observes it on
+                    # create/exec (the runner, task, agent and sandbox all run
+                    # within this same async context).
+                    async with bind_exec_metadata(**base):
+                        task_result = await runner(
+                            raw_prompt=raw_prompt,
+                            session=session,
+                            sample_index=sample_index,
+                            **({"tools_kwargs": tools_kwargs} if tools_kwargs is not None else {}),
+                        )
                 if task_result is None:
                     task_result = TaskResult()
                 elif not isinstance(task_result, TaskResult):

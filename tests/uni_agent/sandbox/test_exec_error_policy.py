@@ -163,7 +163,7 @@ def test_is_timeout_error_override_is_honored_by_exec():
 
 # --------------------------- provider wiring ---------------------------
 
-_PROVIDERS = ["local", "docker", "modal", "vefaas", "openyuanrong"]
+_PROVIDERS = ["local", "docker", "modal", "vefaas", "flash_sandbox", "openyuanrong"]
 
 
 @pytest.mark.cpu
@@ -293,6 +293,21 @@ def test_openyuanrong_is_alive_false_before_start():
     from uni_agent.sandbox.openyuanrong import OpenyuanrongSandbox
 
     assert asyncio.run(OpenyuanrongSandbox(image="python:3.12").is_alive()) is False
+
+
+def test_flash_sandbox_is_alive_false_before_start():
+    from uni_agent.sandbox.flash_sandbox import FlashSandboxSandbox
+
+    assert asyncio.run(FlashSandboxSandbox().is_alive()) is False
+
+
+def test_flash_sandbox_timeout_by_name():
+    from uni_agent.sandbox.flash_sandbox import FlashSandboxSandbox
+
+    sb = FlashSandboxSandbox()
+    assert sb._is_timeout_error(asyncio.TimeoutError()) is True
+    assert sb._is_timeout_error(type("SandboxTimeoutError", (Exception,), {})()) is True
+    assert sb._is_timeout_error(RuntimeError("unrelated")) is False
 
 
 def _fake_modal_sandbox(*, poll_returns=None, poll_raises: BaseException | None = None):

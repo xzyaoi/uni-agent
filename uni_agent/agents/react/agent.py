@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import logging
+import os
 import shlex
 from typing import TYPE_CHECKING, Any
 
 from pydantic import Field
 
+from uni_agent.sandbox.exec_context import bind_exec_metadata
 from uni_agent.tools import Toolbox
 
 from ..base import Agent, AgentConfig, AgentResult, RequestSamplingConfig
@@ -21,6 +23,22 @@ logger = logging.getLogger(__name__)
 
 #: Tool names that end the episode when the policy calls them.
 _FINISH_TOOLS = {"submit", "finish"}
+
+#: Max chars of LLM ``content`` / tool ``arguments`` retained in exec metadata
+#: (the rest is truncated) so the sandbox exec trace + structured event log
+#: stays manageable. Override with the env var of the same name.
+_LLM_PREVIEW_CHARS = int(os.getenv("FLASH_SANDBOX_LLM_PREVIEW_CHARS", "2048"))
+
+
+def _truncate(value: Any, limit: int = _LLM_PREVIEW_CHARS) -> Any:
+    """Truncate a string ``value`` to ``limit`` chars (appending ``…``).
+
+    Non-strings pass through unchanged so the metadata stays JSON-safe and the
+    helper is usable for both LLM ``content`` and tool ``arguments``.
+    """
+    if not isinstance(value, str) or limit <= 0 or len(value) <= limit:
+        return value
+    return value[:limit] + "…"
 
 
 class ReActConfig(AgentConfig):
@@ -154,13 +172,41 @@ class ReActAgent(Agent):
             logger.info("💬 FINISHED: policy replied with plain text (no tool call).")
             return "finished"
 
+        # Capture this turn's LLM input/output (token counts + truncated content
+        # and tool calls) so a downstream consumer of the sandbox exec trace +
+        # structured event log can reconstruct the full execution pattern: which
+        # LLM turn, in which group/trajectory, produced which sandbox command.
+        _llm_meta = {
+            "prompt_tokens": int(gen_info.get("prompt_tokens") or 0),
+            "completion_tokens": int(gen_info.get("completion_tokens") or 0),
+            "total_tokens": int(info["total_tokens"]),
+            "finish_reason": gen_info.get("finish_reason"),
+            "content": _truncate(content),
+            "tool_calls": [
+                {
+                    "name": tc.get("function", {}).get("name"),
+                    "arguments": _truncate(tc.get("function", {}).get("arguments")),
+                }
+                for tc in tool_calls
+            ],
+            "step": int(info.get("steps") or 0),
+        }
+
         # step 2: dispatch the tool calls
         saw_finish = False
         for idx, tool_call in enumerate(tool_calls):
             fn = tool_call.get("function", {})
             name = fn.get("name", "")
             logger.info(f"🎬 ACTION ({name}):\n{fn.get('arguments')}")
-            tool_result = await toolbox.call(name, fn.get("arguments"), timeout=cfg.action_timeout)
+            # Tag this exec with the LLM input/output that produced it. The
+            # session-level rlvr group/rollout base is already bound by the
+            # framework (or re-bound in a Ray worker), so this overlay adds the
+            # per-call ``llm`` bag the provider forwards onto the exec trace +
+            # structured event log.
+            async with bind_exec_metadata(
+                llm={**_llm_meta, "tool_name": name, "tool_arguments": _truncate(fn.get("arguments"))},
+            ):
+                tool_result = await toolbox.call(name, fn.get("arguments"), timeout=cfg.action_timeout)
             observation = tool_result.to_observation()
             info["num_tool_calls"] += 1
             if tool_result.status == "timeout":  # a tool hit its own timeout (e.g. shell command_timeout)

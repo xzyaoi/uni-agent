@@ -1,249 +1,251 @@
-"""Tests for the mini-swe-agent agent's host-side glue.
+"""Tests for mini-swe-agent's white-box host-side glue.
 
-mini-swe-agent runs entirely *inside* the sandbox from a prebuilt tool image
-mounted at ``/opt/mini-swe-agent``. The agent's host-side glue is thin:
-base64-encode the task config (the gateway URL is passed through as-is; the
-reverse-tunnel rewrite happens in ``run_task``), pipe it into the tool-image
-python via stdin, and parse the result JSON out of stdout (litellm noise
-tolerated). These tests cover that glue with a tiny in-memory fake sandbox, so
-they run fast under ``pytest`` (or ``python``).
+mini-swe-agent's own loop runs on the cluster (in this process), pointing its
+model at the gateway and driving the sandbox purely over HTTP as the
+environment. These tests pin that wiring -- config -> model + env -> agent.run
+-> AgentResult -- without a real mini-swe-agent install or network, by
+monkeypatching minisweagent's ``DefaultAgent`` + ``get_model`` with fakes and
+driving the real :class:`RemoteSandboxEnvironment` against an in-memory fake
+sandbox (so the cross-thread ``exec_shell`` bridge is exercised too).
 """
 
 from __future__ import annotations
 
 import asyncio
-import base64
-import json
-from pathlib import Path
 
 import pytest
 
 from uni_agent.agents.base import AgentResult, ModelConfig
 from uni_agent.agents.mini_swe_agent.agent import (
+    _DEFAULT_ENV,
+    _DEFAULT_INSTANCE_TEMPLATE,
     MiniSweAgentAgent,
     MiniSweAgentConfig,
-    build_agent_command,
-    parse_agent_result,
+    RemoteSandboxEnvironment,
 )
 from uni_agent.sandbox.base import ExecResult
-from uni_agent.tasks.config import TaskConfigResolver
 
 
 class _FakeSandbox:
-    """Records the one ``exec_shell`` call and returns canned stdout."""
+    """Records ``exec_shell`` calls and answers them (drives the env bridge)."""
 
     def __init__(self, *, stdout: str = "", exit_code: int = 0):
         self._stdout = stdout
         self._exit_code = exit_code
-        self.exec_shell_calls: list[str] = []
+        self.exec_shell_calls: list[dict] = []
 
-    async def exec_shell(self, script, *, timeout=None, workdir=None, env=None):
-        self.exec_shell_calls.append(script)
+    async def exec_shell(self, command, *, timeout=None, workdir=None, env=None):
+        self.exec_shell_calls.append({"command": command, "timeout": timeout, "workdir": workdir, "env": env})
         return ExecResult(exit_code=self._exit_code, stdout=self._stdout, stderr="")
 
 
-_TOOL_PYTHON = "/opt/mini-swe-agent/bin/python"
-_RUN_AGENT_SCRIPT = "/opt/mini-swe-agent/bin/run_agent.py"
-_EXAMPLE_TASK_CONFIG = (
-    Path(__file__).resolve().parents[3] / "examples" / "mini_swe_agent" / "task_config_mini_swe_agent.yaml"
-)
+class _FakeModel:
+    def __init__(self, config: dict):
+        self.config = config
 
 
-def _agent(base_url: str = "http://gateway:8000/v1", **config_kwargs) -> MiniSweAgentAgent:
-    model = ModelConfig(base_url=base_url, model_name="policy")
-    config_kwargs.setdefault("tool_python", _TOOL_PYTHON)
-    config_kwargs.setdefault("run_agent_script", _RUN_AGENT_SCRIPT)
+class _FakeAgent:
+    """Stands in for mini-swe-agent's DefaultAgent: records config + the run call."""
+
+    last: _FakeAgent | None = None
+    result: dict = {"exit_status": "Submitted", "submission": "diff --git a b\n"}
+    raise_on_run: BaseException | None = None
+
+    def __init__(self, model: _FakeModel, env: RemoteSandboxEnvironment, **kwargs):
+        self.model = model
+        self.env = env
+        self.kwargs = kwargs
+        self.n_calls = 0
+        self.cost = 0.0
+        _FakeAgent.last = self
+
+    def run(self, task: str) -> dict:
+        self.task = task
+        self.n_calls += 1
+        if self.raise_on_run is not None:
+            raise self.raise_on_run
+        return dict(self.result)
+
+
+@pytest.fixture(autouse=True)
+def _patched_mswe(monkeypatch):
+    """Swap minisweagent's DefaultAgent + get_model for fakes; quiet the banner."""
+    monkeypatch.setenv("MSWEA_SILENT_STARTUP", "1")
+    import minisweagent.agents.default as default_mod
+    import minisweagent.models as models_mod
+
+    monkeypatch.setattr(models_mod, "get_model", lambda *, config: _FakeModel(config))
+    monkeypatch.setattr(default_mod, "DefaultAgent", _FakeAgent)
+    _FakeAgent.last = None
+    _FakeAgent.result = {"exit_status": "Submitted", "submission": "diff --git a b\n"}
+    _FakeAgent.raise_on_run = None
+    yield
+
+
+def _agent(**config_kwargs) -> MiniSweAgentAgent:
+    model = ModelConfig(base_url="http://gateway:8000/v1", model_name="policy")
     return MiniSweAgentAgent(MiniSweAgentConfig(model=model, **config_kwargs))
 
 
-def _decode_task_config(cmd: str) -> dict:
-    """Pull the base64 task config out of a built agent command and decode it."""
-    _, _, after = cmd.partition("printf %s ")
-    config_b64, _, _ = after.partition(" | base64 -d")
-    return json.loads(base64.b64decode(config_b64))
+# --------------------------- validation (no import yet) ---------------------------
 
 
-# --------------------------- helpers ---------------------------
-
-
-@pytest.mark.cpu
-@pytest.mark.level0
-def test_build_agent_command_pipes_config_and_invokes_tool_python():
-    cmd = build_agent_command(
-        config_b64="Zm9v",
-        conda_env_path="/opt/miniconda3/envs/testbed",
-        tool_python=_TOOL_PYTHON,
-        run_agent_script=_RUN_AGENT_SCRIPT,
-    )
-    assert cmd.startswith("unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy NO_PROXY no_proxy;")
-    assert "printf %s Zm9v | base64 -d |" in cmd
-    assert "/opt/mini-swe-agent/bin/python /opt/mini-swe-agent/bin/run_agent.py" in cmd
-    # The task conda env is activated around the launch.
-    assert "CONDA_DEFAULT_ENV=testbed" in cmd
-    assert "/opt/miniconda3/envs/testbed/bin" in cmd
-    assert "PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/bin:$PATH" in cmd
-
-
-@pytest.mark.cpu
-@pytest.mark.level0
-def test_build_agent_command_honors_overrides():
-    cmd = build_agent_command(
-        config_b64="",
-        conda_env_path="/opt/miniconda3/envs/myenv",
-        tool_python="/x/python",
-        run_agent_script="/y/run.py",
-    )
-    assert "/x/python /y/run.py" in cmd
-    assert "CONDA_DEFAULT_ENV=myenv" in cmd
-
-
-@pytest.mark.cpu
-@pytest.mark.level0
-def test_build_agent_command_skips_conda_when_unset():
-    cmd = build_agent_command(
-        config_b64="",
-        tool_python=_TOOL_PYTHON,
-        run_agent_script=_RUN_AGENT_SCRIPT,
-    )
-    assert "CONDA_PREFIX" not in cmd
-    assert "CONDA_DEFAULT_ENV" not in cmd
-    assert "PIP_DISABLE_PIP_VERSION_CHECK=1" in cmd
-
-
-@pytest.mark.cpu
-@pytest.mark.level0
-def test_parse_agent_result_empty_is_error():
-    assert parse_agent_result("") == {"exit_status": "error", "submission": ""}
-
-
-@pytest.mark.cpu
-@pytest.mark.level0
-def test_parse_agent_result_picks_last_json_line_ignoring_litellm_noise():
-    stdout = "litellm warning: something\nrandom noise\n" + json.dumps(
-        {"exit_status": "Submitted", "submission": "diff"}
-    )
-    assert parse_agent_result(stdout) == {"exit_status": "Submitted", "submission": "diff"}
-
-
-@pytest.mark.cpu
-@pytest.mark.level0
-def test_parse_agent_result_skips_malformed_json_line():
-    stdout = json.dumps({"exit_status": "Submitted", "submission": "diff"}) + '\n{"truncated'
-    assert parse_agent_result(stdout) == {"exit_status": "Submitted", "submission": "diff"}
-
-
-@pytest.mark.cpu
-@pytest.mark.level0
-def test_parse_agent_result_unparseable_is_error():
-    assert parse_agent_result("totally not json at all") == {"exit_status": "error", "submission": ""}
-
-
-# --------------------------- validation ---------------------------
-
-
-@pytest.mark.cpu
-@pytest.mark.level0
 def test_missing_base_url_raises():
-    agent = MiniSweAgentAgent(MiniSweAgentConfig(tool_python=_TOOL_PYTHON, run_agent_script=_RUN_AGENT_SCRIPT))
+    agent = MiniSweAgentAgent(MiniSweAgentConfig())
     with pytest.raises(ValueError, match="base_url"):
         asyncio.run(agent.run(sandbox=_FakeSandbox(), messages=[{"role": "user", "content": "fix the bug"}]))
 
 
-@pytest.mark.cpu
-@pytest.mark.level0
 def test_missing_user_message_raises():
     agent = _agent()
     with pytest.raises(ValueError, match="requires a 'user' message"):
         asyncio.run(agent.run(sandbox=_FakeSandbox(), messages=[{"role": "system", "content": "sys"}]))
 
 
-@pytest.mark.cpu
-@pytest.mark.level0
-def test_too_many_messages_raises():
+def test_too_many_user_messages_raises():
     agent = _agent()
     messages = [{"role": "system", "content": "s"}, {"role": "user", "content": "u"}, {"role": "user", "content": "u2"}]
-    with pytest.raises(ValueError, match="at most 2 messages"):
+    with pytest.raises(ValueError, match="at most one 'user' message"):
         asyncio.run(agent.run(sandbox=_FakeSandbox(), messages=messages))
 
 
-# --------------------------- happy path ---------------------------
+# --------------------------- RemoteSandboxEnvironment bridge ---------------------------
 
 
-@pytest.mark.cpu
-@pytest.mark.level0
-def test_run_pipes_config_and_parses_stdout_into_result():
-    stdout = "mini-swe-agent noisy log line\n" + json.dumps(
-        {"exit_status": "Submitted", "submission": "diff --git a/...", "model_stats": {"api_calls": 3}}
-    )
-    sandbox = _FakeSandbox(stdout=stdout)
-    agent = _agent(step_limit=25, conda_env_path="/opt/miniconda3/envs/testbed")
+def test_env_exec_forwards_command_workdir_env_timeout():
+    sandbox = _FakeSandbox(stdout="hello")
+
+    async def main() -> None:
+        loop = asyncio.get_running_loop()
+        env = RemoteSandboxEnvironment(
+            sandbox=sandbox, loop=loop, cwd="/testbed", timeout=42, extra_env={"PAGER": "cat"}
+        )
+        # Called from a worker thread, exactly as the agent loop would.
+        out = await asyncio.to_thread(env.execute, {"command": "echo hi"})
+        assert out == {"output": "hello", "returncode": 0, "exception_info": ""}
+        call = sandbox.exec_shell_calls[0]
+        assert call["command"] == "echo hi"
+        assert call["workdir"] == "/testbed"
+        assert call["env"] == {"PAGER": "cat"}
+        assert call["timeout"] == 42
+
+    asyncio.run(main())
+
+
+def test_env_exec_raises_submitted_on_complete_signal():
+    from minisweagent.exceptions import Submitted
+
+    sandbox = _FakeSandbox(stdout="COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT\ndiff --git a b\n")
+
+    async def main() -> None:
+        loop = asyncio.get_running_loop()
+        env = RemoteSandboxEnvironment(sandbox=sandbox, loop=loop)
+        with pytest.raises(Submitted) as exc_info:
+            await asyncio.to_thread(env.execute, {"command": "echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT && git diff"})
+        assert exc_info.value.messages[0]["extra"]["exit_status"] == "Submitted"
+        assert exc_info.value.messages[0]["extra"]["submission"] == "diff --git a b\n"
+
+    asyncio.run(main())
+
+
+def test_env_exec_does_not_signal_without_first_line():
+    sandbox = _FakeSandbox(stdout="echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT\ndiff --git a b\n")
+
+    async def main() -> None:
+        loop = asyncio.get_running_loop()
+        env = RemoteSandboxEnvironment(sandbox=sandbox, loop=loop)
+        out = await asyncio.to_thread(env.execute, {"command": "echo hi"})
+        assert out["exception_info"] == ""  # signal is line[1], not line[0]
+
+    asyncio.run(main())
+
+
+# --------------------------- run() wiring ---------------------------
+
+
+def test_run_builds_model_and_runs_agent():
+    sandbox = _FakeSandbox()
+    agent = _agent(step_limit=25)
     messages = [{"role": "system", "content": "be careful"}, {"role": "user", "content": "fix the off-by-one bug"}]
 
     result = asyncio.run(agent.run(sandbox=sandbox, messages=messages))
 
-    # Exactly one exec_shell, piping the base64 config into the tool-image python.
-    assert len(sandbox.exec_shell_calls) == 1
-    cmd = sandbox.exec_shell_calls[0]
-    assert "base64 -d" in cmd
-    assert "/opt/mini-swe-agent/bin/python /opt/mini-swe-agent/bin/run_agent.py" in cmd
-    assert "CONDA_PREFIX=/opt/miniconda3/envs/testbed" in cmd
+    fake = _FakeAgent.last
+    assert fake is not None
 
-    # The decoded task config carries the user task, the gateway URL (base_url
-    # passed through unchanged -- run_task does the tunnel rewrite), and step_limit.
-    task_config = _decode_task_config(cmd)
-    assert task_config["task"] == "fix the off-by-one bug"
-    assert task_config["gateway_url"] == "http://gateway:8000/v1"
-    assert task_config["agent"]["step_limit"] == 25
+    # model: litellm 'openai/<served>' routed at the gateway; cost stays 0.
+    assert fake.model.config["model_name"] == "openai/policy"
+    assert fake.model.config["cost_tracking"] == "ignore_errors"
+    assert fake.model.config["model_kwargs"]["api_base"] == "http://gateway:8000/v1"
+    assert fake.model.config["model_kwargs"]["api_key"] == "EMPTY"
+    assert fake.model.config["model_kwargs"]["drop_params"] is True
 
-    # The result is parsed out of stdout (litellm noise tolerated) into an AgentResult.
+    # agent: system message flows in as system_template; instance defaults.
+    assert fake.kwargs["system_template"] == "be careful"
+    assert fake.kwargs["instance_template"] == _DEFAULT_INSTANCE_TEMPLATE
+    assert fake.kwargs["step_limit"] == 25
+    assert fake.kwargs["cost_limit"] == 3.0
+
+    # env: real bridge bound to the sandbox at /testbed with quiet pagers.
+    assert isinstance(fake.env, RemoteSandboxEnvironment)
+    assert fake.env.config.cwd == "/testbed"
+    assert fake.env.config.env == _DEFAULT_ENV
+
+    # the loop ran with the user message as the task.
+    assert fake.task == "fix the off-by-one bug"
+
+    # result mapped onto AgentResult; Submitted => finished.
     assert isinstance(result, AgentResult)
     assert result.output["exit_status"] == "Submitted"
-    assert result.output["submission"] == "diff --git a/..."
-    assert result.output["model_stats"]["api_calls"] == 3
-    assert result.info == {"step_limit": 25, "exit_status": "Submitted"}
+    assert result.output["submission"] == "diff --git a b\n"
     assert result.finished is True
-    assert result.transcript == messages
+    assert result.info["exit_status"] == "Submitted"
 
 
-@pytest.mark.cpu
-@pytest.mark.level0
-def test_run_marks_unfinished_when_not_submitted():
-    sandbox = _FakeSandbox(stdout=json.dumps({"exit_status": "error", "submission": ""}))
-    agent = _agent()
-    result = asyncio.run(agent.run(sandbox=sandbox, messages=[{"role": "user", "content": "task"}]))
-    assert result.finished is False
-    assert result.info["exit_status"] == "error"
+def test_default_model_name_used_when_unset():
+    sandbox = _FakeSandbox()
+    config = MiniSweAgentConfig(model=ModelConfig(base_url="http://gateway:8000/v1"))
+    agent = MiniSweAgentAgent(config)
 
-
-@pytest.mark.cpu
-@pytest.mark.level0
-def test_run_passes_base_url_through_unchanged():
-    sandbox = _FakeSandbox(stdout=json.dumps({"exit_status": "Submitted", "submission": "diff"}))
-    # A tunnel-rewritten base_url (what run_task injects) is forwarded verbatim.
-    agent = _agent(base_url="http://127.0.0.1:38197/sessions/abc/v1")
     asyncio.run(agent.run(sandbox=sandbox, messages=[{"role": "user", "content": "task"}]))
-    task_config = _decode_task_config(sandbox.exec_shell_calls[0])
-    assert task_config["gateway_url"] == "http://127.0.0.1:38197/sessions/abc/v1"
+
+    assert _FakeAgent.last.model.config["model_name"] == "openai/default"
 
 
-# --------------------------- example task config ---------------------------
+def test_custom_step_and_cost_limits_flow_through():
+    sandbox = _FakeSandbox()
+    agent = _agent(step_limit=99, cost_limit=5.0, wall_time_limit_seconds=1800)
+
+    asyncio.run(agent.run(sandbox=sandbox, messages=[{"role": "user", "content": "task"}]))
+
+    fake = _FakeAgent.last
+    assert fake.kwargs["step_limit"] == 99
+    assert fake.kwargs["cost_limit"] == 5.0
+    assert fake.kwargs["wall_time_limit_seconds"] == 1800
 
 
-@pytest.mark.cpu
-@pytest.mark.level0
-@pytest.mark.parametrize("task_name", ["swe_bench", "swe_rebench"])
-def test_example_task_config_builds_agent_config(task_name):
-    resolved = TaskConfigResolver.from_file(str(_EXAMPLE_TASK_CONFIG)).resolve({"name": task_name})
-    cfg = MiniSweAgentConfig(**resolved["agent"])
+def test_run_returns_unfinished_when_not_submitted():
+    _FakeAgent.result = {"exit_status": "LimitsExceeded", "submission": ""}
+    sandbox = _FakeSandbox()
+    agent = _agent()
 
-    assert cfg.conda_env_path == "/opt/miniconda3/envs/testbed"
-    cmd = build_agent_command(
-        config_b64="",
-        tool_python=cfg.tool_python,
-        run_agent_script=cfg.run_agent_script,
-        conda_env_path=cfg.conda_env_path,
-    )
-    assert "CONDA_PREFIX=/opt/miniconda3/envs/testbed" in cmd
+    result = asyncio.run(agent.run(sandbox=sandbox, messages=[{"role": "user", "content": "task"}]))
+
+    assert result.finished is False
+    assert result.output["exit_status"] == "LimitsExceeded"
+    assert result.info["exit_status"] == "LimitsExceeded"
+
+
+def test_run_swallows_loop_failure_and_reports():
+    _FakeAgent.raise_on_run = RuntimeError("litellm blew up")
+    sandbox = _FakeSandbox()
+    agent = _agent()
+
+    result = asyncio.run(agent.run(sandbox=sandbox, messages=[{"role": "user", "content": "task"}]))
+
+    assert result.finished is False
+    assert result.output["exit_status"] == "RuntimeError"
+    assert "RuntimeError: litellm blew up" in result.info["error"]
 
 
 if __name__ == "__main__":

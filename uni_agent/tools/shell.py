@@ -141,10 +141,45 @@ def _capture_wrapper(command_path: str, out: str, err: str, rc: str, *, signal: 
 # Best-effort tmux install when the image lacks it: first package manager on PATH,
 # non-interactive, one exec. apt needs an index refresh first (minimal images ship
 # an empty lists dir); `|| true` tolerates a flaky mirror if tmux still resolves.
+# The apt branch is rootless-aware: a fast-path `apt-get install` is tried first,
+# then a download+extract fallback for the flash-sandbox namespace (apt runs as
+# root but its sandbox chown to the _apt user fails with EPERM -> `update` writes
+# no index -> `install tmux` can't locate the package).
 _INSTALL_TMUX = r"""
+# Bundled jammy .deb path (no network). The flash-sandbox backend stages
+# tmux + libevent-core + libutempter0 .debs into /tmp/tmux-bundle during
+# _bootstrap because the sandbox has no DNS and apt-get install is
+# unreliable. dpkg-deb --fsys-tarfile | tar --no-same-owner extracts with
+# no chown (avoids the rootless EPERM). On a non-jammy/non-x86_64 image
+# tmux -V fails here and we fall through to the package managers below.
+if [ -d /tmp/tmux-bundle ] && ls /tmp/tmux-bundle/*.deb >/dev/null 2>&1; then
+  for d in /tmp/tmux-bundle/*.deb; do
+    dpkg-deb --fsys-tarfile "$d" 2>/dev/null | tar --no-same-owner -xf - -C / 2>/dev/null || true
+  done
+  if command -v tmux >/dev/null 2>&1 && tmux -V >/dev/null 2>&1; then
+    echo "tmux installed (bundled debs, no network)" >&2; exit 0
+  fi
+fi
 if command -v apt-get >/dev/null 2>&1; then
-  DEBIAN_FRONTEND=noninteractive apt-get update -qq || true
-  DEBIAN_FRONTEND=noninteractive apt-get install -y -qq tmux
+  DEBIAN_FRONTEND=noninteractive apt-get update -qq >/dev/null 2>&1 || true
+  if DEBIAN_FRONTEND=noninteractive apt-get install -y -qq tmux >/dev/null 2>&1 && command -v tmux >/dev/null 2>&1; then
+    echo "tmux installed (apt fast path)" >&2; exit 0
+  fi
+  _l="$(mktemp -d)"; _a="$(mktemp -d)"
+  DEBIAN_FRONTEND=noninteractive /usr/bin/apt-get \
+      -o APT::Sandbox::User=root -o "Dir::State::lists=$_l" update -qq >/dev/null 2>&1 || true
+  DEBIAN_FRONTEND=noninteractive /usr/bin/apt-get \
+      -o APT::Sandbox::User=root -o "Dir::State::lists=$_l" \
+      -o "Dir::Cache::archives=$_a/" --download-only install -y -qq tmux
+  _rc=$?
+  if [ "$_rc" -eq 0 ]; then
+    find "$_a" -maxdepth 1 -type f -name '*.deb' -print0 \
+        | while IFS= read -r -d '' _p; do dpkg-deb --fsys-tarfile "$_p" | tar --no-same-owner -xf - -C /; done
+    command -v tmux >/dev/null 2>&1 && { echo "tmux installed (apt rootless download+extract)" >&2; rm -rf "$_l" "$_a"; exit 0; }
+  fi
+  rm -rf "$_l" "$_a"
+  echo "tmux install failed (apt rootless exit $_rc)" >&2
+  exit $_rc
 elif command -v dnf >/dev/null 2>&1; then dnf install -y tmux
 elif command -v yum >/dev/null 2>&1; then yum install -y tmux
 elif command -v apk >/dev/null 2>&1; then apk add --no-cache tmux
@@ -467,3 +502,17 @@ class ShellTool(Tool):
         if self._shell is not None:
             await self._shell.close()
             self._shell = None
+
+
+@register_tool("bash")
+class BashTool(ShellTool):
+    """ShellTool exposed to the model as ``bash``.
+
+    Some base models (e.g. Qwen3.5-4B pre-RL) default to calling ``bash``
+    rather than ``shell`` for command execution; registering the same tool
+    under ``bash`` avoids the "Invalid action: function 'bash' is not defined"
+    loop that wastes the entire episode budget (max_steps / runtime_timeout)
+    in the first rollout before RL has taught the policy the tool schema.
+    """
+
+    name = "bash"

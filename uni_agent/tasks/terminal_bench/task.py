@@ -68,9 +68,36 @@ def build_terminal_bench_sandbox_config(config: SandboxConfig, metadata: dict[st
             kwargs.setdefault("gpu", f"{gpu_type}:{gpus}")
         kwargs.setdefault("block_network", not allow_internet)
         kwargs["env"] = {**dict(kwargs.get("env", {})), **environment_env}
+    elif sandbox_config.provider == "flash_sandbox":
+        # Flash-sandbox sandboxes size CPU/memory at start (cpu_cores/
+        # memory_mb ride in sandbox_kwargs and map onto the backend's start
+        # request). Knobs the backend cannot enforce -- per-task workdir,
+        # GPUs, network isolation, and container-level env -- are surfaced
+        # as warnings instead of silently dropped: the verifier and oracle
+        # paths already pass their env explicitly (reward.py / _run_oracle),
+        # so only the agent shell loses container env; route any env the
+        # agent must see through the react stateful_shell env_vars in the
+        # task-config YAML when a task needs it.
+        if cpus is not None:
+            kwargs.setdefault("cpu_cores", float(cpus))
+        if memory_mb is not None:
+            kwargs.setdefault("memory_mb", int(memory_mb))
+        if environment_env:
+            logger.warning(
+                "Terminal-Bench environment env vars are not settable on the flash-sandbox "
+                "backend; add them to the agent shell env_vars if the task needs them: %s",
+                environment_env,
+            )
+        if workdir:
+            logger.debug("Ignoring advisory workdir=%s for flash-sandbox backend", workdir)
+        if gpus > 0:
+            logger.warning("Ignoring gpus=%d (gpu_types=%s): flash-sandbox backends are CPU-only", gpus, gpu_types)
+        if not allow_internet:
+            logger.warning("Ignoring allow_internet=%s: flash-sandbox backends do not support network isolation", allow_internet)
     else:
         raise ValueError(
-            f"Terminal-Bench supports sandbox providers 'docker' and 'modal', got {sandbox_config.provider!r}"
+            f"Terminal-Bench supports sandbox providers 'docker', 'modal' and 'flash_sandbox', "
+            f"got {sandbox_config.provider!r}"
         )
 
     if storage_mb is not None:

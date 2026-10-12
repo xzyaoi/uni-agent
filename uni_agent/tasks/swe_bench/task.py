@@ -7,6 +7,7 @@ import logging
 
 from pydantic import Field
 
+from ...sandbox.exec_context import terminal_exec
 from ..base import Task, TaskConfig, TaskResult
 from ..registry import register_task
 
@@ -61,7 +62,12 @@ class SWEBenchTask(Task):
 
             from .reward import compute_reward
 
-            result = await compute_reward(sample, sandbox, eval_timeout=cfg.eval_timeout)
+            # The eval produces this rollout's terminal application outcome
+            # (resolved/not). Tag it ``rlvr["terminal"] = True`` so the
+            # flash-sandbox coordinator advances the group's progress counter
+            # k_g exactly once (RecordOutcome is idempotent per rollout).
+            async with terminal_exec():
+                result = await compute_reward(sample, sandbox, eval_timeout=cfg.eval_timeout)
             if isinstance(agent_error, str) and agent_error.strip():
                 result = {**result, "agent_error": agent_error}
 
