@@ -12,9 +12,8 @@ Archives have checksums in `assets/SHA256SUMS`.
 ## Inputs the receiving account supplies
 
 - A valid Slurm allocation/account on Clariden with access to 10 GH200 nodes.
-- A readable `harbor-swe-megatron-lean.aarch64.sqsh` training image, matching the
-  original image's CUDA 13/Megatron/Bridge/vLLM dependencies. The large image is
-  supplied separately; it is not included in this script package.
+- Access to the shared training image described below. It includes the original
+  run's CUDA 13/Megatron/Bridge/vLLM dependencies and is not bundled in the scripts.
 - Readable Qwen3.5-27B weights, supplied separately.
 - `uv` on the login node's PATH; setup creates its own Python 3.12 environment.
 - Credentials for the running native AgentENV service and direct network access
@@ -24,6 +23,21 @@ Use paths owned by, or explicitly readable by, the receiving account. All writes
 go under its `WORK_ROOT` on shared scratch. Setup downloads Python dependencies;
 AgentENV pulls the per-task `ghcr.io/scaleapi/swe-bench_pro-v2:<instance_id>`
 images on CloudLab. This package uses the existing service; it does not deploy it.
+
+### Shared training image
+
+`config.env.example` already selects the exact GH200/aarch64 image used by the run:
+
+```bash
+TRAINING_IMAGE="/iopsstor/scratch/cscs/xyao/harbor-swe-megatron-lean.aarch64.sqsh"
+```
+
+This file is readable by other cluster accounts and read-only (`0444`). The
+parent scratch directory permits traversal without directory listing. You can
+use this path directly on Clariden; copying or rebuilding the image is not
+required. Scratch storage is not permanent, so set TRAINING_IMAGE to another
+compatible readable image if this path becomes unavailable. Model weights and
+AgentENV credentials still need to be supplied by the receiving account.
 
 ## Start
 

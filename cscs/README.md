@@ -32,7 +32,18 @@ not depend on the surrounding checkout.
 - `AGENTENV_CREDENTIALS`: a private shell file exporting `AGENTENV_API_KEY`.
 - `uv` on PATH and compute-node access to the configured AgentENV endpoint.
 
-The large training image, model weights and credentials are supplied separately.
+The example config points to the shared training image used by the original run:
+
+```bash
+TRAINING_IMAGE="/iopsstor/scratch/cscs/xyao/harbor-swe-megatron-lean.aarch64.sqsh"
+```
+
+It is readable by cluster accounts and has read-only permissions (`0444`). No
+copy or image build is needed on Clariden. The containing scratch directory
+permits traversal but not directory listing for other accounts. The image is
+stored on scratch; override TRAINING_IMAGE if it is moved or removed.
+
+Model weights and credentials are supplied separately.
 Sources, all 642 prepared task definitions, dependency pins and dataset
 relocation scripts are included in the directory. Sandbox images are
 `ghcr.io/scaleapi/swe-bench_pro-v2:<instance_id>` and are pulled by AgentENV.
