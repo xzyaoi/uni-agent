@@ -15,6 +15,8 @@ from typing import Any
 
 import aiohttp
 
+from uni_agent.observability import traced_chat_completion
+
 logger = logging.getLogger(__name__)
 
 
@@ -120,7 +122,7 @@ class OpenAICompatibleChatModel:
         if self.tools_schemas:
             body["tools"] = self.tools_schemas
 
-        data = await self._post_chat_completion(body)
+        data = await traced_chat_completion(self, body)
 
         response_message = data["choices"][0]["message"]
         response_content = response_message.get("content") or ""

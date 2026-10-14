@@ -8,5 +8,6 @@
   "native_dependencies": "pip freeze from isolated native AgentENV Harbor Python 3.12 environment",
   "included_credentials": false,
   "large_training_image_included": false,
-  "model_weights_included": false
+  "model_weights_included": false,
+  "capture_integration": "Incremental model capture and per-node telemetry added to the original snapshot for run 3661417"
 }

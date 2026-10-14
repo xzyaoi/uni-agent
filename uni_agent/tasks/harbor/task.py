@@ -15,8 +15,8 @@ from uuid import uuid4
 
 from pydantic import Field, field_validator, model_validator
 
+from uni_agent import logging as execution_logging
 from uni_agent.agents import AgentConfig
-from uni_agent.logging import get_current_log_context
 
 from ..base import Task, TaskConfig, TaskResult
 from ..registry import register_task
@@ -52,11 +52,15 @@ class HarborAgentConfig(AgentConfig):
 
 
 class HarborTaskConfig(TaskConfig):
-    """Configuration for one evaluation-only Harbor CLI trial."""
+    """Configuration for one Harbor CLI trial, including gateway-backed training."""
 
     name: str = "harbor"
     sandbox: None = Field(default=None, exclude=True)
     harbor_env: str = Field(default="docker", description="Harbor environment backend.")
+    harbor_executable: str = Field(default="harbor", min_length=1, description="Harbor executable on every worker.")
+    artifacts_dir: str | None = Field(
+        default=None, description="Persistent parent directory for Harbor trial artifacts."
+    )
     agent: HarborAgentConfig = Field(default_factory=HarborAgentConfig)
     timeout_multiplier: float = Field(default=1.0, gt=0)
     override_cpus: int | None = Field(default=None, gt=0)
@@ -105,7 +109,7 @@ def build_harbor_trial_command(
     """Build the argv for one collision-safe Harbor trial."""
     task_path = str(config.metadata["task_path"])
     command = [
-        "harbor",
+        config.harbor_executable,
         "trial",
         "start",
         "--path",
@@ -188,7 +192,8 @@ class HarborTask(Task):
 
     async def run(self) -> TaskResult:
         config: HarborTaskConfig = self.config  # type: ignore[assignment]
-        log_context = get_current_log_context()
+        context_getter = getattr(execution_logging, "get_current_log_context", None)
+        log_context = context_getter() if context_getter is not None else None
         output_dir: Path | None = None
         if log_context is not None and log_context.log_path:
             rollout_dir = Path(log_context.log_path).expanduser().resolve().parent
@@ -198,6 +203,8 @@ class HarborTask(Task):
                 raise RuntimeError(f"Harbor output directory already exists: {output_dir}")
 
         trial_name = str(uuid4().hex)
+        if config.artifacts_dir:
+            output_dir = Path(config.artifacts_dir).expanduser().resolve() / trial_name
         trial_dir = _TEMP_TRIALS_DIR / trial_name
         try:
             return await self._run_trial(

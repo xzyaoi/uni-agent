@@ -21,4 +21,5 @@ native_python=$(uv python find --managed-python 3.12)
 uv venv --python "${native_python}" --allow-existing "${WORK_ROOT}/venv"
 uv pip install --python "${WORK_ROOT}/venv/bin/python" -r "${BUNDLE_ROOT}/requirements-native.txt"
 "${WORK_ROOT}/venv/bin/python" "${BUNDLE_ROOT}/prepare_data.py"
+"${WORK_ROOT}/venv/bin/python" "${BUNDLE_ROOT}/apply_runtime_support.py"
 printf 'Ready: %s\nNext: create your credential file, then run ./submit.sh\n' "${WORK_ROOT}"

@@ -258,6 +258,7 @@ ray job submit --no-wait --runtime-env "$RUNTIME_ENV" \
     actor_rollout_ref.rollout.tensor_model_parallel_size=${gen_tp} \
     actor_rollout_ref.rollout.prompt_length=${max_prompt_length} \
     actor_rollout_ref.rollout.response_length=${max_response_length} \
+    actor_rollout_ref.rollout.disable_log_stats=False \
     actor_rollout_ref.rollout.enable_chunked_prefill=True \
     actor_rollout_ref.rollout.max_num_batched_tokens=${MAX_NUM_BATCHED_TOKENS:-$((max_prompt_length + max_response_length))} \
     actor_rollout_ref.rollout.max_model_len=$((max_prompt_length + max_response_length)) \

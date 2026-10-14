@@ -45,7 +45,7 @@ Follow the end-to-end path:
 
 For detailed guides and examples, we strongly recommend reading the [Uni-Agent documentation](https://uni-agent.readthedocs.io/en/latest/).
 
-For the Qwen3.5-27B SWE-bench Pro V2 baseline on Clariden, see the
+For Qwen3.5 4B/9B/27B training on SWE-bench and WebArena on Clariden, see the
 [CSCS reproduction scripts](./cscs/README.md).
 
 ## Results 📊

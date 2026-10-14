@@ -1,0 +1,13 @@
+# Browser sandbox for the native AgentENV WebArena presets (amd64 CloudLab).
+FROM python:3.11-slim-bookworm
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN pip install browsergym-webarena==0.14.3 playwright==1.44.0 \
+ && python -m playwright install --with-deps chromium \
+ && python -c "import nltk; nltk.download('punkt_tab', download_dir='/usr/local/share/nltk_data', raise_on_error=True)" \
+ && chmod -R a+rX /ms-playwright /usr/local/share/nltk_data
+COPY bridge.py /opt/bgym/bridge.py
+WORKDIR /workspace
+CMD ["tail", "-f", "/dev/null"]

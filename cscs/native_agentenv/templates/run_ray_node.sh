@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+python3 "${METRICS_COLLECTOR}" --role gpu --output "${METRICS_DIR}" --disk "${WORK_ROOT}" &
+_metrics_pid=$!
+_metrics_cleanup() {
+    kill "${_metrics_pid}" 2>/dev/null || true
+    wait "${_metrics_pid}" 2>/dev/null || true
+    if [[ -d ${RAY_TMPDIR}/session_latest/logs ]]; then
+        cp -a "${RAY_TMPDIR}/session_latest/logs" "${METRICS_DIR}/$(hostname)-ray-logs" || true
+    fi
+}
+trap _metrics_cleanup EXIT
+
 unset ROCR_VISIBLE_DEVICES
 
 PORT="${RAY_PORT:-6379}"

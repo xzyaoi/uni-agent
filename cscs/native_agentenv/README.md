@@ -1,7 +1,31 @@
-# Portable SWE-bench Pro V2 native AgentENV training
+# Portable Qwen3.5 native AgentENV training
 
 Repository location: `cscs/native_agentenv/`. See [CSCS reproduction guide](../README.md)
 for the baseline settings and account setup overview.
+
+Separate launchers for 4B, 9B and 27B across Verified, Pro V2 and WebArena live
+in `cscs/qwen3.5-{4b,9b,27b}/`. This standalone package also accepts:
+
+```bash
+bash submit_preset.sh 4B swebench-verified
+bash submit_preset.sh 9B swebench-pro
+bash submit_preset.sh 27B webarena
+```
+
+Run setup once. Pro V2 data is included; prepare Verified with
+`bash prepare_verified.sh`. For WebArena, follow [the browser/site setup guide](webarena/README.md)
+and run `bash prepare_webarena.sh`. MODEL_PATH_4B, MODEL_PATH_9B and MODEL_PATH_27B
+override each preset's weights. All sizes retain the original conservative
+10-node topology; the smaller sizes have not been tuned or trained here.
+WebArena defaults to concurrency 1 for a shared website deployment.
+
+To match the latest 27B full-memory run, use
+`config.fullmem_uncapped.env.example`: 2 trainer nodes / 8 rollout nodes,
+CONCURRENCY=0, and 850,000 MiB per exclusive node. Each portable run now records
+GPU/DCGM/vLLM telemetry and incremental full model calls alongside sandbox
+traces. See [observability](../observability/README.md) for CloudLab host
+collection and replay. When upgrading an older prepared runtime, choose a
+fresh WORK_ROOT so setup extracts the updated source snapshot.
 
 Copy this entire directory to another **Clariden GH200 account**. It includes
 the Uni-Agent/verl source snapshot used by job 3652372, the native persistent
@@ -56,7 +80,7 @@ bash submit.sh
 `setup.sh` checks archive hashes, extracts the source/task snapshots, installs
 the pinned Harbor client environment, and rewrites every parquet task path to
 the new account's task directory. It performs no model evaluation or training.
-`submit.sh` creates a fresh run directory and submits exactly one job. It does
+`submit.sh` defaults to 27B/Pro V2. It creates a fresh run directory and submits exactly one job. It does
 not cancel or modify any existing job. It checks required local inputs; it does
 not run benchmark validation.
 
