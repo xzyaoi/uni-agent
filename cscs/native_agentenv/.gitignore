@@ -1,0 +1,5 @@
+# Account-specific configuration and credentials must stay local.
+config.env
+secrets/
+# These archives are the portable runtime and task inputs.
+!assets/*.tar.gz

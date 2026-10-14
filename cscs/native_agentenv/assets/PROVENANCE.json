@@ -1,0 +1,12 @@
+{
+  "export_date": "2026-10-14",
+  "source_job": "3652372",
+  "dataset": "ScaleAI/SWE-bench_Pro V2 default",
+  "task_count": 642,
+  "image_registry": "ghcr.io/scaleapi/swe-bench_pro-v2",
+  "source": "Deployed Clariden runtime snapshot, including uncommitted native AgentENV integration",
+  "native_dependencies": "pip freeze from isolated native AgentENV Harbor Python 3.12 environment",
+  "included_credentials": false,
+  "large_training_image_included": false,
+  "model_weights_included": false
+}

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+: "${HARBOR_VENV:?Missing HARBOR_VENV}"
+: "${NATIVE_SHELL_ROOT:?Missing NATIVE_SHELL_ROOT}"
+: "${AGENTENV_TRACE_DIR:?Missing AGENTENV_TRACE_DIR}"
+export PYTHONPATH="${PYTHONPATH:+${PYTHONPATH}:}${NATIVE_SHELL_ROOT}"
+export AGENTENV_TRACE_DIR
+exec "${HARBOR_VENV}/bin/harbor" "$@"
