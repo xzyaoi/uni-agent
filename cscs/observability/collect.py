@@ -81,7 +81,7 @@ def stream_command(argv, filename):
 
 
 if args.role == "gpu":
-    stream_command(["dcgmi", "dmon", "-e", "1001,1002,1003,1004,1005", "-d", "1000"], node + "-dcgm.jsonl")
+    stream_command([os.environ.get("DCGMI_PATH", "dcgmi"), "dmon", "-e", "1001,1002,1003,1004,1005", "-d", "1000"], node + "-dcgm.jsonl")
 else:
     prefix = ["sudo", "-n"] if args.sudo_journal else []
     stream_command(
@@ -131,6 +131,8 @@ with (root / (node + "-host.jsonl")).open("a") as host, (root / (node + "-vllm.j
                 "job_id": os.environ.get("SLURM_JOB_ID"),
                 "meminfo": read("/proc/meminfo"),
                 "cpu_stat": read("/proc/stat"),
+                "numa_meminfo": {p.name: read(str(p / "meminfo")) for p in Path("/sys/devices/system/node").glob("node[0-9]*")},
+                "numa_allowed": read("/proc/self/status"),
                 "loadavg": read("/proc/loadavg"),
                 "diskstats": read("/proc/diskstats"),
                 "netdev": read("/proc/net/dev"),

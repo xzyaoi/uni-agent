@@ -1,0 +1,7 @@
+{
+  "campaign": "verified_sweep_20261015_235315Z",
+  "source": "outputs/verified_sweep_20261015_235315Z/sweep_results.json",
+  "sha256": "8bac16385150b434ee4cfc9c84b971417a482dc663dbcf3d4f8192fb614f81fb",
+  "units": "active_groups are groups of eight episodes; wall_seconds excludes image warmup and model initialization; setup included",
+  "scope": "one measurement per concurrency; 128 groups skipped"
+}

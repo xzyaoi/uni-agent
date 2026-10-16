@@ -6,7 +6,7 @@ and WebArena** on Clariden GH200 nodes. It connects
 directly to the native AgentENV service on CloudLab using the SDK, without a
 scheduler proxy or SSH tunnel.
 
-For the latest instrumented 27B setup (8 trainer GPUs, 32 rollout GPUs,
+For the latest instrumented 27B setup (16 trainer GPUs, 24 rollout GPUs,
 uncapped runner concurrency), copy
 `native_agentenv/config.fullmem_uncapped.env.example` to `native_agentenv/config.env`
 before setup. Both profiles request exclusive nodes and the current maximum

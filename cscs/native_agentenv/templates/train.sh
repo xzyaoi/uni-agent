@@ -106,6 +106,7 @@ train_prompt_bsz=${TRAIN_PROMPT_BSZ:-64}
 n_resp_per_prompt=${N_RESP_PER_PROMPT:-8}
 train_prompt_mini_bsz=${PPO_MINI_BATCH_SIZE:-16}
 num_warmup_batches=${NUM_WARMUP_BATCHES:-1}
+rollout_prompt_bsz=${ROLLOUT_PROMPT_BSZ:-${train_prompt_bsz}}
 # Trainer topology: colocate_async (default; one hybrid pool) or separate_async
 # (fully-async: trainer/hybrid pool + standalone vLLM rollout pool, weights
 # shipped via the nccl checkpoint engine). In separate_async NNODES is the
@@ -124,9 +125,13 @@ if [ "${TRAINER_MODE}" = "separate_async" ]; then
         echo "separate_async requires NNODES_ROLLOUT > 0 (standalone rollout pool nodes)" >&2
         exit 1
     fi
-    MODE_OVERRIDES="trainer.v1.trainer_mode=separate_async trainer.v1.separate_async.num_warmup_batches=${num_warmup_batches} trainer.v1.separate_async.parameter_sync_step=${PARAMETER_SYNC_STEP} actor_rollout_ref.rollout.nnodes=${NNODES_ROLLOUT} actor_rollout_ref.rollout.n_gpus_per_node=${NGPUS_PER_NODE} actor_rollout_ref.rollout.checkpoint_engine.backend=nccl"
+    MODE_OVERRIDES="trainer.v1.trainer_mode=separate_async ++trainer.v1.separate_async.rollout_prompt_batch_size=${rollout_prompt_bsz} trainer.v1.separate_async.num_warmup_batches=${num_warmup_batches} trainer.v1.separate_async.parameter_sync_step=${PARAMETER_SYNC_STEP} actor_rollout_ref.rollout.nnodes=${NNODES_ROLLOUT} actor_rollout_ref.rollout.n_gpus_per_node=${NGPUS_PER_NODE} actor_rollout_ref.rollout.checkpoint_engine.backend=nccl"
+    MODE_OVERRIDES+=" ++trainer.v1.separate_async.continuous_refill.enabled=${CONTINUOUS_ROLLOUT:-False} ++trainer.v1.separate_async.continuous_refill.target_inflight_prompts=${ROLLOUT_TARGET_PROMPTS:-128} ++trainer.v1.separate_async.continuous_refill.max_ready_prompts=${ROLLOUT_READY_PROMPTS:-64} ++trainer.v1.separate_async.continuous_refill.submit_prompts=${ROLLOUT_REFILL_PROMPTS:-16} ++trainer.v1.separate_async.continuous_refill.poll_interval=${ROLLOUT_REFILL_INTERVAL:-1.0}"
 else
     MODE_OVERRIDES="trainer.v1.trainer_mode=colocate_async trainer.v1.colocate_async.num_warmup_batches=${num_warmup_batches}"
+fi
+if [[ ${CONTINUOUS_ROLLOUT:-False} = True || ${CONTINUOUS_ROLLOUT:-False} = true ]]; then
+    MODE_OVERRIDES+=" data.dataloader_num_workers=0"
 fi
 lr_decay_steps=${LR_DECAY_STEPS:-2000}
 test_freq=${TEST_FREQ:-10}
@@ -232,6 +237,8 @@ ray job submit --no-wait --runtime-env "$RUNTIME_ENV" \
     ++actor_rollout_ref.actor.policy_loss.rollout_correction.rollout_rs_threshold="${rollout_rs_threshold}" \
     ++actor_rollout_ref.actor.policy_loss.rollout_correction.loss_type=${bypass_loss_type} \
     actor_rollout_ref.actor.entropy_coeff=0 \
+    actor_rollout_ref.actor.megatron.entropy_from_logits_with_chunking=True \
+    actor_rollout_ref.actor.megatron.entropy_from_logits_chunk_size=1024 \
     actor_rollout_ref.actor.loss_agg_mode=${loss_agg_mode} \
     +actor_rollout_ref.actor.checkpoint.save_contents=${checkpoint_save_contents} \
     ++actor_rollout_ref.actor.checkpoint.load_contents=${checkpoint_load_contents} \

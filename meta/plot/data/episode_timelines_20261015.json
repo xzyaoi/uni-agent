@@ -1,0 +1,2788 @@
+{
+  "campaign": "sandbox-sweep-20261015_193213Z",
+  "selection": "Four complete, error-free-call episodes nearest the eligible median lifetime per concurrency; ties resolved by trace filename. Each has at least two model calls and fully paired operations.",
+  "scope": "Sandbox start invocation through sandbox stop invocation; deletion/teardown duration is excluded, independently aligned to time zero. Episodes are not task-matched across concurrency levels. Error-free API calls do not establish completed reward verification or task resolution.",
+  "classification": "Original reference legend conventions: Cold Start is the native start interval; Setup is startup completion through first model call; Sandbox Interaction is observed native operations during the agent phase; Verification is inferred from final shell_close completion through stop invocation and includes patch handling/artifact overhead; LLM Wait is the residual, including measured model calls and untraced agent overhead. Verification is a phase proxy, not confirmed successful reward evaluation. Precedence: cold start > verification > setup > native interaction > residual. Stop duration is excluded.",
+  "points": [
+    {
+      "episode_ceiling": 128,
+      "eligible_episodes": 759,
+      "successful_start_calls": 1021,
+      "successful_start_median_s": 2.677915336913429,
+      "successful_start_p90_s": 3.9087917980505154,
+      "excluded": {
+        "unmatched_operations_or_recorded_call_errors": 258,
+        "missing_lifecycle_or_fewer_than_two_model_calls": 7
+      },
+      "eligible_median_lifetime_s": 84.18878269195557,
+      "source": "outputs/sandbox-sweep-20261015_193213Z/groups-16/inputs/demand.jsonl.gz",
+      "source_sha256": "cc4ad0703fec1e68a2ed1e438bfee04b1dfe31341b87bd70d3662e151601c354",
+      "episodes": [
+        {
+          "trace_file": "2af832ab92cf46ce9d7e843bbaa998da.jsonl",
+          "sandbox_id": "01a14144-2d84-7a03-9534-6d0f48fde025",
+          "start_epoch": 1792096348.8596728,
+          "end_epoch": 1792096432.988965,
+          "lifetime_s": 84.12929224967957,
+          "model_calls": 6,
+          "native_calls": 55,
+          "first_model_start": 1792096352.0623984,
+          "post_agent_start": 1792096359.459221,
+          "post_agent_end": 1792096432.988965,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 2.2812702655792236,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 2.2812702655792236,
+              "end_s": 3.202725648880005,
+              "category": "Setup"
+            },
+            {
+              "start_s": 3.202725648880005,
+              "end_s": 5.205125093460083,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 5.205125093460083,
+              "end_s": 5.350048542022705,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 5.350048542022705,
+              "end_s": 5.350802659988403,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 5.350802659988403,
+              "end_s": 5.495004177093506,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 5.495004177093506,
+              "end_s": 5.4958884716033936,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 5.4958884716033936,
+              "end_s": 5.639813423156738,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 5.639813423156738,
+              "end_s": 5.640526294708252,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 5.640526294708252,
+              "end_s": 5.786954879760742,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 5.786954879760742,
+              "end_s": 6.3966944217681885,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.3966944217681885,
+              "end_s": 6.506361246109009,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.506361246109009,
+              "end_s": 6.507076740264893,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.507076740264893,
+              "end_s": 6.6157708168029785,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.6157708168029785,
+              "end_s": 6.616492986679077,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.616492986679077,
+              "end_s": 6.727302074432373,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.727302074432373,
+              "end_s": 6.728049993515015,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.728049993515015,
+              "end_s": 6.8710713386535645,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.8710713386535645,
+              "end_s": 7.671890020370483,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.671890020370483,
+              "end_s": 7.8149254322052,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.8149254322052,
+              "end_s": 7.815662384033203,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.815662384033203,
+              "end_s": 7.957880020141602,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.957880020141602,
+              "end_s": 7.958582878112793,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.958582878112793,
+              "end_s": 8.103992700576782,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.103992700576782,
+              "end_s": 8.104713439941406,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.104713439941406,
+              "end_s": 8.25028657913208,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.25028657913208,
+              "end_s": 8.875905990600586,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.875905990600586,
+              "end_s": 8.987820148468018,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.987820148468018,
+              "end_s": 8.988646984100342,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.988646984100342,
+              "end_s": 9.098618984222412,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.098618984222412,
+              "end_s": 9.099417924880981,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.099417924880981,
+              "end_s": 9.209699869155884,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.209699869155884,
+              "end_s": 9.210574865341187,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.210574865341187,
+              "end_s": 9.326404094696045,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.326404094696045,
+              "end_s": 9.826572179794312,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.826572179794312,
+              "end_s": 9.971161842346191,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.971161842346191,
+              "end_s": 9.9721200466156,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.9721200466156,
+              "end_s": 10.136375904083252,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.136375904083252,
+              "end_s": 10.137255191802979,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.137255191802979,
+              "end_s": 10.250160932540894,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.250160932540894,
+              "end_s": 10.25109076499939,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.25109076499939,
+              "end_s": 10.45646047592163,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.45646047592163,
+              "end_s": 10.496613264083862,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.496613264083862,
+              "end_s": 10.599548101425171,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.599548101425171,
+              "end_s": 84.12929224967957,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 2.2812702655792236,
+            "LLM Wait": 4.590863466262817,
+            "Sandbox Interaction": 2.8059589862823486,
+            "Setup": 0.9214553833007812,
+            "Verification": 73.5297441482544
+          }
+        },
+        {
+          "trace_file": "4fbe39d2e542442b98922ac842aa4498.jsonl",
+          "sandbox_id": "01a14142-fb0d-7ab3-8bbd-578f2cbd977e",
+          "start_epoch": 1792096270.0842876,
+          "end_epoch": 1792096354.2730703,
+          "lifetime_s": 84.18878269195557,
+          "model_calls": 4,
+          "native_calls": 47,
+          "first_model_start": 1792096273.5607712,
+          "post_agent_start": 1792096278.5715973,
+          "post_agent_end": 1792096354.2730703,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 2.5639517307281494,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 2.5639517307281494,
+              "end_s": 3.4764835834503174,
+              "category": "Setup"
+            },
+            {
+              "start_s": 3.4764835834503174,
+              "end_s": 4.8221435546875,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 4.8221435546875,
+              "end_s": 4.982632637023926,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 4.982632637023926,
+              "end_s": 4.983266830444336,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 4.983266830444336,
+              "end_s": 5.128626346588135,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 5.128626346588135,
+              "end_s": 5.129395008087158,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 5.129395008087158,
+              "end_s": 5.277061462402344,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 5.277061462402344,
+              "end_s": 5.2777814865112305,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 5.2777814865112305,
+              "end_s": 5.619091987609863,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 5.619091987609863,
+              "end_s": 6.434541463851929,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.434541463851929,
+              "end_s": 6.579674243927002,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.579674243927002,
+              "end_s": 6.5803141593933105,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.5803141593933105,
+              "end_s": 6.6989336013793945,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.6989336013793945,
+              "end_s": 6.699630975723267,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.699630975723267,
+              "end_s": 6.8111560344696045,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.8111560344696045,
+              "end_s": 6.811798334121704,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.811798334121704,
+              "end_s": 6.955647945404053,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.955647945404053,
+              "end_s": 7.800762414932251,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.800762414932251,
+              "end_s": 7.947664499282837,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.947664499282837,
+              "end_s": 7.948406934738159,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.948406934738159,
+              "end_s": 8.094553709030151,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.094553709030151,
+              "end_s": 8.09544563293457,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.09544563293457,
+              "end_s": 8.237754106521606,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.237754106521606,
+              "end_s": 8.238399744033813,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.238399744033813,
+              "end_s": 8.359378814697266,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.359378814697266,
+              "end_s": 8.385076522827148,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.385076522827148,
+              "end_s": 8.487309694290161,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.487309694290161,
+              "end_s": 84.18878269195557,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 2.5639517307281494,
+            "LLM Wait": 3.038304090499878,
+            "Sandbox Interaction": 1.9725220203399658,
+            "Setup": 0.912531852722168,
+            "Verification": 75.7014729976654
+          }
+        },
+        {
+          "trace_file": "8561f974481f4e7cbf623de6f072f278.jsonl",
+          "sandbox_id": "01a14140-87e9-75a0-992e-fdfe4c95bb27",
+          "start_epoch": 1792096109.9077015,
+          "end_epoch": 1792096194.152255,
+          "lifetime_s": 84.244553565979,
+          "model_calls": 6,
+          "native_calls": 55,
+          "first_model_start": 1792096112.989515,
+          "post_agent_start": 1792096120.6417117,
+          "post_agent_end": 1792096194.152255,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 2.1193735599517822,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 2.1193735599517822,
+              "end_s": 3.0818135738372803,
+              "category": "Setup"
+            },
+            {
+              "start_s": 3.0818135738372803,
+              "end_s": 4.529050350189209,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 4.529050350189209,
+              "end_s": 4.674629211425781,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 4.674629211425781,
+              "end_s": 4.675367593765259,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 4.675367593765259,
+              "end_s": 4.786283254623413,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 4.786283254623413,
+              "end_s": 4.787099599838257,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 4.787099599838257,
+              "end_s": 4.9295854568481445,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 4.9295854568481445,
+              "end_s": 4.930470943450928,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 4.930470943450928,
+              "end_s": 5.153703689575195,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 5.153703689575195,
+              "end_s": 6.1610705852508545,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.1610705852508545,
+              "end_s": 6.307995319366455,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.307995319366455,
+              "end_s": 6.308776378631592,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.308776378631592,
+              "end_s": 6.45365834236145,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.45365834236145,
+              "end_s": 6.454450845718384,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.454450845718384,
+              "end_s": 6.59765625,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.59765625,
+              "end_s": 6.598369121551514,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.598369121551514,
+              "end_s": 6.702347040176392,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.702347040176392,
+              "end_s": 7.572289228439331,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.572289228439331,
+              "end_s": 7.721668481826782,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.721668481826782,
+              "end_s": 7.722434759140015,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.722434759140015,
+              "end_s": 7.870513439178467,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.870513439178467,
+              "end_s": 7.871185779571533,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.871185779571533,
+              "end_s": 7.983263254165649,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.983263254165649,
+              "end_s": 7.983944654464722,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.983944654464722,
+              "end_s": 8.132483959197998,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.132483959197998,
+              "end_s": 8.975821256637573,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.975821256637573,
+              "end_s": 9.096412420272827,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.096412420272827,
+              "end_s": 9.097141981124878,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.097141981124878,
+              "end_s": 9.244484901428223,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.244484901428223,
+              "end_s": 9.24523138999939,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.24523138999939,
+              "end_s": 9.358808040618896,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.358808040618896,
+              "end_s": 9.359555006027222,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.359555006027222,
+              "end_s": 9.504538536071777,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.504538536071777,
+              "end_s": 10.100282192230225,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.100282192230225,
+              "end_s": 10.244474172592163,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.244474172592163,
+              "end_s": 10.245126962661743,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.245126962661743,
+              "end_s": 10.388522148132324,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.388522148132324,
+              "end_s": 10.389350414276123,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.389350414276123,
+              "end_s": 10.502525568008423,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.502525568008423,
+              "end_s": 10.503166437149048,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.503166437149048,
+              "end_s": 10.61156940460205,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.61156940460205,
+              "end_s": 10.627614259719849,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.627614259719849,
+              "end_s": 10.734010219573975,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.734010219573975,
+              "end_s": 84.244553565979,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 2.1193735599517822,
+            "LLM Wait": 4.790863275527954,
+            "Sandbox Interaction": 2.8613333702087402,
+            "Setup": 0.962440013885498,
+            "Verification": 73.51054334640503
+          }
+        },
+        {
+          "trace_file": "3ab155384b5841feb64ed4368e02872a.jsonl",
+          "sandbox_id": "01a14144-2d56-7aa2-aaff-2de80101ea86",
+          "start_epoch": 1792096348.8592896,
+          "end_epoch": 1792096433.4247115,
+          "lifetime_s": 84.56542181968689,
+          "model_calls": 6,
+          "native_calls": 55,
+          "first_model_start": 1792096352.0880203,
+          "post_agent_start": 1792096360.2991695,
+          "post_agent_end": 1792096433.4247115,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 2.315990686416626,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 2.315990686416626,
+              "end_s": 3.2287306785583496,
+              "category": "Setup"
+            },
+            {
+              "start_s": 3.2287306785583496,
+              "end_s": 6.18316912651062,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.18316912651062,
+              "end_s": 6.295973300933838,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.295973300933838,
+              "end_s": 6.296827793121338,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.296827793121338,
+              "end_s": 6.43903660774231,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.43903660774231,
+              "end_s": 6.439763784408569,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.439763784408569,
+              "end_s": 6.585837125778198,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.585837125778198,
+              "end_s": 6.586522579193115,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.586522579193115,
+              "end_s": 6.727765083312988,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.727765083312988,
+              "end_s": 7.3028342723846436,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.3028342723846436,
+              "end_s": 7.4457688331604,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.4457688331604,
+              "end_s": 7.4464709758758545,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.4464709758758545,
+              "end_s": 7.556136131286621,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.556136131286621,
+              "end_s": 7.556865453720093,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.556865453720093,
+              "end_s": 7.664656400680542,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.664656400680542,
+              "end_s": 7.665355682373047,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.665355682373047,
+              "end_s": 7.875202417373657,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.875202417373657,
+              "end_s": 8.504203796386719,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.504203796386719,
+              "end_s": 8.647874593734741,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.647874593734741,
+              "end_s": 8.648646593093872,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.648646593093872,
+              "end_s": 8.791081428527832,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.791081428527832,
+              "end_s": 8.792004108428955,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.792004108428955,
+              "end_s": 8.934908866882324,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.934908866882324,
+              "end_s": 8.935670375823975,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.935670375823975,
+              "end_s": 9.039208173751831,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.039208173751831,
+              "end_s": 9.60299801826477,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.60299801826477,
+              "end_s": 9.747154712677002,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.747154712677002,
+              "end_s": 9.748049259185791,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.748049259185791,
+              "end_s": 9.891122341156006,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.891122341156006,
+              "end_s": 9.892045021057129,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.892045021057129,
+              "end_s": 10.034996747970581,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.034996747970581,
+              "end_s": 10.035791873931885,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.035791873931885,
+              "end_s": 10.179522275924683,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.179522275924683,
+              "end_s": 10.694520711898804,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.694520711898804,
+              "end_s": 10.83692717552185,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.83692717552185,
+              "end_s": 10.837620258331299,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.837620258331299,
+              "end_s": 10.950201272964478,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.950201272964478,
+              "end_s": 10.950820207595825,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.950820207595825,
+              "end_s": 11.093931436538696,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 11.093931436538696,
+              "end_s": 11.09458589553833,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 11.09458589553833,
+              "end_s": 11.296725988388062,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 11.296725988388062,
+              "end_s": 11.335592985153198,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 11.335592985153198,
+              "end_s": 11.439879894256592,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 11.439879894256592,
+              "end_s": 84.56542181968689,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 2.315990686416626,
+            "LLM Wait": 5.287597179412842,
+            "Sandbox Interaction": 2.9235520362854004,
+            "Setup": 0.9127399921417236,
+            "Verification": 73.1255419254303
+          }
+        }
+      ]
+    },
+    {
+      "episode_ceiling": 256,
+      "eligible_episodes": 508,
+      "successful_start_calls": 1020,
+      "successful_start_median_s": 4.9032309260219336,
+      "successful_start_p90_s": 12.479082714684774,
+      "excluded": {
+        "unmatched_operations_or_recorded_call_errors": 509,
+        "missing_lifecycle_or_fewer_than_two_model_calls": 7
+      },
+      "eligible_median_lifetime_s": 104.04145908355713,
+      "source": "outputs/sandbox-sweep-20261015_193213Z/groups-32/inputs/demand.jsonl.gz",
+      "source_sha256": "7eee161d45e3d4b3a45836c4eb88b5233d2e879b6e358a1991c6008228331e38",
+      "episodes": [
+        {
+          "trace_file": "dda076014e944bbc95a17902b73a3f93.jsonl",
+          "sandbox_id": "01a1415d-028d-7b12-881e-35fe500c002a",
+          "start_epoch": 1792097976.1456857,
+          "end_epoch": 1792098080.1491296,
+          "lifetime_s": 104.00344395637512,
+          "model_calls": 9,
+          "native_calls": 67,
+          "first_model_start": 1792097981.748605,
+          "post_agent_start": 1792097996.201643,
+          "post_agent_end": 1792098080.1491296,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 4.5661256313323975,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 4.5661256313323975,
+              "end_s": 5.602919340133667,
+              "category": "Setup"
+            },
+            {
+              "start_s": 5.602919340133667,
+              "end_s": 6.449956655502319,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.449956655502319,
+              "end_s": 6.605429172515869,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.605429172515869,
+              "end_s": 6.6063079833984375,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.6063079833984375,
+              "end_s": 6.747701406478882,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.747701406478882,
+              "end_s": 6.748580694198608,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.748580694198608,
+              "end_s": 6.896640300750732,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 6.896640300750732,
+              "end_s": 6.897433519363403,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 6.897433519363403,
+              "end_s": 7.073996543884277,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.073996543884277,
+              "end_s": 9.387843608856201,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.387843608856201,
+              "end_s": 9.540904760360718,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.540904760360718,
+              "end_s": 9.541805982589722,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.541805982589722,
+              "end_s": 9.68647575378418,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.68647575378418,
+              "end_s": 9.687335729598999,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.687335729598999,
+              "end_s": 9.84408974647522,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.84408974647522,
+              "end_s": 9.844873666763306,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.844873666763306,
+              "end_s": 9.995894193649292,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.995894193649292,
+              "end_s": 11.273366689682007,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 11.273366689682007,
+              "end_s": 11.425394058227539,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 11.425394058227539,
+              "end_s": 11.426100969314575,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 11.426100969314575,
+              "end_s": 11.58004379272461,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 11.58004379272461,
+              "end_s": 11.58097219467163,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 11.58097219467163,
+              "end_s": 11.728628396987915,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 11.728628396987915,
+              "end_s": 11.729386806488037,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 11.729386806488037,
+              "end_s": 11.877230882644653,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 11.877230882644653,
+              "end_s": 12.920625686645508,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 12.920625686645508,
+              "end_s": 13.08591079711914,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 13.08591079711914,
+              "end_s": 13.086733102798462,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 13.086733102798462,
+              "end_s": 13.246261835098267,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 13.246261835098267,
+              "end_s": 13.247050285339355,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 13.247050285339355,
+              "end_s": 13.398923397064209,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 13.398923397064209,
+              "end_s": 13.399696826934814,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 13.399696826934814,
+              "end_s": 13.515331506729126,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 13.515331506729126,
+              "end_s": 14.640066385269165,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 14.640066385269165,
+              "end_s": 14.836422204971313,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 14.836422204971313,
+              "end_s": 14.83716106414795,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 14.83716106414795,
+              "end_s": 14.990071535110474,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 14.990071535110474,
+              "end_s": 14.995428800582886,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 14.995428800582886,
+              "end_s": 15.146586656570435,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 15.146586656570435,
+              "end_s": 15.147218227386475,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 15.147218227386475,
+              "end_s": 15.309887886047363,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 15.309887886047363,
+              "end_s": 16.225006341934204,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 16.225006341934204,
+              "end_s": 16.38442897796631,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 16.38442897796631,
+              "end_s": 16.38515043258667,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 16.38515043258667,
+              "end_s": 16.535784244537354,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 16.535784244537354,
+              "end_s": 16.536489963531494,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 16.536489963531494,
+              "end_s": 16.695491552352905,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 16.695491552352905,
+              "end_s": 16.696166038513184,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 16.696166038513184,
+              "end_s": 16.84774875640869,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 16.84774875640869,
+              "end_s": 17.848321199417114,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 17.848321199417114,
+              "end_s": 17.98548412322998,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 17.98548412322998,
+              "end_s": 17.986504077911377,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 17.986504077911377,
+              "end_s": 18.14509105682373,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 18.14509105682373,
+              "end_s": 18.14615535736084,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 18.14615535736084,
+              "end_s": 18.30513644218445,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 18.30513644218445,
+              "end_s": 18.30591106414795,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 18.30591106414795,
+              "end_s": 18.440359830856323,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 18.440359830856323,
+              "end_s": 19.337345600128174,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 19.337345600128174,
+              "end_s": 19.491564512252808,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 19.491564512252808,
+              "end_s": 19.49228525161743,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 19.49228525161743,
+              "end_s": 19.664629220962524,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 19.664629220962524,
+              "end_s": 19.665395736694336,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 19.665395736694336,
+              "end_s": 19.824771881103516,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 19.824771881103516,
+              "end_s": 19.825552701950073,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 19.825552701950073,
+              "end_s": 19.930768251419067,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 19.930768251419067,
+              "end_s": 19.94811749458313,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 19.94811749458313,
+              "end_s": 20.055957317352295,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 20.055957317352295,
+              "end_s": 104.00344395637512,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 4.5661256313323975,
+            "LLM Wait": 9.4603431224823,
+            "Sandbox Interaction": 4.992694854736328,
+            "Setup": 1.0367937088012695,
+            "Verification": 83.94748663902283
+          }
+        },
+        {
+          "trace_file": "d8a62fc914394e908e9f61b3fa070cb8.jsonl",
+          "sandbox_id": "01a1415e-00f4-7dd0-b595-4938dbd9f200",
+          "start_epoch": 1792098041.4933968,
+          "end_epoch": 1792098145.572871,
+          "lifetime_s": 104.07947421073914,
+          "model_calls": 4,
+          "native_calls": 47,
+          "first_model_start": 1792098047.5349143,
+          "post_agent_start": 1792098053.9330432,
+          "post_agent_end": 1792098145.572871,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 4.983697891235352,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 4.983697891235352,
+              "end_s": 6.041517496109009,
+              "category": "Setup"
+            },
+            {
+              "start_s": 6.041517496109009,
+              "end_s": 7.7822935581207275,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.7822935581207275,
+              "end_s": 8.000274181365967,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.000274181365967,
+              "end_s": 8.001150608062744,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.001150608062744,
+              "end_s": 8.314286708831787,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.314286708831787,
+              "end_s": 8.315195798873901,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.315195798873901,
+              "end_s": 8.488933563232422,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.488933563232422,
+              "end_s": 8.489898681640625,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.489898681640625,
+              "end_s": 8.92860746383667,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.92860746383667,
+              "end_s": 9.950095891952515,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.950095891952515,
+              "end_s": 10.153932094573975,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.153932094573975,
+              "end_s": 10.155338525772095,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.155338525772095,
+              "end_s": 10.33149266242981,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.33149266242981,
+              "end_s": 10.332832336425781,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.332832336425781,
+              "end_s": 10.588749170303345,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.588749170303345,
+              "end_s": 10.589815378189087,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.589815378189087,
+              "end_s": 10.73976445198059,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.73976445198059,
+              "end_s": 11.59783387184143,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 11.59783387184143,
+              "end_s": 11.780113220214844,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 11.780113220214844,
+              "end_s": 11.781036376953125,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 11.781036376953125,
+              "end_s": 12.001779079437256,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 12.001779079437256,
+              "end_s": 12.00298547744751,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 12.00298547744751,
+              "end_s": 12.199467182159424,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 12.199467182159424,
+              "end_s": 12.200246334075928,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 12.200246334075928,
+              "end_s": 12.310096502304077,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 12.310096502304077,
+              "end_s": 12.331275224685669,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 12.331275224685669,
+              "end_s": 12.439646482467651,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 12.439646482467651,
+              "end_s": 104.07947421073914,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 4.983697891235352,
+            "LLM Wait": 3.650984287261963,
+            "Sandbox Interaction": 2.7471446990966797,
+            "Setup": 1.0578196048736572,
+            "Verification": 91.63982772827148
+          }
+        },
+        {
+          "trace_file": "cb756d56b8d4479b98a116ab0e5075a2.jsonl",
+          "sandbox_id": "01a14160-3aec-7310-a729-ffa036d38a73",
+          "start_epoch": 1792098187.3278317,
+          "end_epoch": 1792098291.6487231,
+          "lifetime_s": 104.32089138031006,
+          "model_calls": 8,
+          "native_calls": 57,
+          "first_model_start": 1792098193.0734015,
+          "post_agent_start": 1792098211.7752852,
+          "post_agent_end": 1792098291.6487231,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 4.6794939041137695,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 4.6794939041137695,
+              "end_s": 5.745569705963135,
+              "category": "Setup"
+            },
+            {
+              "start_s": 5.745569705963135,
+              "end_s": 7.763231992721558,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.763231992721558,
+              "end_s": 7.922041177749634,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 7.922041177749634,
+              "end_s": 7.922802925109863,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 7.922802925109863,
+              "end_s": 8.071370363235474,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.071370363235474,
+              "end_s": 8.07203197479248,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.07203197479248,
+              "end_s": 8.341426849365234,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.341426849365234,
+              "end_s": 8.342182159423828,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 8.342182159423828,
+              "end_s": 8.588911056518555,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 8.588911056518555,
+              "end_s": 9.264907360076904,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.264907360076904,
+              "end_s": 9.42745041847229,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.42745041847229,
+              "end_s": 9.428300142288208,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.428300142288208,
+              "end_s": 9.59599256515503,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.59599256515503,
+              "end_s": 9.596784591674805,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.596784591674805,
+              "end_s": 9.74784255027771,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.74784255027771,
+              "end_s": 9.748591899871826,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 9.748591899871826,
+              "end_s": 9.951724290847778,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 9.951724290847778,
+              "end_s": 10.66798448562622,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.66798448562622,
+              "end_s": 10.851109266281128,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 10.851109266281128,
+              "end_s": 10.852171182632446,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 10.852171182632446,
+              "end_s": 11.026456594467163,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 11.026456594467163,
+              "end_s": 11.02720594406128,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 11.02720594406128,
+              "end_s": 11.186899423599243,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 11.186899423599243,
+              "end_s": 11.187775135040283,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 11.187775135040283,
+              "end_s": 11.308415412902832,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 11.308415412902832,
+              "end_s": 19.030197858810425,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 19.030197858810425,
+              "end_s": 19.177358865737915,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 19.177358865737915,
+              "end_s": 19.17806315422058,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 19.17806315422058,
+              "end_s": 19.303151845932007,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 19.303151845932007,
+              "end_s": 19.303922653198242,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 19.303922653198242,
+              "end_s": 19.457404851913452,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 19.457404851913452,
+              "end_s": 19.458118677139282,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 19.458118677139282,
+              "end_s": 19.568597078323364,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 19.568597078323364,
+              "end_s": 20.293951988220215,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 20.293951988220215,
+              "end_s": 20.435035467147827,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 20.435035467147827,
+              "end_s": 20.43582248687744,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 20.43582248687744,
+              "end_s": 20.588804721832275,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 20.588804721832275,
+              "end_s": 20.589548110961914,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 20.589548110961914,
+              "end_s": 20.734668254852295,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 20.734668254852295,
+              "end_s": 20.735466480255127,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 20.735466480255127,
+              "end_s": 20.848201513290405,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 20.848201513290405,
+              "end_s": 22.83835005760193,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 22.83835005760193,
+              "end_s": 23.255059480667114,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 23.255059480667114,
+              "end_s": 23.986799478530884,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 23.986799478530884,
+              "end_s": 24.33340620994568,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 24.33340620994568,
+              "end_s": 24.343670129776,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 24.343670129776,
+              "end_s": 24.447453498840332,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 24.447453498840332,
+              "end_s": 104.32089138031006,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 4.6794939041137695,
+            "LLM Wait": 14.600982904434204,
+            "Sandbox Interaction": 4.100900888442993,
+            "Setup": 1.0660758018493652,
+            "Verification": 79.87343788146973
+          }
+        },
+        {
+          "trace_file": "7df390dc64b74433a636a5358cd5d4f1.jsonl",
+          "sandbox_id": "01a14157-069b-78f2-bcc6-8f590000460a",
+          "start_epoch": 1792097579.6254764,
+          "end_epoch": 1792097684.1568313,
+          "lifetime_s": 104.5313549041748,
+          "model_calls": 8,
+          "native_calls": 54,
+          "first_model_start": 1792097591.8077557,
+          "post_agent_start": 1792097635.6382449,
+          "post_agent_end": 1792097684.1568313,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 11.27396011352539,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 11.27396011352539,
+              "end_s": 12.182279348373413,
+              "category": "Setup"
+            },
+            {
+              "start_s": 12.182279348373413,
+              "end_s": 35.445796251297,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 35.445796251297,
+              "end_s": 35.97880721092224,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 35.97880721092224,
+              "end_s": 35.97996926307678,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 35.97996926307678,
+              "end_s": 36.261728286743164,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 36.261728286743164,
+              "end_s": 36.26352787017822,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 36.26352787017822,
+              "end_s": 36.6839234828949,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 36.6839234828949,
+              "end_s": 36.68490386009216,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 36.68490386009216,
+              "end_s": 37.13827872276306,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 37.13827872276306,
+              "end_s": 38.381022214889526,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 38.381022214889526,
+              "end_s": 39.32138681411743,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 39.32138681411743,
+              "end_s": 40.475188970565796,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 40.475188970565796,
+              "end_s": 41.231568574905396,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 41.231568574905396,
+              "end_s": 42.26347088813782,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 42.26347088813782,
+              "end_s": 42.830068826675415,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 42.830068826675415,
+              "end_s": 43.81049394607544,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 43.81049394607544,
+              "end_s": 44.07374572753906,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 44.07374572753906,
+              "end_s": 44.07507920265198,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 44.07507920265198,
+              "end_s": 44.49615931510925,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 44.49615931510925,
+              "end_s": 44.497130393981934,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 44.497130393981934,
+              "end_s": 44.81766200065613,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 44.81766200065613,
+              "end_s": 44.81849908828735,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 44.81849908828735,
+              "end_s": 45.059210538864136,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 45.059210538864136,
+              "end_s": 52.346182346343994,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 52.346182346343994,
+              "end_s": 52.61667609214783,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 52.61667609214783,
+              "end_s": 52.61750555038452,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 52.61750555038452,
+              "end_s": 52.92877745628357,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 52.92877745628357,
+              "end_s": 52.92958617210388,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 52.92958617210388,
+              "end_s": 53.14045691490173,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 53.14045691490173,
+              "end_s": 53.14132118225098,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 53.14132118225098,
+              "end_s": 53.29322290420532,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 53.29322290420532,
+              "end_s": 54.26736855506897,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 54.26736855506897,
+              "end_s": 54.57929754257202,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 54.57929754257202,
+              "end_s": 54.58002710342407,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 54.58002710342407,
+              "end_s": 54.854305267333984,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 54.854305267333984,
+              "end_s": 54.856881618499756,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 54.856881618499756,
+              "end_s": 55.02238368988037,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 55.02238368988037,
+              "end_s": 55.02309060096741,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 55.02309060096741,
+              "end_s": 55.173595905303955,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 55.173595905303955,
+              "end_s": 55.88097620010376,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 55.88097620010376,
+              "end_s": 56.012768507003784,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 56.012768507003784,
+              "end_s": 104.5313549041748,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 11.27396011352539,
+            "LLM Wait": 36.654486656188965,
+            "Sandbox Interaction": 7.176002502441406,
+            "Setup": 0.9083192348480225,
+            "Verification": 48.51858639717102
+          }
+        }
+      ]
+    },
+    {
+      "episode_ceiling": 512,
+      "eligible_episodes": 173,
+      "successful_start_calls": 1024,
+      "successful_start_median_s": 11.465557803981937,
+      "successful_start_p90_s": 25.64783100769855,
+      "excluded": {
+        "missing_lifecycle_or_fewer_than_two_model_calls": 705,
+        "unmatched_operations_or_recorded_call_errors": 146
+      },
+      "eligible_median_lifetime_s": 146.84454822540283,
+      "source": "outputs/sandbox-sweep-20261015_193213Z/groups-64/inputs/demand.jsonl.gz",
+      "source_sha256": "c9aac92054f059ca45153721415867e04b673ca0c1f089168bd7d1c972dbb74f",
+      "episodes": [
+        {
+          "trace_file": "3457410b4ea94de2abfb9fdde0597a20.jsonl",
+          "sandbox_id": "01a1416c-e458-7cb2-b507-26c86048701f",
+          "start_epoch": 1792099008.1734076,
+          "end_epoch": 1792099148.727073,
+          "lifetime_s": 140.5536653995514,
+          "model_calls": 4,
+          "native_calls": 47,
+          "first_model_start": 1792099024.7741263,
+          "post_agent_start": 1792099044.616491,
+          "post_agent_end": 1792099148.727073,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 15.726621627807617,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 15.726621627807617,
+              "end_s": 16.60071873664856,
+              "category": "Setup"
+            },
+            {
+              "start_s": 16.60071873664856,
+              "end_s": 21.987739324569702,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 21.987739324569702,
+              "end_s": 22.09608507156372,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 22.09608507156372,
+              "end_s": 22.096815824508667,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 22.096815824508667,
+              "end_s": 22.23857831954956,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 22.23857831954956,
+              "end_s": 22.239253044128418,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 22.239253044128418,
+              "end_s": 22.381664276123047,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 22.381664276123047,
+              "end_s": 22.382319688796997,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 22.382319688796997,
+              "end_s": 22.717219352722168,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 22.717219352722168,
+              "end_s": 28.107972383499146,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 28.107972383499146,
+              "end_s": 28.21667790412903,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 28.21667790412903,
+              "end_s": 28.217315912246704,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 28.217315912246704,
+              "end_s": 28.324483633041382,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 28.324483633041382,
+              "end_s": 28.325117111206055,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 28.325117111206055,
+              "end_s": 28.467534065246582,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 28.467534065246582,
+              "end_s": 28.468111753463745,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 28.468111753463745,
+              "end_s": 28.57988929748535,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 28.57988929748535,
+              "end_s": 35.77548694610596,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 35.77548694610596,
+              "end_s": 35.9216046333313,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 35.9216046333313,
+              "end_s": 35.92230844497681,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 35.92230844497681,
+              "end_s": 36.06461787223816,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 36.06461787223816,
+              "end_s": 36.065253496170044,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 36.065253496170044,
+              "end_s": 36.17359900474548,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 36.17359900474548,
+              "end_s": 36.17420220375061,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 36.17420220375061,
+              "end_s": 36.3165237903595,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 36.3165237903595,
+              "end_s": 36.34263014793396,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 36.34263014793396,
+              "end_s": 36.44308352470398,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 36.44308352470398,
+              "end_s": 140.5536653995514,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 15.726621627807617,
+            "LLM Wait": 18.005330324172974,
+            "Sandbox Interaction": 1.8370344638824463,
+            "Setup": 0.8740971088409424,
+            "Verification": 104.11058187484741
+          }
+        },
+        {
+          "trace_file": "00625fb1c2db4285815b6d3e3c7f3293.jsonl",
+          "sandbox_id": "01a1416c-dc9a-7d83-b418-22b33fc313a2",
+          "start_epoch": 1792099005.3597193,
+          "end_epoch": 1792099152.2042675,
+          "lifetime_s": 146.84454822540283,
+          "model_calls": 4,
+          "native_calls": 47,
+          "first_model_start": 1792099024.2772918,
+          "post_agent_start": 1792099046.1090798,
+          "post_agent_end": 1792099152.2042675,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 18.053725004196167,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 18.053725004196167,
+              "end_s": 18.917572498321533,
+              "category": "Setup"
+            },
+            {
+              "start_s": 18.917572498321533,
+              "end_s": 25.83319664001465,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 25.83319664001465,
+              "end_s": 25.97740888595581,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 25.97740888595581,
+              "end_s": 25.978050708770752,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 25.978050708770752,
+              "end_s": 26.120251893997192,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 26.120251893997192,
+              "end_s": 26.12086772918701,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 26.12086772918701,
+              "end_s": 26.228083848953247,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 26.228083848953247,
+              "end_s": 26.228739500045776,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 26.228739500045776,
+              "end_s": 26.563292264938354,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 26.563292264938354,
+              "end_s": 32.92442607879639,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 32.92442607879639,
+              "end_s": 33.06835675239563,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 33.06835675239563,
+              "end_s": 33.06911778450012,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 33.06911778450012,
+              "end_s": 33.21036982536316,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 33.21036982536316,
+              "end_s": 33.21101975440979,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 33.21101975440979,
+              "end_s": 33.35434889793396,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 33.35434889793396,
+              "end_s": 33.35510730743408,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 33.35510730743408,
+              "end_s": 33.4974091053009,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 33.4974091053009,
+              "end_s": 40.09142589569092,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 40.09142589569092,
+              "end_s": 40.237332582473755,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 40.237332582473755,
+              "end_s": 40.23813533782959,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 40.23813533782959,
+              "end_s": 40.37917876243591,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 40.37917876243591,
+              "end_s": 40.38022518157959,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 40.38022518157959,
+              "end_s": 40.52237558364868,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 40.52237558364868,
+              "end_s": 40.523043155670166,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 40.523043155670166,
+              "end_s": 40.624521255493164,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 40.624521255493164,
+              "end_s": 40.649189472198486,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 40.649189472198486,
+              "end_s": 40.74936056137085,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 40.74936056137085,
+              "end_s": 146.84454822540283,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 18.053725004196167,
+            "LLM Wait": 19.902042388916016,
+            "Sandbox Interaction": 1.9297456741333008,
+            "Setup": 0.8638474941253662,
+            "Verification": 106.09518766403198
+          }
+        },
+        {
+          "trace_file": "69ae9135fcd24a33b8187d2f824f131e.jsonl",
+          "sandbox_id": "01a1416c-94b2-7323-8d17-e12797248447",
+          "start_epoch": 1792098996.0806355,
+          "end_epoch": 1792099145.6576366,
+          "lifetime_s": 149.57700109481812,
+          "model_calls": 11,
+          "native_calls": 60,
+          "first_model_start": 1792099019.338911,
+          "post_agent_start": 1792099067.1948392,
+          "post_agent_end": 1792099145.6576366,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 5.572005748748779,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 5.572005748748779,
+              "end_s": 23.258275508880615,
+              "category": "Setup"
+            },
+            {
+              "start_s": 23.258275508880615,
+              "end_s": 28.141552209854126,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 28.141552209854126,
+              "end_s": 28.290741682052612,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 28.290741682052612,
+              "end_s": 28.29160237312317,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 28.29160237312317,
+              "end_s": 28.43360161781311,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 28.43360161781311,
+              "end_s": 28.434584617614746,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 28.434584617614746,
+              "end_s": 28.57656168937683,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 28.57656168937683,
+              "end_s": 28.57734966278076,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 28.57734966278076,
+              "end_s": 28.719613075256348,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 28.719613075256348,
+              "end_s": 33.335463762283325,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 33.335463762283325,
+              "end_s": 33.443883419036865,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 33.443883419036865,
+              "end_s": 33.44467329978943,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 33.44467329978943,
+              "end_s": 33.58556938171387,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 33.58556938171387,
+              "end_s": 33.586583614349365,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 33.586583614349365,
+              "end_s": 33.72836995124817,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 33.72836995124817,
+              "end_s": 33.729079723358154,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 33.729079723358154,
+              "end_s": 33.838316440582275,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 33.838316440582275,
+              "end_s": 39.30058526992798,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 39.30058526992798,
+              "end_s": 39.445608139038086,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 39.445608139038086,
+              "end_s": 39.446691274642944,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 39.446691274642944,
+              "end_s": 39.589423179626465,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 39.589423179626465,
+              "end_s": 39.59041118621826,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 39.59041118621826,
+              "end_s": 39.70024609565735,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 39.70024609565735,
+              "end_s": 39.70122766494751,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 39.70122766494751,
+              "end_s": 39.84746050834656,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 39.84746050834656,
+              "end_s": 47.58183932304382,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 47.58183932304382,
+              "end_s": 47.72661852836609,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 47.72661852836609,
+              "end_s": 47.727407455444336,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 47.727407455444336,
+              "end_s": 47.87051296234131,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 47.87051296234131,
+              "end_s": 47.87127614021301,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 47.87127614021301,
+              "end_s": 48.01439809799194,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 48.01439809799194,
+              "end_s": 48.01556420326233,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 48.01556420326233,
+              "end_s": 48.1207549571991,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 48.1207549571991,
+              "end_s": 53.9660427570343,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 53.9660427570343,
+              "end_s": 54.47065091133118,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 54.47065091133118,
+              "end_s": 58.43712043762207,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 58.43712043762207,
+              "end_s": 58.78545522689819,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 58.78545522689819,
+              "end_s": 61.458895206451416,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 61.458895206451416,
+              "end_s": 61.86510753631592,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 61.86510753631592,
+              "end_s": 65.1306893825531,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 65.1306893825531,
+              "end_s": 65.48093605041504,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 65.48093605041504,
+              "end_s": 67.15564274787903,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 67.15564274787903,
+              "end_s": 67.54651045799255,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 67.54651045799255,
+              "end_s": 69.75780367851257,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 69.75780367851257,
+              "end_s": 69.9332709312439,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 69.9332709312439,
+              "end_s": 69.93406057357788,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 69.93406057357788,
+              "end_s": 70.22712755203247,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 70.22712755203247,
+              "end_s": 70.22799754142761,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 70.22799754142761,
+              "end_s": 70.63458371162415,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 70.63458371162415,
+              "end_s": 70.63591837882996,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 70.63591837882996,
+              "end_s": 70.78935408592224,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 70.78935408592224,
+              "end_s": 70.80563879013062,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 70.80563879013062,
+              "end_s": 71.11420369148254,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 71.11420369148254,
+              "end_s": 149.57700109481812,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 5.572005748748779,
+            "LLM Wait": 42.3627495765686,
+            "Sandbox Interaction": 5.493178606033325,
+            "Setup": 17.686269760131836,
+            "Verification": 78.46279740333557
+          }
+        },
+        {
+          "trace_file": "eb83f37b0a024a34a26ceed8916974d3.jsonl",
+          "sandbox_id": "01a1416c-dd80-7213-8b85-ee6fc5456090",
+          "start_epoch": 1792099005.3328757,
+          "end_epoch": 1792099158.7679358,
+          "lifetime_s": 153.43506002426147,
+          "model_calls": 4,
+          "native_calls": 47,
+          "first_model_start": 1792099024.6110845,
+          "post_agent_start": 1792099049.2994244,
+          "post_agent_end": 1792099158.7679358,
+          "segments": [
+            {
+              "start_s": 0.0,
+              "end_s": 18.403293132781982,
+              "category": "Cold Start"
+            },
+            {
+              "start_s": 18.403293132781982,
+              "end_s": 19.27820873260498,
+              "category": "Setup"
+            },
+            {
+              "start_s": 19.27820873260498,
+              "end_s": 30.948132038116455,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 30.948132038116455,
+              "end_s": 31.061341285705566,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 31.061341285705566,
+              "end_s": 31.06202244758606,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 31.06202244758606,
+              "end_s": 31.17010188102722,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 31.17010188102722,
+              "end_s": 31.170791149139404,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 31.170791149139404,
+              "end_s": 31.313472509384155,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 31.313472509384155,
+              "end_s": 31.31413698196411,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 31.31413698196411,
+              "end_s": 31.650563955307007,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 31.650563955307007,
+              "end_s": 36.90745663642883,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 36.90745663642883,
+              "end_s": 37.056652307510376,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 37.056652307510376,
+              "end_s": 37.05757141113281,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 37.05757141113281,
+              "end_s": 37.16651391983032,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 37.16651391983032,
+              "end_s": 37.16743326187134,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 37.16743326187134,
+              "end_s": 37.31054639816284,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 37.31054639816284,
+              "end_s": 37.3113226890564,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 37.3113226890564,
+              "end_s": 37.42547082901001,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 37.42547082901001,
+              "end_s": 43.33597016334534,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 43.33597016334534,
+              "end_s": 43.48372197151184,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 43.48372197151184,
+              "end_s": 43.48447227478027,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 43.48447227478027,
+              "end_s": 43.627524852752686,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 43.627524852752686,
+              "end_s": 43.628175497055054,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 43.628175497055054,
+              "end_s": 43.73883676528931,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 43.73883676528931,
+              "end_s": 43.73960280418396,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 43.73960280418396,
+              "end_s": 43.843331813812256,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 43.843331813812256,
+              "end_s": 43.865330934524536,
+              "category": "LLM Wait"
+            },
+            {
+              "start_s": 43.865330934524536,
+              "end_s": 43.966548681259155,
+              "category": "Sandbox Interaction"
+            },
+            {
+              "start_s": 43.966548681259155,
+              "end_s": 153.43506002426147,
+              "category": "Verification"
+            }
+          ],
+          "phase_seconds": {
+            "Cold Start": 18.403293132781982,
+            "LLM Wait": 22.866131067276,
+            "Sandbox Interaction": 1.8222088813781738,
+            "Setup": 0.874915599822998,
+            "Verification": 109.46851134300232
+          }
+        }
+      ]
+    }
+  ]
+}

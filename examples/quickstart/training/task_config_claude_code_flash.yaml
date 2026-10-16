@@ -1,0 +1,60 @@
+# Bristen (CSCS A100) task config -- the black-box Claude Code Agent runs the
+# real `claude` CLI INSIDE each Flash Sandbox instance, pointed at the
+# locally-served Qwen3.5-4B gateway (ANTHROPIC_BASE_URL = session.base_url, the
+# CLI re-appends /v1/messages). The CLI is opaque (black-box), but the LLM it
+# talks to is the policy being trained -- NOT real Anthropic Claude -- so no
+# ANTHROPIC_API_KEY is required. The Flash Sandbox (api.opentela.ai) is only the
+# tool/instance boundary over HTTP, so no inbound port is needed on the GPU
+# nodes (same firewall-friendly shape as vefaas, but OpenTela-hosted).
+#
+# Provider swap vs task_config_claude_code.yaml:
+#   vefaas  -> flash_sandbox   (https://pypi.org/project/flash-sandbox/)
+#   + sandbox_kwargs (cpu_cores / memory_mb / keep_alive) -- the flash_sandbox
+#     provider is a microVM-style backend and needs an explicit resource
+#     request; keep_alive pings so a long episode never trips the create-time
+#     ttl_seconds cap.
+#
+# Per-row SWE instances still carry their canonical image
+# (swebench/sweb.eval.x86_64.<id>) in the sample's `sandbox.image`; it
+# deep-merges on top of these defaults, so do NOT set `image:` here.
+#
+# Set OTELA_API_KEY (export OTELA_API_KEY=sk-...) on the launch node / Ray
+# runtime env; the FlashSandboxSandbox provider reads it (api_key_env below).
+# Override the endpoint with FLASH_SANDBOX_ENDPOINT if you use a private mirror.
+- name: swe_bench
+  sandbox:
+    provider: flash_sandbox
+    runtime_timeout: 7200
+    sandbox_kwargs:
+      api_key_env: OTELA_API_KEY
+      cpu_cores: 4.0
+      memory_mb: 8192
+      keep_alive: true
+      keep_alive_interval_sec: 45.0
+  agent:
+    name: claude_code
+    max_turns: 200
+    run_timeout: 4800
+    model:
+      temperature: 1.0
+      top_p: 1.0
+      max_total_tokens: 131072
+
+- name: swe_rebench
+  sandbox:
+    provider: flash_sandbox
+    runtime_timeout: 7200
+    sandbox_kwargs:
+      api_key_env: OTELA_API_KEY
+      cpu_cores: 4.0
+      memory_mb: 8192
+      keep_alive: true
+      keep_alive_interval_sec: 45.0
+  agent:
+    name: claude_code
+    max_turns: 200
+    run_timeout: 4800
+    model:
+      temperature: 1.0
+      top_p: 1.0
+      max_total_tokens: 131072

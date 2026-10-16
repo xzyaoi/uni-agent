@@ -1,0 +1,14 @@
+# Native AgentENV baseline. All lifecycle, execution and file calls go directly
+# to AGENTENV_ENDPOINT; no scheduler or transparent proxy is used.
+# Resource overrides match the current CloudLab AgentENV server configuration.
+- name: harbor
+  harbor_env: uni_agent.tasks.harbor.agentenv_environment:AgentEnvEnvironment
+  override_cpus: 4
+  override_memory_mb: 4096
+  agent:
+    name: uni_agent.tasks.harbor.react_agent:UniAgentReAct
+    timeout_sec: 3600
+    kwargs:
+      max_steps: 200
+      temperature: 1.0
+      top_p: 1.0

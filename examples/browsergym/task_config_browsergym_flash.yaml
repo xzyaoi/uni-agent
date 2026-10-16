@@ -1,0 +1,31 @@
+# BrowserGym on flash-sandbox: the react agent runs in the framework process;
+# each episode's sandbox runs the BrowserGym bridge daemon + headless Chromium
+# from the image built by ./build_and_push_ghcr.sh.
+#
+# Per-row samples (from uni_agent.tasks.browsergym.preprocess) carry the env
+# name / seed / timeouts in metadata and the image in sandbox.image; they
+# deep-merge on top of these defaults.
+#
+# Requires: OTELA_API_KEY in the environment (flash-sandbox API key).
+- name: browsergym
+  sandbox:
+    provider: flash_sandbox
+    runtime_timeout: 1200
+    sandbox_kwargs:
+      api_key_env: OTELA_API_KEY
+      cpu_cores: 2.0
+      memory_mb: 4096
+      keep_alive: true
+      keep_alive_interval_sec: 45.0
+  agent:
+    name: react
+    max_steps: 30            # MiniWoB episodes are short; raise for WebArena
+    tools:
+      - name: browser
+        command_timeout: 90
+        obs_max_chars: 30000
+      - name: submit
+    model:
+      temperature: 1.0
+      top_p: 1.0
+      max_total_tokens: 32768

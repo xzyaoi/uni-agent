@@ -1,0 +1,51 @@
+# BrowserGym sandbox image for uni-agent / flash-sandbox.
+#
+# What lives here: browsergym (core + miniwob), playwright + headless Chromium,
+# and the uni-agent bridge daemon (examples/browsergym/bgym_bridge/bridge.py).
+# The agent loop itself never runs inside this image -- the sandbox is only the
+# tool boundary; the host-side `browser` tool execs the bridge CLI.
+#
+# Rootless notes (flash-sandbox): the bridge patches playwright's launch to
+# chromium_sandbox=False + --disable-dev-shm-usage --disable-gpu at runtime, so
+# no special entrypoint is needed.
+#
+# Build & push: ./build_and_push_ghcr.sh  (defaults TAG=0.1.0, linux/amd64 --
+# flash-sandbox backends are x86_64).
+FROM python:3.11-slim-bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    # Fixed browser location: flash-sandbox runs commands as a NON-root user,
+    # so the default $HOME/.cache/ms-playwright resolves differently at runtime
+    # (/root at build time vs / at run time). A pinned path + world-read access
+    # makes playwright agree across build and runtime users.
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+
+# browsergym first (pulls a compatible playwright), then the browser itself,
+# then the Farama miniwob package: browsergym >= 0.4 expects its HTML tree
+# (served by the bridge daemon) instead of bundling the sites.
+# Pins frozen from the first verified build (reward=1.0 episode on
+# browsergym/miniwob.click-test); bump deliberately, the bridge carries
+# compat shims for the 0.3 API but they are only exercised on old versions.
+RUN pip install browsergym-core==0.14.3 browsergym-miniwob==0.14.3 miniwob==1.1.0 playwright==1.44.0 \
+ && python -m playwright install --with-deps chromium \
+ && chmod -R a+rX /ms-playwright
+
+# The bridge daemon/CLI; client subcommands are stdlib-only, `serve` needs
+# browsergym -- both are in this image.
+COPY bgym_bridge/bridge.py /opt/bgym/bridge.py
+
+# Build-time sanity: browsergym imports, the benchmark registry lists tasks,
+# the 0.4+ observation helper is reachable, and the bridge compiles.
+RUN python -c "import importlib, gymnasium as gym; importlib.import_module('browsergym.miniwob'); ids=[i for i in gym.envs.registry if i.startswith('browsergym/miniwob.')]; print('miniwob tasks:', len(ids)); assert ids" \
+ && python -c "from browsergym.utils.obs import flatten_axtree_to_str; print('obs utils OK')" \
+ && python -c "import miniwob, pathlib; p = pathlib.Path(miniwob.__file__).parent / 'html' / 'miniwob'; assert (p / 'click-test.html').is_file(), p; print('miniwob sites OK')" \
+ && python -c "import os; from playwright.sync_api import sync_playwright; p = sync_playwright().start(); path = p.chromium.executable_path; assert 'ms-playwright' in path and os.path.isfile(path), path; print('chromium at', path); p.stop()" \
+ && python -m py_compile /opt/bgym/bridge.py \
+ && python /opt/bgym/bridge.py --help > /dev/null \
+ && echo "bridge OK"
+
+WORKDIR /workspace
+CMD ["tail", "-f", "/dev/null"]

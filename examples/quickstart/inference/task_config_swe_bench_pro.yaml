@@ -1,3 +1,5 @@
+# Legacy V1 only. V2/default and HARD-51 rows use the Harbor task backend.
+# See docs/source/quickstart/swe-bench-pro.md.
 - name: swe_bench_pro
   sandbox:
     provider: modal

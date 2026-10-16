@@ -1,0 +1,96 @@
+# Ray runtime environment for uni-agent training on Bristen (A100) with the
+# OpenTela Flash Sandbox (https://pypi.org/project/flash-sandbox/).
+#
+# No working_dir: the repo lives on SHARED SCRATCH (mounted on every node via
+# the enroot .toml), so Ray does NOT need to package and ship it via the GCS --
+# which fails intermittently on Bristen with "runtime_env file package
+# prematurely deleted from the GCS" (Ray 2.55.1 GC race). Instead we put the
+# repo root AND the bundled verl/ dir on PYTHONPATH (absolute, Bristen-specific)
+# so both `import uni_agent` (repo root) and `import verl` (repo root/verl)
+# resolve on every worker. Keep all paths passed to the Ray job ABSOLUTE too
+# (e.g. TASK_CONFIG), since the actors' CWD is no longer the repo root.
+#
+# Provider swap vs the docs' vefaas example: flash-sandbox + swebench replace
+# volcengine-python-sdk + swe-rex + swebench. flash-sandbox + litellm are
+# already baked into the Megatron image (via rllm[verl,harbor]); listing them
+# here too is a harmless no-op that makes the runtime env self-describing and
+# survives an image swap.
+
+# ----------------------------------------------------------------------
+# NO `pip:` section -- all packages below are BAKED INTO the lean image
+# (examples/quickstart/flash-sandbox/Containerfile.lean:120). Ray re-runs
+# `pip install` in a fresh virtualenv on EVERY worker that gets this
+# runtime_env, and on Bristen that pip I/O hit Lustre EIO
+# ([Errno 5] Input/output error) even though every package was already
+# satisfied -- killing job 81960 at 38 min. Removing the `pip` key skips
+# the install entirely; the `env_vars` below are still applied.
+#
+# Pinned versions + rationale (kept here for the next image build):
+#  - swebench==4.1.0: imported at runtime by uni_agent.tasks.{swe_bench,
+#    swe_rebench}.reward. PIN 4.1.0, NOT 5.x -- uni_agent does
+#    `from swebench.harness.test_spec.python import get_test_directives`,
+#    which 5.0.0 REMOVED (harness/test_spec/ gone). 4.1.0 is the latest
+#    4.x with that module.
+#  - flash-linear-attention==0.5.2: Qwen3.5 (arch Qwen3_5ForConditional-
+#    Generation) uses GatedDeltaNet (SSM/linear-attention) layers via
+#    megatron-bridge's qwen35 provider; megatron/core/ssm/gated_delta_net.py
+#    raises without it. Pure-Python wheel (py3-none-any) -- Triton kernels
+#    JIT at runtime.
+#  - liger-kernel, latex2sympy2-extended, pylatexenc, math-verify,
+#    TransferQueue==0.1.8: see Containerfile.lean:120.
+# ----------------------------------------------------------------------
+
+env_vars:
+  PYTHONPATH: "/iopsstor/scratch/cscs/xyao/uni-agent:/iopsstor/scratch/cscs/xyao/uni-agent/verl"
+  PYTHONNOUSERSITE: "1"
+  TORCH_NCCL_AVOID_RECORD_STREAMS: "1"
+  CUDA_DEVICE_MAX_CONNECTIONS: "1"
+  # megatron-bridge config load lock (see harbor-swe-megatron-bristen.toml
+  # [env] of the same name). With DP=4 replicas x 8 workers loading
+  # Qwen3.5-4B concurrently, the default ~/.cache/huggingface lock
+  # (= ${SCRATCH}/home/.cache/huggingface, Lustre) fails to acquire after
+  # 4 retries -> ValueError (job 82027 at 13:02). Node-local /tmp makes
+  # each replica's lock instant (the config is already on shared scratch).
+  MEGATRON_CONFIG_LOCK_DIR: "/tmp/megatron-config-locks"
+  # XDG_CACHE_HOME: belt-and-suspenders for the ~/.cache/* family (HF hub
+  # cache fallback, torch, fontconfig) that HOME=${SCRATCH}/home would
+  # otherwise put on Lustre. Node-local /tmp per node.
+  # (TRITON_CACHE_DIR=/tmp/triton below is ALREADY node-local and was in
+  # effect for 82077 -- the real killer there was TMPDIR=${SCRATCH}/tmp
+  # (Triton tempfile.TemporaryDirectory() /open(,"w") at build.py:91),
+  # now fixed to /tmp in run_train_qwen3p5_bristen.sh RUN_ENV.)
+  XDG_CACHE_HOME: "/tmp/xdg-cache"
+  # Flash Sandbox credentials (read on the launch node, propagated here).
+  # OTELA_API_KEY is the API key for api.opentela.ai/v1/service/flash-sandbox.
+  # Override the endpoint with FLASH_SANDBOX_ENDPOINT if you use a private mirror.
+  OTELA_API_KEY: "${OTELA_API_KEY}"
+  # Digest pin for browsergym sandboxes (task.py BROWSERGYM_FORCE_IMAGE).
+  # Providers cache mutable tags per node (observed: stale :latest after the
+  # 0.1.4 push) -- production runs must pin repo@sha256:... here.
+  BROWSERGYM_FORCE_IMAGE: "${BROWSERGYM_FORCE_IMAGE}"
+  # SWE rows carry ``swebench/sweb.eval.x86_64.<id>`` (Docker Hub). OpenTela
+  # silently falls back to ``python:3.x`` instead of pulling it -> no /testbed,
+  # git or harness -> nothing to edit. FLASH_SANDBOX_IMAGE_REGISTRY
+  # (see flash_sandbox.py:_resolve_image) rewrites that bare ref to the GHCR
+  # mirror (/testbed + git + harness preinstalled; tmux NOT needed -- the
+  # stateful shell uses the SDK's persistent ``shell_exec``).
+  # Only the Verified subset is on ghcr.io/swe-images; SWE-rebench (1150,
+  # org `swerebench`) is Docker-Hub-only, so for now pair this with
+  # TRAIN_FILE=.../swe_bench_verified.parquet.
+  FLASH_SANDBOX_IMAGE_REGISTRY: "ghcr.io/swe-images"
+  # Slurm injects ROCR_VISIBLE_DEVICES (=0,1,2,3) for CUDA/ROCm portability;
+  # on these A100 nodes it's meaningless and trips verl's "don't set ROCR when
+  # CUDA is set" guard. run_ray_node.sh also unsets it pre-Ray; this empty
+  # value is a belt-and-suspenders for any actor env that bypasses that path.
+  ROCR_VISIBLE_DEVICES: ""
+  # Qwen3.5 uses GatedDeltaNet (linear-attention) layers whose Triton kernels
+  # are JIT-compiled + autotuned at warmup. The default cache (~/.triton on
+  # NFS /users) goes ESTALE when 8 GPUs across 2 nodes compile the same kernel
+  # concurrently -> the autotuner retries forever and CUDA-graph capture hangs
+  # at 0%. /tmp is node-local tmpfs (369 GB), so each node gets its own cache
+  # (no cross-node handle invalidation). TORCHINDUCTOR_CACHE_DIR too (torch's
+  # own compile cache defaults to /tmp/torchinductor_<user> but set explicitly
+  # in case HOME-relative defaults leak). HF_HOME keeps any HF cache off NFS.
+  TRITON_CACHE_DIR: "/tmp/triton"
+  TORCHINDUCTOR_CACHE_DIR: "/tmp/torchinductor"
+  HF_HOME: "/tmp/hf"

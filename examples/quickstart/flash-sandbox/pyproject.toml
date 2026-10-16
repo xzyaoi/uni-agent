@@ -1,0 +1,122 @@
+# Local, self-contained dependency manifest for the LEAN verl+Harbor+Megatron
+# image (examples/quickstart/flash-sandbox/Containerfile.lean).
+#
+# WHY this exists (vs. COPYing rllm/pyproject.toml + rllm-model-gateway/ from
+# the rllm checkout): the lean build previously depended on a SEPARATE rllm
+# checkout (RLLM_DIR) for two reasons -- (1) rllm's pyproject carries the
+# [verl]+[harbor] extras, and (2) rllm-model-gateway is a local-path source
+# (rllm/pyproject.toml line ~143: [tool.uv.sources] maps it to ./rllm-model-gateway,
+# editable) AND a base [project] dep, so `uv pip install -e '.[verl,harbor]'` had
+# to find it on disk. The build then `uninstall`ed rllm + the gateway (never
+# imported at runtime -- verl/uni_agent come from the mounted repo via PYTHONPATH).
+#
+# This file removes both dependencies on the rllm checkout:
+#   * rllm's [verl] + [harbor] extras are inlined below, byte-for-byte.
+#   * rllm-model-gateway is DROPPED entirely (it was uninstalled anyway). Its
+#     four deps NOT otherwise covered by base/[verl] are added to [project]
+#     dependencies (fastapi, uvicorn, httpx, renderers; pydantic/aiosqlite/
+#     PyYAML/transformers are already present), so the installed runtime dep
+#     set is identical to the proven 80024 build.
+#   * [tool.uv.sources] is gone (no local-path source to satisfy).
+#
+# [tool.uv] override-dependencies + [tool.uv.extra-build-dependencies] are kept
+# EXACTLY as in rllm: they drive the resolution that "a flat -r/inline pins
+# cannot express" (litellm[proxy]==1.83.0, numpy>=1.26.0, rich>=14.1.0, and
+# flash-attn building against the in-image torch). Keep them in sync with
+# rllm/pyproject.toml when bumping.
+#
+# The tiny `lean_image_deps/` package next to this file (an empty __init__.py)
+# only exists so `setuptools` has something to build for `uv pip install
+# '.[verl,harbor]'` -- it is never imported at runtime and needs no uninstall.
+
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lean-image-deps"
+version = "0"
+description = "Dependency manifest for the lean verl+Harbor+Megatron training image (not a real package)"
+requires-python = ">=3.10"
+dependencies = [
+    # ---- rllm base deps (minus rllm-model-gateway, which was uninstalled) ----
+    "click>=8.0",
+    "rich>=13.9.4",
+    "simple-term-menu>=1.6",
+    "pydantic",
+    "PyYAML",
+    "openai",
+    "tqdm",
+    "requests",
+    "datasets>=2.20.0",
+    "pillow",
+    "pandas",
+    "polars",
+    "pyarrow",
+    "litellm[proxy]>=1.83.0",
+    "aiosqlite",
+    "hydra-core",
+    "codetiming",
+    "tinker>=0.22.2 ; python_version >= '3.11'",
+    "tinker-cookbook>=0.4.1 ; python_version >= '3.11'",
+    # ---- rllm-model-gateway's deps NOT otherwise covered (gateway dropped,
+    #      but keep its transitive set so the runtime image matches 80024) ----
+    "fastapi>=0.100.0",
+    "uvicorn>=0.20.0",
+    "httpx>=0.24.0",
+    "renderers>=0.1.7",
+]
+
+[project.optional-dependencies]
+# Byte-for-byte from rllm/pyproject.toml. verl 0.8.0 is the BUNDLED verl's
+# pin; at runtime verl 0.9.0.dev is imported from the mounted repo (PYTHONPATH)
+# -- this pin only pulls verl's TRANSITIVE deps into the image (and is then a
+# harmless no-op since the mounted version shadows it on sys.path).
+verl = [
+    "transformers>=5.5.3",
+    "numpy",
+    "verl==0.8.0",
+    "ray",
+    "torch>=2.10.0",
+    "torchvision>=0.23.0",
+    # vllm 0.24.0 matches the bundled verl submodule's own stable image recipe
+    # (verl/docker/Dockerfile.stable.vllm @1ae9455). rllm's manifest pinned
+    # 0.22.1, which predates Qwen3.5 GDN (GatedDeltaNet) fixes -- the smoke
+    # job 80168 showed vLLM 0.22.1 crashing with cudaErrorIllegalAddress in
+    # the generation engine after ~30 min of rollout.
+    "vllm==0.24.0",
+    "flash-attn==2.8.3",
+    "qwen-vl-utils",
+]
+harbor = [
+    # flash-sandbox is intentionally NOT pinned here even though the provider
+    # (uni_agent/sandbox/flash_sandbox.py) drives it via start_sandbox /
+    # exec_command / shell_exec + the `metadata` kwarg that _forward_metadata
+    # gates on via _accepts_kwarg. harbor==0.3.0 itself does NOT declare
+    # flash-sandbox (verified on PyPI), so lifting the pin into its own thin
+    # final layer (Containerfile.lean PHASE 3) means a future flash-sandbox
+    # bump (0.3.0 -> 0.3.1) rebuilds only that ~1s layer instead of the whole
+    # Phase-2 manifest layer (vLLM/ray/flashinfer). The metadata-kwarg
+    # assertion lives in that PHASE 3 layer; a regressed pin (e.g. 0.2.11,
+    # which predates metadata) fails the image build loudly there.
+    "harbor==0.3.0 ; python_version >= '3.12'",
+]
+
+# ---- Resolution knobs (must match rllm/pyproject.toml) ---------------------
+[tool.uv]
+override-dependencies = [
+    "litellm[proxy]==1.83.0",
+    "numpy>=1.26.0",
+    "rich>=14.1.0",
+]
+
+[tool.uv.extra-build-dependencies]
+# flash-attn's sdist builds against the torch installed in the image
+# (match-runtime=true), not an isolated build env.
+flash-attn = [
+    { requirement = "torch", match-runtime = true },
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["lean_image_deps*"]

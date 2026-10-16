@@ -4,6 +4,8 @@ import json
 import os
 import shlex
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 import pyarrow.parquet as pq
@@ -70,6 +72,13 @@ settings = {
     "TRAINING_STEPS": os.environ["TRAINING_STEPS"],
     "SAVE_FREQ": os.environ["SAVE_FREQ"],
     "TRAIN_PROMPT_BSZ": "64",
+    "ROLLOUT_PROMPT_BSZ": os.environ.get("ROLLOUT_PROMPT_BSZ", "64"),
+    "NUM_WARMUP_BATCHES": os.environ.get("NUM_WARMUP_BATCHES", "1"),
+    "CONTINUOUS_ROLLOUT": os.environ.get("CONTINUOUS_ROLLOUT", "False"),
+    "ROLLOUT_TARGET_PROMPTS": os.environ.get("ROLLOUT_TARGET_PROMPTS", "128"),
+    "ROLLOUT_READY_PROMPTS": os.environ.get("ROLLOUT_READY_PROMPTS", "64"),
+    "ROLLOUT_REFILL_PROMPTS": os.environ.get("ROLLOUT_REFILL_PROMPTS", "16"),
+    "ROLLOUT_REFILL_INTERVAL": os.environ.get("ROLLOUT_REFILL_INTERVAL", "1.0"),
     "N_RESP_PER_PROMPT": "8",
     "PPO_MINI_BATCH_SIZE": "16",
     "VLLM_GPU_MEM_UTIL": "0.45",
@@ -87,7 +96,8 @@ settings = {
 for name in ("train.sh", "run_ray_node.sh", "harbor-native", "configure_webarena.py"):
     shutil.copyfile(bundle / "templates" / name, run / name)
     (run / name).chmod(0o750)
-shutil.copyfile(runtime / "cscs/observability/collect.py", run / "collect.py")
+shutil.copyfile(bundle.parent / "observability/collect.py", run / "collect.py")
+subprocess.run([sys.executable, str(bundle.parent / "observability/bundle_dcgm.py"), "--output", str(run / "dcgm-client")], check=True)
 shutil.copyfile(bundle / "templates/batch.sh", run / "launcher.sh")
 (run / "launcher.sh").chmod(0o750)
 task_config = [

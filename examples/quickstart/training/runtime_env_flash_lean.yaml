@@ -1,0 +1,48 @@
+# Ray runtime environment for uni-agent training on Bristen (A100) with the
+# OpenTela Flash Sandbox (https://pypi.org/project/flash-sandbox/).
+#
+# This is the LEAN variant (ENV_NAME=harbor-swe-megatron-lean, vllm 0.24.0):
+# there is NO pip: section. The 7 deps that the proven runtime_env_flash.yaml
+# installs at job submit (swebench==4.1.0, liger-kernel, latex2sympy2-extended,
+# pylatexenc, math-verify, TransferQueue==0.1.8, flash-linear-attention==0.5.2)
+# are BAKED into the lean image (Containerfile.lean STEP 11) and import-verified
+# at build time (job 80184 STEP 13). Omitting pip avoids the Ray 2.55.1 GCS GC
+# race on the runtime_env package AND saves ~2-5 min/node of venv setup. The
+# proven runtime_env_flash.yaml (with pip:) is kept for the proven image.
+#
+# No working_dir: the repo lives on SHARED SCRATCH (mounted on every node via
+env_vars:
+  PYTHONPATH: "/iopsstor/scratch/cscs/xyao/uni-agent:/iopsstor/scratch/cscs/xyao/uni-agent/verl"
+  PYTHONNOUSERSITE: "1"
+  TORCH_NCCL_AVOID_RECORD_STREAMS: "1"
+  CUDA_DEVICE_MAX_CONNECTIONS: "1"
+  # Flash Sandbox credentials (read on the launch node, propagated here).
+  # OTELA_API_KEY is the API key for api.opentela.ai/v1/service/flash-sandbox.
+  # Override the endpoint with FLASH_SANDBOX_ENDPOINT if you use a private mirror.
+  OTELA_API_KEY: "${OTELA_API_KEY}"
+  # SWE rows carry ``swebench/sweb.eval.x86_64.<id>`` (Docker Hub). OpenTela
+  # silently falls back to ``python:3.x`` instead of pulling it -> no /testbed,
+  # git or harness -> nothing to edit. FLASH_SANDBOX_IMAGE_REGISTRY
+  # (see flash_sandbox.py:_resolve_image) rewrites that bare ref to the GHCR
+  # mirror (/testbed + git + harness preinstalled; tmux NOT needed -- the
+  # stateful shell uses the SDK's persistent ``shell_exec``).
+  # Only the Verified subset is on ghcr.io/swe-images; SWE-rebench (1150,
+  # org `swerebench`) is Docker-Hub-only, so for now pair this with
+  # TRAIN_FILE=.../swe_bench_verified.parquet.
+  FLASH_SANDBOX_IMAGE_REGISTRY: "ghcr.io/swe-images"
+  # Slurm injects ROCR_VISIBLE_DEVICES (=0,1,2,3) for CUDA/ROCm portability;
+  # on these A100 nodes it's meaningless and trips verl's "don't set ROCR when
+  # CUDA is set" guard. run_ray_node.sh also unsets it pre-Ray; this empty
+  # value is a belt-and-suspenders for any actor env that bypasses that path.
+  ROCR_VISIBLE_DEVICES: ""
+  # Qwen3.5 uses GatedDeltaNet (linear-attention) layers whose Triton kernels
+  # are JIT-compiled + autotuned at warmup. The default cache (~/.triton on
+  # NFS /users) goes ESTALE when 8 GPUs across 2 nodes compile the same kernel
+  # concurrently -> the autotuner retries forever and CUDA-graph capture hangs
+  # at 0%. /tmp is node-local tmpfs (369 GB), so each node gets its own cache
+  # (no cross-node handle invalidation). TORCHINDUCTOR_CACHE_DIR too (torch's
+  # own compile cache defaults to /tmp/torchinductor_<user> but set explicitly
+  # in case HOME-relative defaults leak). HF_HOME keeps any HF cache off NFS.
+  TRITON_CACHE_DIR: "/tmp/triton"
+  TORCHINDUCTOR_CACHE_DIR: "/tmp/torchinductor"
+  HF_HOME: "/tmp/hf"

@@ -8,6 +8,7 @@ import json
 import logging
 import os
 import random
+import time
 from collections.abc import Awaitable, Callable
 from copy import deepcopy
 from dataclasses import dataclass, replace
@@ -24,6 +25,7 @@ from tensordict.tensorclass import NonTensorData, NonTensorStack
 
 from uni_agent.gateway.session import SessionHandle, Trajectory
 from uni_agent.logging import LogContext, sample_logging
+from uni_agent.observability import pipeline_context, pipeline_event
 from uni_agent.rl_insight.adapter import agent_loop_session
 from uni_agent.sandbox.exec_context import (
     bind_exec_metadata,
@@ -633,28 +635,52 @@ class GatewayAgentFramework(AgentFramework):
         if uids is None:
             raise ValueError("GatewayAgentFramework requires prompts['uid'] for TransferQueue output")
 
-        stats = await self._run_batch_rollouts(
-            prompts,
+        batch_id = uuid4().hex
+        started = time.monotonic()
+        with pipeline_context(
+            batch_id=batch_id,
+            operation_id=batch_id,
             global_steps=global_steps,
             partition_id=partition_id,
+            num_prompts=len(prompts),
             num_sessions=num_sessions,
-        )
-        logger.info(
-            "generate_sequences summary: num_input_prompts=%s num_success_sessions=%s "
-            "num_failed_sessions=%s num_success_outputs=%s num_unfinished_episodes=%s "
-            "num_failed_uids=%s failure_reasons=%s",
-            stats["num_input_prompts"],
-            stats["num_success_sessions"],
-            stats["num_failed_sessions"],
-            stats["num_success_outputs"],
-            stats["num_unfinished_episodes"],
-            stats["num_failed_uids"],
-            stats["failure_reasons"][:3],
-        )
-        if stats["num_success_outputs"] == 0:
-            raise RuntimeError(
-                f"All rollouts failed at global_steps={global_steps}. "
-                f"failures={stats['num_failed_uids']}/{stats['num_input_prompts']}"
+        ):
+            pipeline_event("batch_begin")
+            try:
+                stats = await self._run_batch_rollouts(
+                    prompts,
+                    global_steps=global_steps,
+                    partition_id=partition_id,
+                    num_sessions=num_sessions,
+                )
+                logger.info(
+                    "generate_sequences summary: num_input_prompts=%s num_success_sessions=%s "
+                    "num_failed_sessions=%s num_success_outputs=%s num_unfinished_episodes=%s "
+                    "num_failed_uids=%s failure_reasons=%s",
+                    stats["num_input_prompts"],
+                    stats["num_success_sessions"],
+                    stats["num_failed_sessions"],
+                    stats["num_success_outputs"],
+                    stats["num_unfinished_episodes"],
+                    stats["num_failed_uids"],
+                    stats["failure_reasons"][:3],
+                )
+                if stats["num_success_outputs"] == 0:
+                    raise RuntimeError(
+                        f"All rollouts failed at global_steps={global_steps}. "
+                        f"failures={stats['num_failed_uids']}/{stats['num_input_prompts']}"
+                    )
+            except BaseException as exc:
+                pipeline_event(
+                    "batch_error",
+                    duration=time.monotonic() - started,
+                    error_class=type(exc).__name__,
+                )
+                raise
+            pipeline_event(
+                "batch_end",
+                duration=time.monotonic() - started,
+                **{key: value for key, value in stats.items() if key != "failure_reasons"},
             )
         return None
 
@@ -883,6 +909,60 @@ class GatewayAgentFramework(AgentFramework):
     ) -> tuple[list[Trajectory], dict[str, object]]:
         """Run one AgentRunner episode inside a Framework-created Gateway session."""
         session_id = f"session-sample-{sample_index}-rollout-{session_index}-{uuid4().hex}"
+        identity = {
+            "operation_id": uuid4().hex,
+            "session_id": session_id,
+            "uid": str(sample_fields.get("uid", "")),
+            "sample_index": sample_index,
+            "session_index": session_index,
+            "global_steps": global_steps,
+            "num_sessions": num_sessions,
+            "runner_name": runner_name,
+        }
+        started = time.monotonic()
+        pipeline_event("episode_begin", **identity)
+        try:
+            result = await self._execute_agent_episode(
+                session_id=session_id,
+                sample_fields=sample_fields,
+                sample_index=sample_index,
+                session_index=session_index,
+                global_steps=global_steps,
+                runner_name=runner_name,
+                runner_config=runner_config,
+                sampling_params=sampling_params,
+                num_sessions=num_sessions,
+            )
+        except BaseException as exc:
+            pipeline_event(
+                "episode_error",
+                **identity,
+                duration=time.monotonic() - started,
+                error_class=type(exc).__name__,
+            )
+            raise
+        pipeline_event(
+            "episode_end",
+            **identity,
+            duration=time.monotonic() - started,
+            num_outputs=len(result[0]),
+        )
+        return result
+
+    async def _execute_agent_episode(
+        self,
+        *,
+        session_id: str,
+        sample_fields: dict[str, object],
+        sample_index: int,
+        session_index: int,
+        global_steps: int | None,
+        runner_name: str,
+        runner_config: _RunnerConfig,
+        sampling_params: dict[str, object],
+        num_sessions: int,
+    ) -> tuple[list[Trajectory], dict[str, object]]:
+        """Execute an admitted episode; caller records its full lifecycle timing."""
         uid = str(sample_fields.get("uid", ""))
         session_trace = agent_loop_session(
             sample=sample_index,

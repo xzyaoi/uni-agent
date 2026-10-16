@@ -1,0 +1,59 @@
+# Terminal-Bench training task config for the Flash Sandbox tool boundary
+# (Clariden/OpenTela pipeline). Mirrors task_config_react_clariden.yaml (the
+# proven SWE-bench flash-sandbox training config) with Terminal-Bench-specific
+# agent settings; the sandbox resources themselves come from each row's
+# environment_json -- task.py maps them onto cpu_cores/memory_mb start kwargs
+# (see build_terminal_bench_sandbox_config).
+#
+# Row-driven fields (do NOT set them here): the parquet rows carry
+# sandbox.image (the task's docker_image) and sandbox.runtime_timeout
+# (agent_timeout + verifier_timeout + 600s), which deep-merge over these
+# defaults per sample.
+#
+# The flash-sandbox caveats for Terminal-Bench (vs the docker/modal providers):
+#   - per-task container env vars cannot be set at sandbox start; the verifier
+#     and oracle still receive their env explicitly, and any env the AGENT
+#     must see should be added to the stateful_shell env_vars below;
+#   - workdir / gpus / network isolation are advisory and ignored (warned).
+#
+# Image availability: rows reference public base images (python:3.12,
+# ubuntu:22.04, ...) which the backend pulls directly; custom per-task images
+# must exist in a pullable registry (FLASH_SANDBOX_IMAGE_REGISTRY rewrites
+# bare Docker Hub org refs, same as the SWE mirror path).
+#
+# OTELA_API_KEY must be in the environment (the launcher extracts it from
+# ~/.zshrc and forwards it); api_key_env MUST be OTELA_API_KEY here -- the
+# FlashSandboxSandbox provider defaults to "OTELA_API" (see flash_sandbox.py
+# _DEFAULT_API_KEY_ENV), which the launcher does NOT set.
+- name: terminal_bench
+  sandbox:
+    provider: flash_sandbox
+    runtime_timeout: 7200
+    sandbox_kwargs:
+      api_key_env: OTELA_API_KEY
+      keep_alive: true
+      keep_alive_interval_sec: 45.0
+  agent:
+    name: react
+    # 200 turns is ample headroom: episodes bind on the trajectory token
+    # budget (40,960 by default; 81,920 in the wide-context runs) long before
+    # 200 tool turns.
+    max_steps: 200
+    tools:
+      - name: str_replace_editor
+      - name: stateful_shell
+        # Terminal-Bench tasks legitimately run long builds/tests (the
+        # inference config uses 600s); keep parity there.
+        command_timeout: 600
+        env_vars:
+          PAGER: "cat"
+          GIT_PAGER: "cat"
+          MANPAGER: "cat"
+          TQDM_DISABLE: "1"
+          PIP_PROGRESS_BAR: "off"
+          DEBIAN_FRONTEND: "noninteractive"
+      - name: submit
+    model:
+      temperature: 1.0
+      top_p: 1.0
+      max_total_tokens: 131072

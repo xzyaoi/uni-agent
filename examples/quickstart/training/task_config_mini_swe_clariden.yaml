@@ -1,0 +1,85 @@
+# Clariden (CSCS GH200) task config for mini-swe-agent -- the white-box shape.
+#
+# mini-swe-agent's own loop runs ON the Ray cluster (in this process), pointing
+# its model at the gateway at the node's private IP (session.base_url, reachable
+# from the same node behind the CSCS firewall) and using the Flash Sandbox
+# (api.opentela.ai) purely as the command-execution environment over HTTP. This
+# is the only mini-swe-agent shape that works without an inbound tunnel to the
+# gateway: the cloud sandbox makes no connection to the private endpoint.
+#
+# Per-row SWE instances still carry their canonical image
+# (swebench/sweb.eval.x86_64.<id>) in the sample's `sandbox.image`; it
+# deep-merges on top of these defaults, so do NOT set `image:` here.
+#
+# Runtime deps -- mini-swe-agent is NOT a hard uni-agent dep. The Ray runtime
+# env (RUNTIME_ENV, by default data/uni_agent/runtime_env.yaml) must include in
+# its `pip.packages`:
+#     - mini-swe-agent        # provides minisweagent.{agents,models,exceptions}
+#     - litellm               # OpenAI-compatible chat-completions client
+#     - jinja2                # system/instance/observation template rendering
+# Set OTELA_API (export OTELA_API=sk-...) on the launch node / Ray runtime env.
+#
+# Sampling lives in `extra_model_kwargs` (forwarded to litellm.completion); the
+# agent.model block is injected at runtime by run_task from the gateway session
+# (base_url = the node's private IP, api_key, model_name = the served model).
+#
+# Tool-calling vs textbased: by default mini-swe-agent uses LitellmModel, which
+# sends tools=[BASH_TOOL] and expects OpenAI tool_calls back (the gateway's
+# TOOL_PARSER=qwen3_coder produces them). If that format is finicky with your
+# chat template, set `model_class: litellm_textbased` to parse
+# ```mswea_bash_command``` blocks out of the completion instead -- no tool API.
+- name: swe_bench
+  sandbox:
+    provider: flash_sandbox
+    runtime_timeout: 7200
+    sandbox_kwargs:
+      cpu_cores: 4.0
+      memory_mb: 8192
+      keep_alive: true
+      keep_alive_interval_sec: 45.0
+  agent:
+    name: mini_swe_agent
+    step_limit: 250            # swebench default; lower for a 1-node smoke
+    cost_limit: 3.0            # with cost_tracking=ignore_errors (set in run()) this is effectively unbounded
+    command_timeout: 120       # per-command cap forwarded to the sandbox (+30s bridge margin)
+    cwd: /testbed
+    env:
+      PAGER: "cat"
+      MANPAGER: "cat"
+      LESS: "-R"
+      PIP_PROGRESS_BAR: "off"
+      TQDM_DISABLE: "1"
+    extra_model_kwargs:
+      drop_params: true        # let litellm drop fields the gateway rejects
+      parallel_tool_calls: true
+      temperature: 1.0
+      top_p: 1.0
+      max_tokens: 32768        # per-turn cap; let the loop/step_limit bound the episode
+
+- name: swe_rebench
+  sandbox:
+    provider: flash_sandbox
+    runtime_timeout: 7200
+    sandbox_kwargs:
+      cpu_cores: 4.0
+      memory_mb: 8192
+      keep_alive: true
+      keep_alive_interval_sec: 45.0
+  agent:
+    name: mini_swe_agent
+    step_limit: 250
+    cost_limit: 3.0
+    command_timeout: 120
+    cwd: /testbed
+    env:
+      PAGER: "cat"
+      MANPAGER: "cat"
+      LESS: "-R"
+      PIP_PROGRESS_BAR: "off"
+      TQDM_DISABLE: "1"
+    extra_model_kwargs:
+      drop_params: true
+      parallel_tool_calls: true
+      temperature: 1.0
+      top_p: 1.0
+      max_tokens: 32768

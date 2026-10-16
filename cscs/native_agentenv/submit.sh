@@ -15,14 +15,18 @@ fi
 export EXP_NAME=${EXP_NAME:-qwen35_${MODEL_SIZE,,}_${BENCHMARK}_native_$(date +%Y%m%d_%H%M%S)}
 [[ ${EXP_NAME} =~ ^[A-Za-z0-9_.-]+$ ]] || { echo 'Invalid EXP_NAME' >&2; exit 1; }
 [[ ${CONCURRENCY} =~ ^[0-9]+$ ]] || { echo 'CONCURRENCY must be non-negative; 0 disables the runner cap.' >&2; exit 1; }
-for value in "${TRAINING_STEPS}" "${SAVE_FREQ}" "${CLUSTER_NNODES}" "${NNODES_ROLLOUT}" "${TP}" "${PP}" "${GEN_TP}"; do
+for value in "${ROLLOUT_PROMPT_BSZ}" "${TRAINING_STEPS}" "${SAVE_FREQ}" "${CLUSTER_NNODES}" "${NNODES_ROLLOUT}" "${TP}" "${PP}" "${GEN_TP}"; do
     [[ ${value} =~ ^[1-9][0-9]*$ ]] || { echo 'Concurrency, steps, and save frequency must be positive integers.' >&2; exit 1; }
 done
+[[ ${NUM_WARMUP_BATCHES} =~ ^[0-9]+$ ]] || { echo "NUM_WARMUP_BATCHES must be non-negative." >&2; exit 1; }
 trainer_gpus=$(((CLUSTER_NNODES - NNODES_ROLLOUT) * 4))
 if (( trainer_gpus <= 0 || trainer_gpus % (TP * PP) != 0 || (NNODES_ROLLOUT * 4) % GEN_TP != 0 )); then
     echo 'Invalid node split or tensor/pipeline parallelism for four GPUs per node.' >&2
     exit 1
 fi
+# Refresh the small runtime extension for existing setup.sh installations too.
+"${WORK_ROOT}/venv/bin/python" "${BUNDLE_ROOT}/apply_rollout_batch.py" "${WORK_ROOT}/runtime"
+"${WORK_ROOT}/venv/bin/python" "${BUNDLE_ROOT}/apply_continuous_rollout.py" "${WORK_ROOT}/runtime"
 RUN_DIR=${WORK_ROOT}/runs/${EXP_NAME}
 export RUN_DIR
 "${WORK_ROOT}/venv/bin/python" "${BUNDLE_ROOT}/prepare_run.py"

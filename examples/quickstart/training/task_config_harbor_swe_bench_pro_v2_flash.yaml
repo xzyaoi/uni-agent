@@ -1,0 +1,15 @@
+# Training copies explicitly allow public networking; official V2 verifier
+# files and GHCR images are preserved. This is not the locked leaderboard protocol.
+- name: harbor
+  harbor_executable: /iopsstor/scratch/cscs/xyao/venvs/uni-harbor-v2/bin/harbor
+  harbor_env: uni_agent.tasks.harbor.flash_environment:FlashSandboxEnvironment
+  artifacts_dir: /iopsstor/scratch/cscs/xyao/logs/Uni-Agent-Qwen3.5-27B-SWE-bench-Pro-V2/harbor
+  override_cpus: 4
+  override_memory_mb: 8192
+  agent:
+    name: uni_agent.tasks.harbor.react_agent:UniAgentReAct
+    timeout_sec: 3600
+    kwargs:
+      max_steps: 200
+      temperature: 1.0
+      top_p: 1.0

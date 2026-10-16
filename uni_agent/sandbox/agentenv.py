@@ -216,6 +216,13 @@ class AgentEnvSandbox(Sandbox):
             result = exc
         return ExecResult(exit_code=result.exit_code, stdout=result.stdout or "", stderr=result.stderr or "")
 
+    def _is_timeout_error(self, exc: BaseException) -> bool:
+        return (
+            super()._is_timeout_error(exc)
+            or isinstance(exc, httpx.TimeoutException)
+            or type(exc).__name__ == "TimeoutException"  # E2B command deadline.
+        )
+
     async def is_alive(self) -> bool:
         try:
             return (await self._exec(["true"], timeout=5)).exit_code == 0

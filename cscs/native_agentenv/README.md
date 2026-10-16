@@ -19,8 +19,15 @@ override each preset's weights. All sizes retain the original conservative
 10-node topology; the smaller sizes have not been tuned or trained here.
 WebArena defaults to concurrency 1 for a shared website deployment.
 
+Entropy diagnostics use the existing Megatron chunked implementation with
+1,024-token chunks. This targets the large temporary allocation seen during
+old-log-prob evaluation in run 3661417. Entropy remains available as a metric;
+its loss coefficient remains zero. The required old-log-prob recomputation
+continues to run. Runtime memory improvement must be confirmed by the next
+instrumented training run.
+
 To match the latest 27B full-memory run, use
-`config.fullmem_uncapped.env.example`: 2 trainer nodes / 8 rollout nodes,
+`config.fullmem_uncapped.env.example`: 4 trainer nodes / 6 rollout nodes,
 CONCURRENCY=0, and 850,000 MiB per exclusive node. Each portable run now records
 GPU/DCGM/vLLM telemetry and incremental full model calls alongside sandbox
 traces. See [observability](../observability/README.md) for CloudLab host
@@ -138,3 +145,107 @@ Clariden scratch directory using the bundled sources and pinned dependencies;
 all 642 task paths were relocated. Generated container, Ray and Harbor configs
 parsed successfully. No new training job or benchmark validation was run. A
 training run from a second account has not been executed as part of packaging.
+
+### Independent rollout batch size
+
+Set `ROLLOUT_PROMPT_BSZ=128` in `config.env` to dispatch **128 prompts × 8
+responses = 1,024 agent episodes** per batch. The full-memory experiment profile
+now uses this value. `TRAIN_PROMPT_BSZ=64`, `PPO_MINI_BATCH_SIZE=16`, and
+`PARAMETER_SYNC_STEP=4` stay unchanged, so optimizer update sizes do not grow.
+
+The corresponding Hydra setting is
+`trainer.v1.separate_async.rollout_prompt_batch_size`. Null uses the training
+batch size for backward compatibility. `setup.sh` and `submit.sh` apply the
+small runtime extension to the pinned source archive, including existing
+installations; unrelated source changes are preserved. `data.gen_batch_size`
+remains a dataloader-fetch size, not this rollout-dispatch size.
+
+This increases finite dispatch batches; it does not implement continuous
+refill. With one warmup batch, startup can launch two batches (2,048 episodes
+at this setting), before failed-group refills. Subsequent steps add 1,024
+episodes while consuming 512; monitor ready-data backlog, policy staleness,
+and sandbox CPU pressure. More generated data is not necessarily more data
+used for training, and short runs can end with unused work.
+
+### Continuous rollout refill (enabled in the experiment profile)
+
+The full-memory experiment profile now sets:
+
+```bash
+CONTINUOUS_ROLLOUT=True
+ROLLOUT_TARGET_PROMPTS=128
+ROLLOUT_READY_PROMPTS=0
+ROLLOUT_REFILL_PROMPTS=16
+ROLLOUT_REFILL_INTERVAL=1.0
+```
+
+This maintains up to **128 pending/running prompt groups** (up to 1,024 agent
+episodes at 8 responses per prompt), submitting at most 16 groups per second.
+`ROLLOUT_READY_PROMPTS=0` disables admission backpressure from completed groups,
+so generation can continue during training even when results accumulate.
+The 128-group in-flight limit remains active. Completed results can accumulate
+without a count bound; the existing sampler still applies policy staleness rules.
+A positive value restores the completed-backlog cap: admissions pause at that
+threshold and total unsampled groups are bounded by the in-flight target plus
+the threshold. Failed terminal groups also count toward a positive threshold.
+
+Continuous mode replaces the warmup/per-step dispatch policy; it ignores
+`ROLLOUT_PROMPT_BSZ` and `NUM_WARMUP_BATCHES`. The independent larger finite
+batch setting above applies when continuous mode is disabled. Optimizer batches
+remain 64 prompts, split into four 16-prompt updates, and existing policy
+staleness checks continue to apply. A prompt group refills only after all its
+response sessions settle, not after each individual session finishes.
+
+A dedicated producer reads an independent TransferQueue metadata snapshot.
+It does not mutate the sampler's working sets. Checkpoint and validation pause
+new submissions across dataloader/queue snapshots. Driver shutdown stops and
+joins the producer, including early returns and exceptions; outstanding remote
+episodes retain the existing Ray lifecycle. Producer errors surface at step
+boundaries and replay polling. The installed training image's synchronous TQ
+client schedules calls onto its dedicated event-loop thread.
+
+`setup.sh` and `submit.sh` install `apply_continuous_rollout.py` and the bundled
+runtime extension. The base trainer default remains disabled for other recipes.
+Configuration lives at `trainer.v1.separate_async.continuous_refill.*`.
+The producer writes `feeder-<pid>.jsonl` under `UNI_AGENT_TRACE_DIR` and reports
+`training/refill/*` metrics (in-flight, terminal, failed and submitted groups).
+These are prompt-group counts, not vLLM active request counts. The feature has
+been syntax checked and statically reviewed; a fresh training run is still
+needed to establish its runtime behavior and throughput.
+
+Continuous mode also sets `data.dataloader_num_workers=0`: fetching runs in the
+producer thread, so it must not fork DataLoader subprocesses at initial startup
+or dataset rollover. The extension rejects nonzero worker counts in this mode.
+This removes loader subprocess parallelism; model, optimizer and GPU topology
+settings remain the same.
+
+
+### GH200 episode dispatch and host memory
+
+For the AgentENV saturation experiment, use
+`AGENT_RUNNER_DISPATCH_MODE=inline_async` with the Clariden operational launcher
+`examples/quickstart/training/submit_qwen35_27b_pro_v2_agentenv_clariden.sh`.
+This uses the existing async runner path instead of starting a heavyweight Ray
+worker for each episode. Harbor still runs its CLI in the native client venv;
+sandbox commands execute remotely through AgentENV. The runner concurrency and
+128-group active target remain independent settings.
+
+`CPU_MEMORY_BIND=True` binds ordinary host allocations to permitted NUMA nodes
+with CPUs, before Ray starts. GH200 also exposes GPU HBM as NUMA memory; host
+allocations in HBM can reduce memory available to CUDA. The run-local
+`bind_cpu_memory.sh` uses Linux MPOL_BIND and does not require numactl in the
+image. It limits usable host memory to CPU-attached RAM and fails explicitly if
+binding is unsupported. Explicit CUDA allocations are unaffected by this host
+allocation policy. Collect per-node NUMA memory to check its effect.
+
+The operational launcher accepts `MODEL_PATH`, `TOTAL_NODES`, `TIME_LIMIT`,
+`TRAINING_STEPS`, batch settings, and parallelism overrides. For the 9B smoke:
+one trainer node, one rollout node, TP4/PP1/CP1, 8 training prompts with 8
+responses each, 2-prompt minibatches, one step, 4096 prompt tokens and 8192
+response tokens. Debug permits 90 node-minutes per job, so two nodes use a
+45-minute limit. This smaller run does not establish full-size memory safety.
+
+An explicit `AGENTENV_ENDPOINT` survives loading the private credential file.
+The launcher sets NO_PROXY only for that endpoint host, preserving other proxy
+settings. AWS deployments must permit the actual compute egress address on the
+AgentENV port; login and compute egress addresses may differ.

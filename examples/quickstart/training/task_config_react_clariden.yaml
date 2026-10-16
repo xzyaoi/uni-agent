@@ -1,0 +1,75 @@
+# Clariden (CSCS GH200) task config -- agent loop runs ON the Ray cluster, the
+# Flash Sandbox (api.opentela.ai) is only the tool boundary over HTTP. This is
+# the combination that works behind the CSCS firewall: the react agent calls the
+# gateway at its private Ray-node IP (session.base_url) from the same node, so no
+# inbound port is needed. Per-row SWE instances still carry their canonical image
+# (swebench/sweb.eval.x86_64.<id>) in the sample's `sandbox.image`; it deep-merges
+# on top of these defaults, so do NOT set `image:` here.
+#
+# Set OTELA_API_KEY (the launcher extracts it from ~/.zshrc and forwards it
+# via RUN_ENV). api_key_env MUST be OTELA_API_KEY here -- the
+# FlashSandboxSandbox provider defaults to "OTELA_API"
+# (see flash_sandbox.py:_DEFAULT_API_KEY_ENV), which the launcher does NOT
+# set. Without this, every sandbox start fails with "Flash Sandbox requires
+# OTELA_API to be set" -> "All rollouts failed at global_steps=1" (smoke
+# job 3538281, 2026-09-29 -- the first GH200 run got all the way through
+# image+ray+model+vLLM and died ONLY here). Mirrors
+# task_config_react_flash.yaml (Bristen-proven).
+# Override the endpoint with FLASH_SANDBOX_ENDPOINT if you use a private mirror.
+- name: swe_bench
+  sandbox:
+    provider: flash_sandbox
+    runtime_timeout: 7200
+    sandbox_kwargs:
+      api_key_env: OTELA_API_KEY
+      cpu_cores: 4.0
+      memory_mb: 8192
+      keep_alive: true
+      keep_alive_interval_sec: 45.0
+  agent:
+    name: react
+    max_steps: 200
+    tools:
+      - name: str_replace_editor
+      - name: stateful_shell
+        command_timeout: 120
+        env_vars:
+          PAGER: "cat"
+          GIT_PAGER: "cat"
+          MANPAGER: "cat"
+          TQDM_DISABLE: "1"
+          PIP_PROGRESS_BAR: "off"
+      - name: submit
+    model:
+      temperature: 1.0
+      top_p: 1.0
+      max_total_tokens: 131072
+
+- name: swe_rebench
+  sandbox:
+    provider: flash_sandbox
+    runtime_timeout: 7200
+    sandbox_kwargs:
+      api_key_env: OTELA_API_KEY
+      cpu_cores: 4.0
+      memory_mb: 8192
+      keep_alive: true
+      keep_alive_interval_sec: 45.0
+  agent:
+    name: react
+    max_steps: 200
+    tools:
+      - name: str_replace_editor
+      - name: stateful_shell
+        command_timeout: 120
+        env_vars:
+          PAGER: "cat"
+          GIT_PAGER: "cat"
+          MANPAGER: "cat"
+          TQDM_DISABLE: "1"
+          PIP_PROGRESS_BAR: "off"
+      - name: submit
+    model:
+      temperature: 1.0
+      top_p: 1.0
+      max_total_tokens: 131072

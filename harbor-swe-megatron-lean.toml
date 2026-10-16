@@ -1,0 +1,47 @@
+# Enroot environment for uni-agent Qwen3.5-4B training -- LEAN image (vllm 0.24.0) on Bristen (x86 A100).
+#
+# Mirrors examples/harbor_swe/bristen/harbor-swe-bristen.toml (the proven A100
+# spec: SCRATCH/HOME/capstor mounts, NCCL_NET=Socket, CUDA_DEVICE_MAX_CONNECTIONS=1)
+# with two changes for the uni-agent path:
+#   1. image  -> the Megatron build (harbor-swe-megatron-lean.x86_64.sqsh), which
+#      layers megatron-core 0.17.1 + mbridge@691a377f + transformer_engine 2.11
+#      + apex (sm_80) on top of the rllm[verl,harbor] base.
+#   2. workdir + PYTHONPATH -> the uni-agent repo and its BUNDLED verl submodule
+#      (0.9.0.dev), NOT the image's /workspace/rllm (0.8.0). Ray ships the repo
+#      via working_dir, and this PYTHONPATH makes `verl` resolve to the bundled
+#      copy on every worker, matching train_qwen3p5_dense.sh's expectation that
+#      it is launched from the repository root.
+#
+# OTELA_API is passed through unchanged (the FlashSandboxSandbox provider reads it).
+#
+# TEMP FILES -> SCRATCH (not /users/xyao, which is quota-limited): HOME is
+# overridden to ${SCRATCH}/home so every ~/.cache, ~/.config, ~/.local write
+# inside the container lands on scratch. The ${HOME}:${HOME} mount is kept so
+# /users/xyao is still reachable by its explicit path if ever needed. TMPDIR +
+# PIP_CACHE_DIR are set here as the most reliable path to ALL in-container
+# processes (srun --environment applies [env] at container start, before bash);
+# run_train_qwen3p5_bristen.sh also exports them and forwards via RUN_ENV.
+image = "${SCRATCH}/harbor-swe-megatron-lean.x86_64.sqsh"
+mounts = [
+    "${SCRATCH}:${SCRATCH}",
+    "${HOME}:${HOME}",
+    "/capstor:/capstor",
+]
+workdir = "${SCRATCH}/uni-agent"
+writable = true
+[env]
+RLLM_HOME = "${SCRATCH}/rllm_home"
+HF_HOME = "${SCRATCH}/hf"
+HUGGING_FACE_HUB_TOKEN = "${HF_TOKEN:-}"
+OTELA_API_KEY = "${OTELA_API_KEY:-}"
+PYTHONPATH = "${SCRATCH}/uni-agent/verl"
+PYTHONNOUSERSITE = "1"
+HOME = "${SCRATCH}/home"
+TMPDIR = "${SCRATCH}/tmp"
+PIP_CACHE_DIR = "${SCRATCH}/pip-cache"
+WANDB_DIR = "${SCRATCH}/wandb"
+TOKENIZERS_PARALLELISM = "true"
+VLLM_LOGGING_LEVEL = "WARN"
+NCCL_DEBUG = "WARN"
+NCCL_NET = "Socket"
+CUDA_DEVICE_MAX_CONNECTIONS = "1"

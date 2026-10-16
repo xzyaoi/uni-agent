@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# The run-local client links through its own RPATH to the matching libdcgm.
+_dcgm_run_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+if [[ -x ${_dcgm_run_dir}/dcgm-client/bin/dcgmi ]]; then
+    export DCGMI_PATH="${_dcgm_run_dir}/dcgm-client/bin/dcgmi"
+    export PATH="${_dcgm_run_dir}/dcgm-client/bin:${PATH}"
+fi
+
 python3 "${METRICS_COLLECTOR}" --role gpu --output "${METRICS_DIR}" --disk "${WORK_ROOT}" &
 _metrics_pid=$!
 _metrics_cleanup() {

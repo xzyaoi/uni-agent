@@ -50,6 +50,9 @@ manifest = {
     "model_files": {},
     "run_files": {},
 }
+dcgm_manifest = args.run / "dcgm-client/manifest.json"
+if dcgm_manifest.exists():
+    manifest["dcgm_client"] = json.loads(dcgm_manifest.read_text())
 for path in sorted(args.model.iterdir()):
     if path.is_file():
         stat = path.stat()
@@ -59,7 +62,7 @@ for path in sorted(args.model.iterdir()):
             "sha256": digest(path) if stat.st_size < 32 * 1024 * 1024 else None,
         }
 for path in sorted(args.run.iterdir()):
-    if path.is_file() and path.suffix in (".sh", ".yaml", ".env"):
+    if path.is_file() and path.suffix in (".sh", ".yaml", ".env", ".py", ".toml"):
         manifest["run_files"][path.name] = digest(path)
 for name, command in {
     "git_commit": ["git", "-C", str(args.repo), "rev-parse", "HEAD"],

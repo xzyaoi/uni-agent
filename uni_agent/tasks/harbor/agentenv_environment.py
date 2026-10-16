@@ -6,6 +6,9 @@ server has a fixed resource shape; overrides must match the actual server.
 
 from __future__ import annotations
 
+import hashlib
+import os
+import shlex
 from pathlib import Path
 from typing import Any
 
@@ -23,12 +26,14 @@ class AgentEnvEnvironment(BaseEnvironment):
         runtime_timeout: float = 14400,
         api_key_env: str = "AGENTENV_API_KEY",
         endpoint: str | None = None,
-        fixed_cpu_cores: int = 4,
+        fixed_cpu_cores: int | None = None,
         fixed_memory_mb: int = 4096,
         start_timeout: float = 600.0,
-        exec_timeout: float = 180.0,
+        exec_timeout: float | None = None,
         **kwargs: Any,
     ) -> None:
+        if fixed_cpu_cores is None:
+            fixed_cpu_cores = int(os.environ.get("AGENTENV_FIXED_CPU_CORES", "4"))
         kwargs.setdefault("override_cpus", fixed_cpu_cores)
         kwargs.setdefault("override_memory_mb", fixed_memory_mb)
         super().__init__(*args, **kwargs)
@@ -44,7 +49,10 @@ class AgentEnvEnvironment(BaseEnvironment):
             api_key_env=api_key_env,
             endpoint=endpoint,
             start_timeout=start_timeout,
-            exec_timeout=exec_timeout,
+            # Harbor enforces its task/phase deadline outside environment.exec.
+            # Without an explicit command deadline, do not impose a shorter
+            # SDK default; the sandbox lifetime remains the RPC ceiling.
+            exec_timeout=runtime_timeout if exec_timeout is None else exec_timeout,
             env_vars=self._startup_env(),
         )
         self._started = False
@@ -78,9 +86,32 @@ class AgentEnvEnvironment(BaseEnvironment):
             if result is not None and result.return_code != 0:
                 raise RuntimeError(f"Unable to create Harbor log directories: {result.stderr or result.stdout}")
             await self._upload_environment_dir_after_start()
+            await self._prepare_native_tools()
         except BaseException:
             await self.stop(delete=True)
             raise
+
+    async def _prepare_native_tools(self) -> None:
+        """Supply the upstream Verified Dockerfile's pinned uv tool on native images."""
+        archive_name = os.environ.get("AGENTENV_UV_ARCHIVE")
+        if not archive_name:
+            return
+        archive = Path(archive_name)
+        expected = os.environ.get("AGENTENV_UV_ARCHIVE_SHA256")
+        if not expected or hashlib.sha256(archive.read_bytes()).hexdigest() != expected:
+            raise ValueError("Native uv archive checksum is missing or incorrect")
+        guest_archive = "/tmp/uni-agent-uv.tar.gz"
+        await self._sandbox.upload(archive, guest_archive)
+        command = (
+            "mkdir -p /root/.local/bin && tar -xzf " + shlex.quote(guest_archive)
+            + " --strip-components=1 -C /root/.local/bin"
+            + " uv-x86_64-unknown-linux-gnu/uv uv-x86_64-unknown-linux-gnu/uvx"
+            + " && rm -f " + shlex.quote(guest_archive)
+            + " && /root/.local/bin/uv --version"
+        )
+        result = await self._sandbox.exec_shell(command, timeout=120)
+        if result.exit_code != 0 or not result.stdout.strip().startswith("uv 0.7.13"):
+            raise RuntimeError("Unable to prepare native Verified uv tool: " + result.stderr)
 
     async def stop(self, delete: bool = True) -> None:
         # Native AgentENV sandboxes are ephemeral; stop always deletes the instance.
@@ -126,4 +157,6 @@ class AgentEnvEnvironment(BaseEnvironment):
             env=self._merge_env(env),
             timeout=timeout_sec,
         )
+        if result.exit_code == -1:
+            raise TimeoutError(result.stderr or "AgentENV command timed out")
         return ExecResult(stdout=result.stdout, stderr=result.stderr, return_code=result.exit_code)

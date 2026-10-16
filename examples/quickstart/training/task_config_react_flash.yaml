@@ -1,0 +1,83 @@
+# Bristen (CSCS A100) task config -- the "react" agent loop runs ON the Ray
+# cluster (in-process), the Flash Sandbox (api.opentela.ai) is only the
+# tool/command boundary over HTTP. This is the firewall-friendly shape: the
+# react agent calls the gateway at its private Ray-node IP
+# (agent.model.base_url, injected at runtime from the served session) from the
+# same node, so NO inbound port is needed on the GPU nodes.
+#
+# Why "react" for the Bristen smoke (vs claude_code / mini_swe_agent):
+#   * react is a BUILT-IN uni_agent agent (uni_agent/agents/react/agent.py,
+#     registered as "react"); imports only pydantic + uni_agent.tools -- both
+#     baked into the Megatron image. No external CLI (claude_code shells out to
+#     the real `claude` binary) and no extra PyPI package (mini_swe_agent needs
+#     the `mini-swe-agent` wheel, NOT in the image). So this is the lowest-risk
+#     config that still exercises the full rollout->reward->PPO loop.
+#   * The react tools (str_replace_editor, stateful_shell, submit) are uni_agent
+#     builtins that execute commands INSIDE each flash_sandbox instance.
+#
+# Per-row SWE instances still carry their canonical image
+# (swebench/sweb.eval.x86_64.<id>) in the sample's `sandbox.image`; it
+# deep-merges on top of these defaults, so do NOT set `image:` here.
+#
+# Set OTELA_API_KEY on the launch node / Ray runtime env (the launcher does).
+# api_key_env MUST be OTELA_API_KEY here -- the FlashSandboxSandbox provider
+# defaults to "OTELA_API" (see flash_sandbox.py:_DEFAULT_API_KEY_ENV), which the
+# Bristen launcher does NOT set. task_config_claude_code_flash.yaml already
+# makes this explicit; mirror it so the react config works identically.
+# Override the endpoint with FLASH_SANDBOX_ENDPOINT if you use a private mirror.
+- name: swe_bench
+  sandbox:
+    provider: flash_sandbox
+    runtime_timeout: 600
+    sandbox_kwargs:
+      api_key_env: OTELA_API_KEY
+      cpu_cores: 1.0
+      memory_mb: 4096
+      keep_alive: false
+      keep_alive_interval_sec: 45.0
+  agent:
+    name: react
+    max_steps: 200           # upstream max_turns:200 -- agent needs room to finish SWE tasks
+    tools:
+      - name: str_replace_editor
+      - name: bash
+        command_timeout: 120
+        env_vars:
+          PAGER: "cat"
+          GIT_PAGER: "cat"
+          MANPAGER: "cat"
+          TQDM_DISABLE: "1"
+          PIP_PROGRESS_BAR: "off"
+      - name: submit
+    model:
+      temperature: 1.0
+      top_p: 1.0
+      max_total_tokens: 131072
+- name: swe_rebench
+  sandbox:
+    provider: flash_sandbox
+    runtime_timeout: 600
+    sandbox_kwargs:
+      api_key_env: OTELA_API_KEY
+      cpu_cores: 1.0
+      memory_mb: 4096
+      keep_alive: false
+      keep_alive_interval_sec: 45.0
+  agent:
+    name: react
+    max_steps: 200
+    tools:
+      - name: str_replace_editor
+      - name: bash
+        command_timeout: 120
+        env_vars:
+          PAGER: "cat"
+          GIT_PAGER: "cat"
+          MANPAGER: "cat"
+          TQDM_DISABLE: "1"
+          PIP_PROGRESS_BAR: "off"
+      - name: submit
+    model:
+      temperature: 1.0
+      top_p: 1.0
+      max_total_tokens: 131072

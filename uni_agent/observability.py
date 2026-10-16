@@ -13,6 +13,7 @@ from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 _context: ContextVar[dict | None] = ContextVar("capture_context", default=None)
+_pipeline_context: ContextVar[dict | None] = ContextVar("pipeline_context", default=None)
 
 
 @contextmanager
@@ -22,6 +23,43 @@ def capture_context(**metadata):
         yield
     finally:
         _context.reset(token)
+
+
+@contextmanager
+def pipeline_context(**metadata):
+    """Keep batch identity across concurrent episode tasks, separate from model capture."""
+    token = _pipeline_context.set(metadata)
+    try:
+        yield
+    finally:
+        _pipeline_context.reset(token)
+
+
+def pipeline_event(event: str, **metadata):
+    """Append optional rollout timing/identity metadata without task or error contents.
+
+    Begin/terminal pairs share an operation ID. Episode events inherit their
+    batch identity through contextvars, including across asyncio task creation.
+    No capture error may replace a training result or its original exception.
+    """
+    try:
+        directory = os.environ.get("UNI_AGENT_TRACE_DIR")
+        if not directory:
+            return
+        _append(
+            Path(directory) / f"pipeline-{os.getpid()}.jsonl",
+            {
+                **(_pipeline_context.get() or {}),
+                **metadata,
+                "schema_version": 1,
+                "timestamp": time.time(),
+                "kind": "pipeline",
+                "event": event,
+                "pid": os.getpid(),
+            },
+        )
+    except Exception:
+        logger.warning("Unable to append rollout pipeline capture", exc_info=True)
 
 
 def _redact(value):

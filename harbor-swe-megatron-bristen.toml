@@ -1,0 +1,83 @@
+# Enroot environment for uni-agent Qwen3.5-4B training on Bristen (x86 A100).
+#
+# Mirrors examples/harbor_swe/bristen/harbor-swe-bristen.toml (the proven A100
+# spec: SCRATCH/HOME/capstor mounts, NCCL_NET=Socket, CUDA_DEVICE_MAX_CONNECTIONS=1)
+# with two changes for the uni-agent path:
+#   1. image  -> the Megatron build (harbor-swe-megatron.x86_64.sqsh), which
+#      layers megatron-core 0.17.1 + mbridge@691a377f + transformer_engine 2.11
+#      + apex (sm_80) on top of the rllm[verl,harbor] base.
+#   2. workdir + PYTHONPATH -> the uni-agent repo and its BUNDLED verl submodule
+#      (0.9.0.dev), NOT the image's /workspace/rllm (0.8.0). Ray ships the repo
+#      via working_dir, and this PYTHONPATH makes `verl` resolve to the bundled
+#      copy on every worker, matching train_qwen3p5_dense.sh's expectation that
+#      it is launched from the repository root.
+#
+# OTELA_API is passed through unchanged (the FlashSandboxSandbox provider reads it).
+#
+# TEMP FILES -> SCRATCH (not /users/xyao, which is quota-limited): HOME is
+# overridden to ${SCRATCH}/home so every ~/.cache, ~/.config, ~/.local write
+# inside the container lands on scratch. The ${HOME}:${HOME} mount is kept so
+# /users/xyao is still reachable by its explicit path if ever needed. TMPDIR +
+# PIP_CACHE_DIR are set here as the most reliable path to ALL in-container
+# processes (srun --environment applies [env] at container start, before bash);
+# run_train_qwen3p5_bristen.sh also exports them and forwards via RUN_ENV.
+image = "${SCRATCH}/harbor-swe-megatron-lean.x86_64.sqsh"
+# vLLM 0.24.0 lean image (built Aug 22 23:25) -- REQUIRED: the prior proven
+# image (harbor-swe-megatron.x86_64.sqsh, Aug 21) pinned vLLM 0.22.1, which
+# predates the Qwen3.5 GDN (GatedDeltaNet) cudaErrorIllegalAddress fix and
+# crashed every rollout since 80205 (80205 survived 21 steps by luck on
+# transcript content; 80231/44/48/52/56/61 all died at step 0). The lean image
+# also bakes in swebench==4.1.0 + flash-linear-attention==0.5.2 + liger-kernel
+# + math-verify + latex2sympy2-extended + pylatexenc + TransferQueue==0.1.8
+# (see examples/quickstart/flash-sandbox/Containerfile.lean), so the pip
+# section in runtime_env_flash.yaml is now a harmless no-op.
+mounts = [
+    "${SCRATCH}:${SCRATCH}",
+    "${HOME}:${HOME}",
+    "/capstor:/capstor",
+]
+workdir = "${SCRATCH}/uni-agent"
+writable = true
+[env]
+RLLM_HOME = "${SCRATCH}/rllm_home"
+HF_HOME = "${SCRATCH}/hf"
+HUGGING_FACE_HUB_TOKEN = "${HF_TOKEN:-}"
+OTELA_API_KEY = "${OTELA_API_KEY:-}"
+PYTHONPATH = "${SCRATCH}/uni-agent/verl"
+PYTHONNOUSERSITE = "1"
+HOME = "${SCRATCH}/home"
+# MEGATRON_CONFIG_LOCK_DIR (megatron.bridge.models.hf_pretrained.
+# safe_config_loader): the per-config lock defaults to ~/.cache/huggingface
+# (= ${SCRATCH}/home/.cache/huggingface, Lustre). With DP=4 replicas x 8
+# workers all loading the Qwen3.5-4B config concurrently, filelock over
+# Lustre fails to acquire after 4 retries -> ValueError "could not be
+# acquired" (job 82027 at 13:02, the FIRST run to reach model load because
+# 81982 died at the tee before it). The config is ALREADY local on shared
+# scratch, so the lock is pure process-safety overhead -- redirect it to
+# node-local /tmp so each node gets its own (instant, no cross-node
+# fcntl/flock contention). NVIDIA documents this var for multi-node.
+MEGATRON_CONFIG_LOCK_DIR = "/tmp/megatron-config-locks"
+# XDG_CACHE_HOME: belt-and-suspenders for the ~/.cache/* family (HF hub
+# cache fallback, torch, fontconfig, ...) that the toml HOME=${SCRATCH}/home
+# would otherwise put on Lustre. Node-local /tmp per node.
+# (The REAL 82077 killer was TMPDIR=${SCRATCH}/tmp in run_train_qwen3p5_
+# bristen.sh RUN_ENV -- Triton's tempfile.TemporaryDirectory() /open(,"w")
+# at build.py:91 EIO'd under 8-way JIT. Fixed by setting in-container
+# TMPDIR=/tmp there. TRITON_CACHE_DIR=/tmp/triton was ALREADY node-local
+# in the runtime_env, so no toml override needed for it.)
+XDG_CACHE_HOME = "/tmp/xdg-cache"
+# TMPDIR intentionally NOT set here. The toml [env] is applied to the
+# host-side enroot start (pyxis spank_pyxis.so) BEFORE the hooks (runtime.sh,
+# 10-netstack.sh, 10-shadow.sh) run, so a [env] TMPDIR on Lustre makes their
+# bash here-doc temp files EIO (jobs 81650/81661/676/81726/81958/81959). The
+# in-container TMPDIR=${SCRATCH}/tmp is set instead by `env "${RUN_ENV[@]}"`
+# (see run_train_qwen3p5_bristen.sh) so Python tempfile + pip cache still
+# land on scratch. The sruns pin the host-side TMPDIR to /tmp (node-local
+# SSD) via --export=ALL,TMPDIR=/tmp.
+PIP_CACHE_DIR = "${SCRATCH}/pip-cache"
+WANDB_DIR = "${SCRATCH}/wandb"
+TOKENIZERS_PARALLELISM = "true"
+VLLM_LOGGING_LEVEL = "WARN"
+NCCL_DEBUG = "WARN"
+NCCL_NET = "Socket"
+CUDA_DEVICE_MAX_CONNECTIONS = "1"

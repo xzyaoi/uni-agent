@@ -1,0 +1,14 @@
+# Official Harbor Verified verifier, GHCR base images, native AgentENV.
+- name: harbor
+  harbor_executable: /iopsstor/scratch/cscs/xyao/native-agentenv/harbor-native
+  harbor_env: uni_agent.tasks.harbor.agentenv_environment:AgentEnvEnvironment
+  artifacts_dir: /iopsstor/scratch/cscs/xyao/logs/verified-native/harbor
+  override_cpus: 1
+  override_memory_mb: 4096
+  agent:
+    name: uni_agent.tasks.harbor.react_agent:UniAgentReAct
+    timeout_sec: 3600
+    kwargs:
+      max_steps: 200
+      temperature: 1.0
+      top_p: 1.0

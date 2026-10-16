@@ -1,0 +1,15 @@
+{
+  "campaign": "sandbox-sweep-20261015_193213Z",
+  "source": "outputs/sandbox-sweep-20261015_193213Z/sweep_results.csv",
+  "sha256": "9d10031c9bed7649f749cab9662280389b645c42455e56e5571b685b8b14577b",
+  "reference_notebook": "../../flash-sandbox/meta/plot/3_paper/1_characterization.ipynb",
+  "metric": "episode count * 60 / rollout wall seconds; excludes model/framework initialization",
+  "episode_ceiling": "active groups * 8; configured ceiling, not measured simultaneous occupancy",
+  "caveats": [
+    "Rollout-only campaign: no PPO trainer, optimizer, or backward pass.",
+    "One ordered run per concurrency; stochastic trajectories and warmed image caches may affect comparisons.",
+    "Terminal attempts include errors; reward verification completed includes reward zero.",
+    "512-episode ceiling encountered vLLM EngineDeadError; 705 attempts lack stored trajectories.",
+    "All Slurm jobs exited FAILED during Ray teardown after results were written."
+  ]
+}

@@ -1,0 +1,15 @@
+# Native AgentENV API on CloudLab. No scheduler or transparent proxy.
+# Credentials and endpoint are supplied by the Slurm launcher.
+- name: harbor
+  harbor_executable: /iopsstor/scratch/cscs/xyao/native-agentenv/harbor-native
+  harbor_env: uni_agent.tasks.harbor.agentenv_environment:AgentEnvEnvironment
+  artifacts_dir: /iopsstor/scratch/cscs/xyao/logs/Uni-Agent-Qwen3.5-27B-SWE-bench-Pro-V2-AgentENV/harbor
+  override_cpus: 4
+  override_memory_mb: 4096
+  agent:
+    name: uni_agent.tasks.harbor.react_agent:UniAgentReAct
+    timeout_sec: 3600
+    kwargs:
+      max_steps: 200
+      temperature: 1.0
+      top_p: 1.0

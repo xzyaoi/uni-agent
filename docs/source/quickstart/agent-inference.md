@@ -22,6 +22,9 @@ python -m uni_agent.tasks.swe_bench.preprocess --local-save-dir ~/data/swe_agent
 
 The command writes `~/data/swe_agent/swe_bench_verified.parquet`.
 
+For SWE-bench Pro V2, HARD-51, or legacy V1, see the
+[SWE-bench Pro guide](swe-bench-pro.md) for dataset preprocessing and task configurations.
+
 Each row contains the prompt and a provider-agnostic task definition under `extra_info.tools_kwargs.task`. The selected sandbox backend maps the task image at runtime.
 
 ## Task Configuration
