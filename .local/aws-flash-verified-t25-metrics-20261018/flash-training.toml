@@ -1,0 +1,76 @@
+# Enroot environment for uni-agent Qwen3.5-4B training on Clariden (GH200, aarch64).
+#
+# Adapted from harbor-swe-megatron-bristen.toml (the proven Bristen x86 A100
+# spec) for the CSCS Clariden GH200 partition:
+#   1. image  -> the AARCH64 lean build (harbor-swe-megatron-lean.aarch64.sqsh,
+#      TORCH_CUDA_ARCH_LIST=9.0, built by
+#      examples/quickstart/flash-sandbox/build_lean_image_clariden.sh).
+#      The Bristen x86_64 sqsh CANNOT run here: Clariden GPU nodes are
+#      aarch64 (Grace CPU, sm_90 Hopper GPUs).
+#   2. NCCL: the Bristen toml forced NCCL_NET=Socket (Bristen-specific eni
+#      issue). Clariden's proven GH200 config (flash-evolve-verl-gh200.toml)
+#      instead enables the HOST aws-ofi-nccl enroot hook over Slurm's
+#      libfabric/CXI netstack:
+#        com.hooks.aws_ofi_nccl.enabled = "true"
+#        com.hooks.aws_ofi_nccl.variant = "cuda13"   (cu13 image -> cuda13 plugin)
+#      which gives NCCL the Slingshot11/RDMA transport (/etc/enroot/hooks.d/
+#      90-aws-ofi-nccl.sh + 89-libfabric-cxi.sh, host-managed). Do NOT set
+#      NCCL_NET=Socket here or every allreduce would fall back to TCP.
+#   3. workdir + PYTHONPATH -> the uni-agent repo + its BUNDLED verl
+#      (0.9.0.dev). /iopsstor is CSCS cross-cluster scratch, so the repo lives
+#      at the SAME absolute path as on Bristen -- ray ships it to workers via
+#      runtime_env PYTHONPATH, matching train_qwen3p5_dense.sh's expectation
+#      that it is launched from the repository root.
+#
+# TEMP FILES -> node-local /tmp (NOT /users/xyao, quota-limited): HOME is
+# overridden to ${SCRATCH}/home so every ~/.cache, ~/.config, ~/.local write
+# inside the container lands on scratch. TMPDIR is intentionally NOT set here
+# (the [env] block is applied to the HOST-side enroot start BEFORE the
+# 10-netstack/10-shadow hooks run -- a Lustre TMPDIR makes their here-doc
+# tempfile writes EIO, killed Bristen jobs 81650/81661/676/81726/81958/81959).
+# The training script's sruns pin host TMPDIR=/tmp and forward the
+# in-container TMPDIR=/tmp via RUN_ENV instead.
+image = "${SCRATCH}/harbor-swe-megatron-lean.aarch64.sqsh"
+mounts = [
+    "${SCRATCH}:${SCRATCH}",
+    "${HOME}:${HOME}",
+    "/capstor:/capstor",
+]
+workdir = "/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_verified_flash_2n45m_c512_t25_metrics_20261018/source"
+writable = true
+[env]
+RLLM_HOME = "${SCRATCH}/rllm_home"
+HF_HOME = "${SCRATCH}/hf"
+HUGGING_FACE_HUB_TOKEN = "${HF_TOKEN:-}"
+OTELA_API_KEY = "${OTELA_API_KEY:-}"
+PYTHONPATH = "/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_verified_flash_2n45m_c512_t25_metrics_20261018/source/sdk/python:/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_verified_flash_2n45m_c512_t25_metrics_20261018/source:/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_verified_flash_2n45m_c512_t25_metrics_20261018/source/verl"
+PYTHONNOUSERSITE = "1"
+HOME = "${SCRATCH}/home"
+# MEGATRON_CONFIG_LOCK_DIR (megatron.bridge.models.hf_pretrained.
+# safe_config_loader): the per-config lock defaults to ~/.cache/huggingface
+# (= ${SCRATCH}/home/.cache/huggingface, Lustre). With DP=4 replicas x 8
+# workers all loading the Qwen3.5-4B config concurrently, filelock over
+# Lustre fails to acquire after 4 retries -> ValueError "could not be
+# acquired" (Bristen job 82027). The config is ALREADY local on shared
+# scratch, so the lock is pure process-safety overhead -- redirect it to
+# node-local /tmp so each node gets its own (instant, no cross-node
+# fcntl/flock contention). NVIDIA documents this var for multi-node.
+MEGATRON_CONFIG_LOCK_DIR = "/tmp/megatron-config-locks"
+# XDG_CACHE_HOME: belt-and-suspenders for the ~/.cache/* family (HF hub
+# cache fallback, torch, fontconfig, ...) that the toml HOME=${SCRATCH}/home
+# would otherwise put on Lustre. Node-local /tmp per node.
+XDG_CACHE_HOME = "/tmp/xdg-cache"
+PIP_CACHE_DIR = "${SCRATCH}/pip-cache"
+WANDB_DIR = "${SCRATCH}/wandb"
+TOKENIZERS_PARALLELISM = "true"
+VLLM_LOGGING_LEVEL = "INFO"
+NCCL_DEBUG = "WARN"
+CUDA_DEVICE_MAX_CONNECTIONS = "1"
+# GH200 (sm_90): Hopper TF32/FP32 matmul defaults differ from Ampere; keep
+# cuDNN/cuBLAS workspace growth bounded (same value the flash-evolve GH200
+# image used).
+CUBLAS_WORKSPACE_CONFIG = ":4096:8"
+
+[annotations]
+com.hooks.aws_ofi_nccl.enabled = "true"
+com.hooks.aws_ofi_nccl.variant = "cuda13"

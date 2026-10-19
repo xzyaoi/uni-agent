@@ -67,6 +67,7 @@ class AgentEnvSandbox(Sandbox):
         start_timeout: float = 600.0,
         request_timeout: float = 30.0,
         exec_timeout: float = 180.0,
+        secure: bool | None = None,
         env_vars: dict[str, str] | None = None,
         guest_env_file: str | None = None,
     ):
@@ -77,6 +78,7 @@ class AgentEnvSandbox(Sandbox):
         self.start_timeout = start_timeout
         self.request_timeout = request_timeout
         self.exec_timeout = exec_timeout
+        self.secure = secure if secure is not None else os.getenv("AGENTENV_SECURE", "false").lower() == "true"
         self.env_vars = dict(env_vars or {})
         if guest_env_file:
             with open(guest_env_file, encoding="utf-8") as stream:
@@ -131,6 +133,7 @@ class AgentEnvSandbox(Sandbox):
                     "image": self.image,
                     "timeout": int(self.runtime_timeout),
                     "autoPause": False,
+                    **({"secure": True} if self.secure else {}),
                     **({"envVars": self.env_vars} if self.env_vars else {}),
                 },
             )

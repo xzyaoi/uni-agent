@@ -1,7 +1,64 @@
 {
   "campaign": "verified_sweep_20261015_235315Z",
   "source": "outputs/verified_sweep_20261015_235315Z/sweep_results.json",
-  "sha256": "8bac16385150b434ee4cfc9c84b971417a482dc663dbcf3d4f8192fb614f81fb",
+  "sha256": "b48a6ff8ae266b2c65251594b20290d3d506b9de0e32238ab4341b4bd26c46a4",
   "units": "active_groups are groups of eight episodes; wall_seconds excludes image warmup and model initialization; setup included",
-  "scope": "one measurement per concurrency; 128 groups skipped"
+  "scope": "One plotted observation per concurrency; 256 replaced by successful repetition; 128 groups skipped.",
+  "superseded_256_observation": {
+    "source": "outputs/verified_sweep_20261015_235315Z/sweep_results.json",
+    "source_data_sha256": "8bac16385150b434ee4cfc9c84b971417a482dc663dbcf3d4f8192fb614f81fb",
+    "observation": {
+      "active_groups": 32,
+      "episode_ceiling": 256,
+      "state": "completed",
+      "benchmark": "swebench-verified",
+      "wall_seconds": 1107.7904693209566,
+      "groups_terminal": 128,
+      "harbor_counts": {
+        "evaluation_completed": 1017,
+        "evaluation_incomplete": 7,
+        "resolved": 37,
+        "terminal_results": 1024
+      },
+      "completed_episodes": 1024,
+      "verified_episodes": 1017,
+      "incomplete_verifications": 7,
+      "usable_episodes": 984,
+      "completed_episodes_per_minute": 55.461751749553265,
+      "verified_episodes_per_minute": 55.082618680952805,
+      "usable_episodes_per_minute": 53.29527707183634,
+      "terminal_groups_per_hour": 415.9631381216495,
+      "usable_episodes_per_hour": 3197.7166243101806,
+      "sandbox_cpu_busy_pct_mean": 69.81392274746574,
+      "sandbox_cpu_busy_pct_max_1min_mean": 99.80794099962905,
+      "sandbox_cpu_psi_pct_mean": 21.062745098039215,
+      "sandbox_cpu_psi_pct_max_1min_mean": 49.910000000000004,
+      "sandbox_vm_count_mean": 152.13725490196077,
+      "sandbox_vm_count_max_1min_mean": 257.8333333333333,
+      "sandbox_ram_available_gib_mean": 292.75307412241017,
+      "sandbox_ram_available_gib_max_1min_mean": 362.0508804321289,
+      "rollout_gpu_busy_pct_mean": 54.001838235294116,
+      "rollout_gpu_busy_pct_max_1min_mean": 81.84375,
+      "rollout_sm_active_pct_mean": 15.147891950898005,
+      "rollout_sm_active_pct_max_1min_mean": 31.055000000000003,
+      "rollout_tensor_active_pct_mean": 2.7538761534025378,
+      "rollout_tensor_active_pct_max_1min_mean": 11.702291666666667
+    },
+    "reason": "Original Verified 256 run had a sample_tokens RPC timeout and EngineDeadError."
+  },
+  "replacement_256": {
+    "campaign": "verified_rerun_c256_retry_20261016_100619Z",
+    "job_id": "3674787",
+    "source": "outputs/verified_rerun_c256_retry_20261016_100619Z/sweep_results.json",
+    "source_sha256": "3998e0a275ad2997ca09874d113b39b183ba24e13c5bd9345499e6812939baa7",
+    "same_selected_tasks": true,
+    "engine_dead_error": false
+  },
+  "sources_by_episode_ceiling": {
+    "64": "outputs/verified_sweep_20261015_235315Z/sweep_results.json",
+    "128": "outputs/verified_sweep_20261015_235315Z/sweep_results.json",
+    "256": "outputs/verified_rerun_c256_retry_20261016_100619Z/sweep_results.json",
+    "512": "outputs/verified_sweep_20261015_235315Z/sweep_results.json",
+    "1024": "outputs/verified_sweep_20261015_235315Z/sweep_results.json"
+  }
 }

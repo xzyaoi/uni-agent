@@ -1,4 +1,4 @@
 benchmark,concurrent_trajectories,successful_starts,median_cold_start_s,p90_cold_start_s
 SWE-bench Verified,128,1024,2.4280099130119197,4.020604595300393
-SWE-bench Verified,256,1024,3.540940481470898,12.212805379403289
+SWE-bench Verified,256,1024,3.6031501409997873,7.021946449301322
 SWE-bench Verified,512,1011,9.24280893302057,21.546066985989455

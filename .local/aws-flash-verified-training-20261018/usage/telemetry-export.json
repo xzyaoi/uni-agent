@@ -1,0 +1,111 @@
+{
+  "captured_high_watermark": 335693,
+  "events_archived": 100000,
+  "resource_samples": 360,
+  "pages": [
+    {
+      "clock_id": "server-monotonic:5435bf5a14054a0586ffde7c8e20c866",
+      "dropped_events": 235693,
+      "gap": {
+        "first_missing_cursor": 1,
+        "last_missing_cursor": 235693,
+        "reason": "retention"
+      },
+      "high_watermark": 335693,
+      "next_cursor": 245693,
+      "oldest_cursor": 235694,
+      "schema_version": 1,
+      "server_instance_id": "5435bf5a14054a0586ffde7c8e20c866"
+    },
+    {
+      "clock_id": "server-monotonic:5435bf5a14054a0586ffde7c8e20c866",
+      "dropped_events": 235693,
+      "gap": null,
+      "high_watermark": 335693,
+      "next_cursor": 255693,
+      "oldest_cursor": 235694,
+      "schema_version": 1,
+      "server_instance_id": "5435bf5a14054a0586ffde7c8e20c866"
+    },
+    {
+      "clock_id": "server-monotonic:5435bf5a14054a0586ffde7c8e20c866",
+      "dropped_events": 235693,
+      "gap": null,
+      "high_watermark": 335693,
+      "next_cursor": 265693,
+      "oldest_cursor": 235694,
+      "schema_version": 1,
+      "server_instance_id": "5435bf5a14054a0586ffde7c8e20c866"
+    },
+    {
+      "clock_id": "server-monotonic:5435bf5a14054a0586ffde7c8e20c866",
+      "dropped_events": 235693,
+      "gap": null,
+      "high_watermark": 335693,
+      "next_cursor": 275693,
+      "oldest_cursor": 235694,
+      "schema_version": 1,
+      "server_instance_id": "5435bf5a14054a0586ffde7c8e20c866"
+    },
+    {
+      "clock_id": "server-monotonic:5435bf5a14054a0586ffde7c8e20c866",
+      "dropped_events": 235693,
+      "gap": null,
+      "high_watermark": 335693,
+      "next_cursor": 285693,
+      "oldest_cursor": 235694,
+      "schema_version": 1,
+      "server_instance_id": "5435bf5a14054a0586ffde7c8e20c866"
+    },
+    {
+      "clock_id": "server-monotonic:5435bf5a14054a0586ffde7c8e20c866",
+      "dropped_events": 235693,
+      "gap": null,
+      "high_watermark": 335693,
+      "next_cursor": 295693,
+      "oldest_cursor": 235694,
+      "schema_version": 1,
+      "server_instance_id": "5435bf5a14054a0586ffde7c8e20c866"
+    },
+    {
+      "clock_id": "server-monotonic:5435bf5a14054a0586ffde7c8e20c866",
+      "dropped_events": 235698,
+      "gap": null,
+      "high_watermark": 335698,
+      "next_cursor": 305693,
+      "oldest_cursor": 235699,
+      "schema_version": 1,
+      "server_instance_id": "5435bf5a14054a0586ffde7c8e20c866"
+    },
+    {
+      "clock_id": "server-monotonic:5435bf5a14054a0586ffde7c8e20c866",
+      "dropped_events": 235698,
+      "gap": null,
+      "high_watermark": 335698,
+      "next_cursor": 315693,
+      "oldest_cursor": 235699,
+      "schema_version": 1,
+      "server_instance_id": "5435bf5a14054a0586ffde7c8e20c866"
+    },
+    {
+      "clock_id": "server-monotonic:5435bf5a14054a0586ffde7c8e20c866",
+      "dropped_events": 235698,
+      "gap": null,
+      "high_watermark": 335698,
+      "next_cursor": 325693,
+      "oldest_cursor": 235699,
+      "schema_version": 1,
+      "server_instance_id": "5435bf5a14054a0586ffde7c8e20c866"
+    },
+    {
+      "clock_id": "server-monotonic:5435bf5a14054a0586ffde7c8e20c866",
+      "dropped_events": 235698,
+      "gap": null,
+      "high_watermark": 335698,
+      "next_cursor": 335693,
+      "oldest_cursor": 235699,
+      "schema_version": 1,
+      "server_instance_id": "5435bf5a14054a0586ffde7c8e20c866"
+    }
+  ]
+}

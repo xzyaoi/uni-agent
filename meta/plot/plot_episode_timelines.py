@@ -21,14 +21,16 @@ COLORS = {
 
 
 def plot(sources, output):
+    if len(sources) != 1:
+        raise ValueError('Render one benchmark per figure.')
     datasets = [json.loads(path.read_text()) for path in sources]
     plt.rcParams.update({'font.family': ['Roboto', 'DejaVu Sans'],
-                         'font.size': 11, 'svg.fonttype': 'none',
+                         'font.size': 12, 'svg.fonttype': 'none',
                          'pdf.fonttype': 42, 'axes.spines.top': False,
                          'axes.spines.right': False})
     rows = max(len(data['points']) for data in datasets)
     xmax = max(e['lifetime_s'] for data in datasets for p in data['points'] for e in p['episodes']) * 1.025
-    fig, axes = plt.subplots(rows, len(datasets), figsize=(9 * len(datasets), 2 * rows + 1.6),
+    fig, axes = plt.subplots(rows, len(datasets), figsize=(9 * len(datasets), 5.5),
                              squeeze=False, sharex=True)
     selections = []
     starts = []
@@ -43,7 +45,7 @@ def plot(sources, output):
                     if intervals:
                         ax.broken_barh(intervals, (4 - index - .32, .64),
                                        facecolors=color, edgecolors='none')
-                selections.append({'benchmark': benchmark, 'campaign': data['campaign'],
+                selections.append({'benchmark': benchmark, 'campaign': point.get('campaign', data['campaign']),
                                    'concurrent_trajectories': point['episode_ceiling'],
                                    'lane': 'e%d' % index, 'sandbox_id': episode['sandbox_id'],
                                    'trace_file': episode['trace_file'], 'lifetime_s': episode['lifetime_s'],
@@ -57,28 +59,34 @@ def plot(sources, output):
             title = f"{point['episode_ceiling']} concurrent trajectories"
             if benchmark == 'SWE-bench Pro V2' and point['episode_ceiling'] == 512:
                 title += ' (run had engine failure)'
-            ax.set_title(title, loc='left', fontsize=12)
+            ax.set_title(title, loc='left', fontsize=14, pad=5)
             ax.set(xlim=(0, xmax), ylim=(-.55, 3.55), yticks=[0, 1, 2, 3],
                    yticklabels=['e4', 'e3', 'e2', 'e1'])
             ax.spines['left'].set_visible(False)
-            ax.tick_params(axis='y', length=0)
+            ax.tick_params(axis='y', labelsize=12, length=0)
+            ax.tick_params(axis='x', labelsize=14)
             ax.xaxis.set_major_locator(MaxNLocator(nbins=6))
             ax.set_axisbelow(True)
             ax.grid(axis='x', linestyle=':', color='#CFCECE')
         for row in range(len(data['points']), rows):
             axes[row, col].set_visible(False)
-        axes[len(data['points']) - 1, col].set_xlabel('Time since sandbox request (s)')
-        fig.text((col + .5) / len(datasets), .88, benchmark, ha='center', fontsize=17)
+        axes[len(data['points']) - 1, col].set_xlabel('Time since sandbox request (s)', fontsize=17.6)
+        fig.text((col + .5) / len(datasets), .82 if len(datasets) > 1 else .76,
+                 benchmark, ha='center', fontsize=16)
     handles = [Patch(facecolor=color, label=phase) for phase, color in COLORS.items()]
-    fig.legend(handles=handles, loc='upper center', ncol=5, frameon=False, bbox_to_anchor=(.5, .98))
-    fig.text(.5, .025,
+    fig.legend(handles=[handles[i] for i in (0, 3, 1, 4, 2)], loc='upper center',
+               ncol=3, frameon=False, bbox_to_anchor=(.5, 1.0), fontsize=17.6,
+               handlelength=1.0, columnspacing=1.0, labelspacing=.45)
+    fig.text(.5, .015,
              'Four median-near, complete, error-free-call traces per panel; episodes are not task-matched.\n'
              'Verification is an inferred phase; LLM Wait includes untraced overhead. Deletion time excluded.',
-             ha='center', fontsize=10)
-    fig.subplots_adjust(left=.055, right=.985, bottom=.14, top=.81, hspace=.58, wspace=.16)
+             ha='center', fontsize=9)
+    fig.subplots_adjust(left=.11 / len(datasets), right=.98, bottom=.23,
+                        top=.75 if len(datasets) > 1 else .69,
+                        hspace=.70, wspace=.16)
     output.parent.mkdir(parents=True, exist_ok=True)
     for ext in ('svg', 'png', 'pdf'):
-        fig.savefig(output.with_suffix('.' + ext), dpi=220, facecolor='white')
+        fig.savefig(output.with_suffix('.' + ext), dpi=300, facecolor='white')
     plt.close(fig)
     for suffix, records in [('selection', selections), ('cold_start_summary', starts)]:
         with output.with_name(output.name + '_' + suffix + '.csv').open('w') as stream:
@@ -93,6 +101,12 @@ if __name__ == '__main__':
     parser.add_argument('--data', type=Path, nargs='+', default=[
         ROOT / 'data/episode_timelines_20261015.json',
         ROOT / 'data/episode_timelines_verified_20261016.json'])
-    parser.add_argument('--output', type=Path, default=ROOT / 'figure/episode_timelines')
+    parser.add_argument('--output', type=Path, help='Output stem for a single --data source')
     args = parser.parse_args()
-    plot(args.data, args.output)
+    if args.output is not None and len(args.data) != 1:
+        parser.error('--output requires exactly one --data source')
+    for source in args.data:
+        benchmark = json.loads(source.read_text()).get('benchmark', 'SWE-bench Pro V2')
+        suffix = 'verified' if benchmark == 'SWE-bench Verified' else 'pro'
+        output = args.output or ROOT / 'figure' / f'episode_timelines_{suffix}'
+        plot([source], output)

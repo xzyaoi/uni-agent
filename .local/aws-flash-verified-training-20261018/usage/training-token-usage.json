@@ -1,0 +1,20 @@
+{
+  "trajectory_files": 1024,
+  "retained_tokens": {
+    "model_token_count": 1600566,
+    "response_len": 13124067,
+    "prompt_len": 1530152
+  },
+  "peak_overlapping_intervals": {
+    "trial": 512,
+    "agent": 483
+  },
+  "total_inference_tokens": null,
+  "historical_gpu_utilization_percent": null,
+  "notes": [
+    "model_token_count is generated tokens retained by response masks",
+    "response_len includes tool and observation tokens",
+    "prompt_len counts retained initial prompts, not every model call",
+    "Harbor agent total_tokens retains only the last call; not cumulative"
+  ]
+}

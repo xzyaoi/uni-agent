@@ -1,0 +1,68 @@
+{
+  "ImageId": "ami-0d04783cd08f6525a",
+  "InstanceType": "m5d.metal",
+  "MinCount": 1,
+  "MaxCount": 1,
+  "KeyName": "flash-sandbox-bench",
+  "ClientToken": "uni-agent-flash-20261018-0a98b1ac9fe1469183ee6e260af2cc47",
+  "NetworkInterfaces": [
+    {
+      "DeviceIndex": 0,
+      "SubnetId": "subnet-0f931d53df7786f28",
+      "Groups": [
+        "sg-08d4faa4e1fafde03"
+      ],
+      "AssociatePublicIpAddress": true,
+      "DeleteOnTermination": true
+    }
+  ],
+  "MetadataOptions": {
+    "HttpTokens": "required",
+    "HttpEndpoint": "enabled",
+    "HttpPutResponseHopLimit": 1
+  },
+  "TagSpecifications": [
+    {
+      "ResourceType": "instance",
+      "Tags": [
+        {
+          "Key": "Name",
+          "Value": "uni-agent-flash-scheduler-20261018"
+        },
+        {
+          "Key": "Purpose",
+          "Value": "uni-agent-flash-sandbox-with-scheduler"
+        },
+        {
+          "Key": "SourceAMI",
+          "Value": "ami-0d04783cd08f6525a"
+        },
+        {
+          "Key": "GitCommit",
+          "Value": "7d9cba5d328a12632e0a0e29297f4a4891a02e37"
+        }
+      ]
+    },
+    {
+      "ResourceType": "volume",
+      "Tags": [
+        {
+          "Key": "Name",
+          "Value": "uni-agent-flash-scheduler-20261018"
+        },
+        {
+          "Key": "Purpose",
+          "Value": "uni-agent-flash-sandbox-with-scheduler"
+        },
+        {
+          "Key": "SourceAMI",
+          "Value": "ami-0d04783cd08f6525a"
+        },
+        {
+          "Key": "GitCommit",
+          "Value": "7d9cba5d328a12632e0a0e29297f4a4891a02e37"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+[
+  {
+    "name": "harbor",
+    "harbor_executable": "/iopsstor/scratch/cscs/xyao/venvs/uni-harbor-v2/bin/harbor",
+    "harbor_env": "uni_agent.tasks.harbor.verified_flash_environment:VerifiedFlashEnvironment",
+    "artifacts_dir": "/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_verified_flash_2n45m_c512_t25_metrics_20261018/harbor",
+    "override_cpus": 4,
+    "override_memory_mb": 8192,
+    "agent": {
+      "name": "uni_agent.tasks.harbor.react_agent:UniAgentReAct",
+      "timeout_sec": 900,
+      "kwargs": {
+        "max_steps": 25,
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    }
+  }
+]

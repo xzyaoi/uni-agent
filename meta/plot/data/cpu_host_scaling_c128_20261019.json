@@ -1,0 +1,51 @@
+{
+  "benchmark": "SWE-bench Pro V2",
+  "model": "Qwen3.5-9B",
+  "rollout_gpus": 8,
+  "groups": 128,
+  "responses": 8,
+  "rows": [
+    {
+      "runtime_count": 1,
+      "vcpus": 96,
+      "episode_ceiling": 128,
+      "state": "completed",
+      "wall_seconds": 1912.4070584889269,
+      "completed_episodes": 1024,
+      "verified_episodes": 1020,
+      "incomplete_verifications": 4,
+      "usable_episodes": 1023,
+      "sandbox_cpu_busy_pct_mean": 68.35359331960572,
+      "sandbox_cpu_busy_pct_peak_1min": 99.90815549153838,
+      "cpu_minutes": 31,
+      "rollout_sm_active_pct_mean": 7.807597530947863,
+      "gpu_minutes": 31,
+      "gpu_minutes_with_all_eight_devices": 31,
+      "peak_anonymous_memory_gib": 161.15755081176758,
+      "memory_full_coverage_5s_bins": 383,
+      "completed_episodes_per_minute": 32.12705147017515,
+      "verified_episodes_per_minute": 32.001555175369774
+    },
+    {
+      "runtime_count": 2,
+      "vcpus": 192,
+      "episode_ceiling": 128,
+      "state": "completed",
+      "wall_seconds": 1446.2901608978864,
+      "completed_episodes": 1024,
+      "verified_episodes": 1024,
+      "incomplete_verifications": 0,
+      "usable_episodes": 1024,
+      "sandbox_cpu_busy_pct_mean": 31.037439316549825,
+      "sandbox_cpu_busy_pct_peak_1min": 61.734088901159055,
+      "cpu_minutes": 23,
+      "rollout_sm_active_pct_mean": 8.683804500060894,
+      "gpu_minutes": 23,
+      "gpu_minutes_with_all_eight_devices": 23,
+      "peak_anonymous_memory_gib": 173.96133422851562,
+      "memory_full_coverage_5s_bins": 289,
+      "completed_episodes_per_minute": 42.48110210599566,
+      "verified_episodes_per_minute": 42.48110210599566
+    }
+  ]
+}

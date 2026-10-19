@@ -1,0 +1,145 @@
+{
+  "ReservationId": "r-044ea9a3cc908990c",
+  "OwnerId": "087572104165",
+  "Groups": [],
+  "Instances": [
+    {
+      "Architecture": "x86_64",
+      "BlockDeviceMappings": [],
+      "ClientToken": "uni-agent-flash-20261018-0a98b1ac9fe1469183ee6e260af2cc47",
+      "EbsOptimized": false,
+      "EnaSupport": true,
+      "Hypervisor": "xen",
+      "NetworkInterfaces": [
+        {
+          "Attachment": {
+            "AttachTime": "2026-10-18T16:27:02+00:00",
+            "AttachmentId": "eni-attach-060f2ede1044a142f",
+            "DeleteOnTermination": true,
+            "DeviceIndex": 0,
+            "Status": "attaching",
+            "NetworkCardIndex": 0
+          },
+          "Description": "",
+          "Groups": [
+            {
+              "GroupId": "sg-08d4faa4e1fafde03",
+              "GroupName": "flash-sandbox-bench"
+            }
+          ],
+          "Ipv6Addresses": [],
+          "MacAddress": "02:ff:c9:ed:89:31",
+          "NetworkInterfaceId": "eni-0e2ba8fb517adafad",
+          "OwnerId": "087572104165",
+          "PrivateDnsName": "ip-172-31-3-137.ec2.internal",
+          "PrivateIpAddress": "172.31.3.137",
+          "PrivateIpAddresses": [
+            {
+              "Primary": true,
+              "PrivateDnsName": "ip-172-31-3-137.ec2.internal",
+              "PrivateIpAddress": "172.31.3.137"
+            }
+          ],
+          "SourceDestCheck": true,
+          "Status": "in-use",
+          "SubnetId": "subnet-0f931d53df7786f28",
+          "VpcId": "vpc-0bed9ca38b8cc7a62",
+          "InterfaceType": "interface",
+          "Operator": {
+            "Managed": false
+          }
+        }
+      ],
+      "RootDeviceName": "/dev/sda1",
+      "RootDeviceType": "ebs",
+      "SecurityGroups": [
+        {
+          "GroupId": "sg-08d4faa4e1fafde03",
+          "GroupName": "flash-sandbox-bench"
+        }
+      ],
+      "SourceDestCheck": true,
+      "StateReason": {
+        "Code": "pending",
+        "Message": "pending"
+      },
+      "Tags": [
+        {
+          "Key": "GitCommit",
+          "Value": "7d9cba5d328a12632e0a0e29297f4a4891a02e37"
+        },
+        {
+          "Key": "Name",
+          "Value": "uni-agent-flash-scheduler-20261018"
+        },
+        {
+          "Key": "Purpose",
+          "Value": "uni-agent-flash-sandbox-with-scheduler"
+        },
+        {
+          "Key": "SourceAMI",
+          "Value": "ami-0d04783cd08f6525a"
+        }
+      ],
+      "VirtualizationType": "hvm",
+      "CpuOptions": {
+        "CoreCount": 48,
+        "ThreadsPerCore": 2
+      },
+      "CapacityReservationSpecification": {
+        "CapacityReservationPreference": "open"
+      },
+      "MetadataOptions": {
+        "State": "pending",
+        "HttpTokens": "required",
+        "HttpPutResponseHopLimit": 1,
+        "HttpEndpoint": "enabled",
+        "HttpProtocolIpv6": "disabled",
+        "InstanceMetadataTags": "disabled"
+      },
+      "EnclaveOptions": {
+        "Enabled": false
+      },
+      "BootMode": "uefi-preferred",
+      "PrivateDnsNameOptions": {
+        "HostnameType": "ip-name",
+        "EnableResourceNameDnsARecord": false,
+        "EnableResourceNameDnsAAAARecord": false
+      },
+      "MaintenanceOptions": {
+        "AutoRecovery": "default",
+        "RebootMigration": "default"
+      },
+      "CurrentInstanceBootMode": "legacy-bios",
+      "Operator": {
+        "Managed": false
+      },
+      "InstanceId": "i-0db8e7f4fd51493ea",
+      "ImageId": "ami-0d04783cd08f6525a",
+      "State": {
+        "Code": 0,
+        "Name": "pending"
+      },
+      "PrivateDnsName": "ip-172-31-3-137.ec2.internal",
+      "PublicDnsName": "",
+      "StateTransitionReason": "",
+      "KeyName": "flash-sandbox-bench",
+      "AmiLaunchIndex": 0,
+      "ProductCodes": [],
+      "InstanceType": "m5d.metal",
+      "LaunchTime": "2026-10-18T16:27:02+00:00",
+      "Placement": {
+        "AvailabilityZoneId": "use1-az1",
+        "GroupName": "",
+        "Tenancy": "default",
+        "AvailabilityZone": "us-east-1a"
+      },
+      "Monitoring": {
+        "State": "disabled"
+      },
+      "SubnetId": "subnet-0f931d53df7786f28",
+      "VpcId": "vpc-0bed9ca38b8cc7a62",
+      "PrivateIpAddress": "172.31.3.137"
+    }
+  ]
+}

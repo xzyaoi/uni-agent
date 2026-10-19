@@ -1,0 +1,96 @@
+{
+  "job_id": "3692513",
+  "start_utc": "2026-10-18T19:21:21+00:00",
+  "end_utc": "2026-10-18T20:06:33+00:00",
+  "elapsed_seconds": 2712.0,
+  "state": "TIMEOUT",
+  "configured_global_concurrency": 512,
+  "batch": {
+    "prompts": 64,
+    "rollouts_per_prompt": 8,
+    "samples": 512
+  },
+  "sandbox_usage": {
+    "created_vms": 1024,
+    "destroyed_vms": 1024,
+    "peak_acknowledged_resident_vms": 512,
+    "sampled_peak_running_vms": 512,
+    "average_acknowledged_resident_vms": 214.31784660766962,
+    "resident_vm_hours": 161.45277777777778,
+    "first_vm_created_utc": "2026-10-18T19:30:17+00:00",
+    "last_vm_destroyed_utc": "2026-10-18T20:02:56+00:00",
+    "resolution": "Successful VM lifecycle logs, second-resolution timestamps"
+  },
+  "aws_host_usage": {
+    "instance_type": "m5d.metal",
+    "cpu_cores": 96,
+    "average_cpu_cores": 26.507566310226157,
+    "average_cpu_percent": 27.612048239818915,
+    "sampled_peak_cpu_cores": 90.981,
+    "average_memory_gib": 115.06720761699546,
+    "sampled_peak_memory_gib": 278.3134765625,
+    "total_memory_gib": 377.4970703125,
+    "sample_count": 91,
+    "sample_interval_seconds": 30,
+    "average_method": "Trapezoidal integration, linearly interpolated run boundaries",
+    "scope": "Whole AWS host gauges, includes worker and host overhead"
+  },
+  "clariden_usage": {
+    "nodes": 2,
+    "gpus": 8,
+    "allocated_node_hours": 1.5066666666666666,
+    "allocated_gpu_hours": 6.026666666666666,
+    "allocated_cpu_core_hours": 433.92,
+    "total_cpu_time": "04:59:43",
+    "training_step_max_rss_gib": 397.73980712890625,
+    "node_energy_joules": 10585191,
+    "node_energy_kwh": 2.9403308333333333,
+    "historical_gpu_utilization_percent": null,
+    "training_step_max_rss_scope": "Slurm MaxRSS: maximum sampled RSS of one task, not a sum across nodes or GPU VRAM"
+  },
+  "telemetry_coverage": {
+    "retained_events": 100000,
+    "retained_resource_samples": 360,
+    "first_page": {
+      "clock_id": "server-monotonic:5435bf5a14054a0586ffde7c8e20c866",
+      "dropped_events": 235693,
+      "gap": {
+        "first_missing_cursor": 1,
+        "last_missing_cursor": 235693,
+        "reason": "retention"
+      },
+      "high_watermark": 335693,
+      "next_cursor": 245693,
+      "oldest_cursor": 235694,
+      "schema_version": 1,
+      "server_instance_id": "5435bf5a14054a0586ffde7c8e20c866"
+    },
+    "note": "Scheduler ring lost early samples; full-run host gauges and VM concurrency recovered from durable logs"
+  },
+  "limitations": [
+    "Host CPU/RAM peaks are 30-second sampled peaks, not continuous maxima",
+    "VM hours use acknowledged created/restored/destroyed lifecycle events, not admission queue time",
+    "GPU hours measure allocation; utilization percentages were not retained",
+    "No optimizer step completion or checkpoint was recorded"
+  ],
+  "training_usage": {
+    "trajectory_files": 1024,
+    "retained_tokens": {
+      "model_token_count": 1600566,
+      "response_len": 13124067,
+      "prompt_len": 1530152
+    },
+    "peak_overlapping_intervals": {
+      "trial": 512,
+      "agent": 483
+    },
+    "total_inference_tokens": null,
+    "historical_gpu_utilization_percent": null,
+    "notes": [
+      "model_token_count is generated tokens retained by response masks",
+      "response_len includes tool and observation tokens",
+      "prompt_len counts retained initial prompts, not every model call",
+      "Harbor agent total_tokens retains only the last call; not cumulative"
+    ]
+  }
+}

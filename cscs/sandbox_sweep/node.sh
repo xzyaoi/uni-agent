@@ -19,8 +19,14 @@ if [[ ${SWEEP_DIAGNOSTICS:-False} = True ]]; then
 fi
 export TRITON_CACHE_DIR=/tmp/triton TORCHINDUCTOR_CACHE_DIR=/tmp/torchinductor HF_HOME=/tmp/hf
 export XDG_CACHE_HOME=/tmp/xdg-cache MEGATRON_CONFIG_LOCK_DIR=/tmp/megatron-config-locks
-export NO_PROXY="${NO_PROXY:+${NO_PROXY},}ec2-3-229-113-27.compute-1.amazonaws.com,127.0.0.1,localhost"
+sweep_agentenv_host=${AGENTENV_ENDPOINT#*://}
+sweep_agentenv_host=${sweep_agentenv_host%%/*}
+sweep_agentenv_host=${sweep_agentenv_host%%:*}
+export NO_PROXY="${NO_PROXY:+${NO_PROXY},}${sweep_agentenv_host},127.0.0.1,localhost"
 export no_proxy="${NO_PROXY}"
+if [[ ${AGENTENV_EXPECTED_NODE_COUNT:-0} -gt 0 ]]; then
+    python3 "${RUN_DIR}/gateway_preflight.py" --expected-nodes "${AGENTENV_EXPECTED_NODE_COUNT}"
+fi
 export UNI_AGENT_TRACE_DIR="${RUN_DIR}/telemetry/model-calls"
 export AGENTENV_TRACE_DIR="${RUN_DIR}/native-traces"
 export RAY_ADDRESS=auto

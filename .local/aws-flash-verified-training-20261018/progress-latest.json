@@ -1,0 +1,22 @@
+{
+  "observed_at": "2026-10-18T20:43:50.957819+00:00",
+  "job_id": "3692513",
+  "state": "TIMEOUT",
+  "elapsed": "00:45:12",
+  "time_limit": "00:45:00",
+  "completed_trial_results": 1024,
+  "saved_trajectories": 1024,
+  "unique_completed_tasks": 128,
+  "reward_counts": {
+    "1.0": 93,
+    "0.0": 923,
+    "missing": 8
+  },
+  "trial_exception_counts": {
+    "AgentTimeoutError": 256,
+    "RewardFileNotFoundError": 8
+  },
+  "checkpoints": [],
+  "active_sandboxes": 0,
+  "worker_status": "healthy"
+}

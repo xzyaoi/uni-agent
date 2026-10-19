@@ -1,0 +1,48 @@
+{
+  "sha256": "7d56dd29b1d7b4df3e7d0ca1c497b74d9c48c2f32892ce756ccd1aec3f3a08ab",
+  "sources": [
+    {
+      "runtime_count": 1,
+      "campaign": "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128",
+      "job_id": "3695409",
+      "model_ready_at": 1792375131.1129942,
+      "finished_at": 1792377044.280144,
+      "files": {
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/result.json": "eb24b2bebfed684ab0d70a5415c165f5ca5a7ab83e16bbca8b653c218f5283fd",
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/manifest.json": "41ac390d844557c94eea377bf5e462e40e6578f6438e826a5abb554a507abcb5",
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/settings.json": "55bd00772fedbca2c273383f36c3c4325d40acda0d70028f66570cdb81bf62c6",
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/cluster_metrics_1min.csv": "9b397ef9c5ec95cdd9c3a4e0affdc0ea5a9c966dd69ad75de6d61d7ece872d97",
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/cluster_metric_definitions.json": "042e25875b2208bf92fff34977b3569e3dc7b4b413a984cd303233fc5e6132b3",
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/preparation/measurement-manifest.json": "b9f0f0b093ee802cc6a9933e3fc35ad740e5c600a52bdf9bba9a98a822056489",
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/inputs/demand.jsonl.gz": "40b862522e22eb89144d1e3e5a4d3f060153b56007b7f228671ab42434090715",
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/inputs/runtime-1/host.jsonl.gz": "c9efc9652cbc16cc4f5ef6617315b721f21b46b9c32c2fbcc45d7eeed306e873"
+      }
+    },
+    {
+      "runtime_count": 2,
+      "campaign": "outputs/pro_multinode_2x_20261018",
+      "job_id": "3694759",
+      "model_ready_at": 1792367355.684057,
+      "finished_at": 1792368802.7061884,
+      "files": {
+        "outputs/pro_multinode_2x_20261018/results/groups-16/result.json": "66c27ddfbae1a14c253efb69b241a75eadd078342b8392134a4ea343bd17385b",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/manifest.json": "8e89a5f61cc9e68177adb34e220e7f8ed6f286879f7e2e18c61f4ce41619f597",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/settings.json": "9a106e4c88008b14e3bf2d4c8f80d5d159fa977f21a835064e4f6fba66af787f",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/cluster_metrics_1min.csv": "928226397fb3bf59b1e8dc37893765725f316b157e8826420ea6e44cdcd2da6f",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/cluster_metric_definitions.json": "98c933127156a4cc0bfa536a182eed6d72bd2c190d678569317ee0859b60b909",
+        "outputs/pro_multinode_2x_20261018/preparation/measurement-manifest.json": "b9f0f0b093ee802cc6a9933e3fc35ad740e5c600a52bdf9bba9a98a822056489",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/inputs/demand.jsonl.gz": "9f75c776eddc22b9918c80061014715cd152617568bc1e7c8813e3119ea449c5",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/inputs/runtime-1/host.jsonl.gz": "3f9a09f3452685fbf76d4a68c87c5134f175de54f2c7aac670fcd07c575110f9",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/inputs/runtime-2/host.jsonl.gz": "8ee756b9a9dcd453d251892a42a0601a870f17393484b559241e39375af3bc7f"
+      }
+    }
+  ],
+  "comparison": "One completed observation per host count; two-host point is from the preceding sweep. The planned overnight two-host repetition has no completed result in local exports.",
+  "matching": "Identical selected task order, model config hash, pinned measurement manifest, and settings except output/task-config paths. Task-config hashes differ between runs.",
+  "throughput": "Terminal attempts or completed reward verifications / rollout_wall_seconds * 60; model initialization excluded, native sandbox setup included. Verification includes reward zero.",
+  "cpu": "Mean full-node-coverage one-minute CPU busy bins wholly within the rollout window; normalized to 96 or 192 total vCPUs.",
+  "gpu": "Mean of DCGM SM-active sample means per complete minute within the rollout window, rebuilt from raw demand exports for both runs. Missing samples are not zero-filled.",
+  "memory": "Peak sum across active hosts of aenv.service memory.stat anon, using per-host means in five-second bins with all hosts present; rollout-window samples only; file cache excluded.",
+  "selection_sha256": "1d82ee3b64bd91f1548ccdb7f265c1509e108b5218e23a438caaeeb2d7c0781c",
+  "model_config_sha256": "d0883072e01861ed0b2d47be3c16c36a8e81c224c7ffaa310c6558fb3f932b05"
+}

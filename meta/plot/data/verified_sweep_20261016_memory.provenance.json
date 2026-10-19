@@ -1,0 +1,48 @@
+{
+  "sha256": "9c12d35bd84da8daa6ee5ead5c3aef76ecda9c7b15300c308d339ec58880435c",
+  "metric": "Maximum aenv.service memory.stat anon bytes / 2**30 over raw host samples inside each rollout window",
+  "sources": [
+    {
+      "episode_ceiling": 64,
+      "source": "outputs/verified_sweep_20261015_235315Z/groups-8/inputs/cloudlab.jsonl.gz",
+      "sha256": "bd5f2d038e4826b46e2a3bc62c0cbfa82cf3c7ba4ebcdf61b9b3f6b7dc5b3713",
+      "model_ready_at": 1792108838.6996582,
+      "finished_at": 1792110459.3422854
+    },
+    {
+      "episode_ceiling": 128,
+      "source": "outputs/verified_sweep_20261015_235315Z/groups-16/inputs/cloudlab.jsonl.gz",
+      "sha256": "e7d1073bacab8d5c03f69222ce1f4be57d36d1d7f06d60b0597e15f364aa60a5",
+      "model_ready_at": 1792111310.4257438,
+      "finished_at": 1792112326.2376049
+    },
+    {
+      "episode_ceiling": 256,
+      "campaign": "verified_rerun_c256_retry_20261016_100619Z",
+      "job_id": "3674787",
+      "source": "outputs/verified_rerun_c256_retry_20261016_100619Z/groups-32/inputs/cloudlab.jsonl.gz",
+      "sha256": "4566ef0a4194f02940d90c12a7a48f0cd3ea62c128c777fc22d3ea0e8555af7c",
+      "model_ready_at": 1792145971.5944738,
+      "finished_at": 1792146717.3681135
+    },
+    {
+      "episode_ceiling": 512,
+      "source": "outputs/verified_sweep_20261015_235315Z/groups-64/inputs/cloudlab.jsonl.gz",
+      "sha256": "bb7697d201e4f7fd64dfeaf129b0e72e45181fb03fc3199ea34cbfcc6e9ecfd5",
+      "model_ready_at": 1792115093.1074939,
+      "finished_at": 1792115989.6067998
+    }
+  ],
+  "superseded_256_observation": {
+    "episode_ceiling": "256",
+    "peak_anonymous_memory_gib": "144.90447616577148",
+    "host_samples": "222"
+  },
+  "superseded_256_source": {
+    "episode_ceiling": 256,
+    "source": "outputs/verified_sweep_20261015_235315Z/groups-32/inputs/cloudlab.jsonl.gz",
+    "sha256": "fd11510461ebb450ede29ebace52af57ef7e61aa9851a573b448a7786b18f915",
+    "model_ready_at": 1792113146.106002,
+    "finished_at": 1792114254.9398043
+  }
+}

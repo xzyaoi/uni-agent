@@ -1,0 +1,29 @@
+{
+  "verified_at": "2026-10-18T16:45:16.409521+00:00",
+  "commit": "7d9cba5d328a12632e0a0e29297f4a4891a02e37",
+  "image": "ghcr.io/swe-images/sweb.eval.x86_64.astropy_1776_astropy-13033",
+  "backend": "firecracker",
+  "scheduler_address": "http://127.0.0.1:8090",
+  "create_seconds": 1.236,
+  "exec_stdout": "LATEST_CODE_OKPython 3.11.5\n",
+  "persistent_shell_verified": true,
+  "guest_agent_sha256": "87d492bb425145820e0071aec31bc5b252f49336d7b83185da4c4e632e4d199b",
+  "hibernate_resume_verified": true,
+  "sandbox_and_snapshot_cleanup_verified": true,
+  "dashboard": {
+    "hibernated": 0,
+    "live": 0,
+    "nodes_available": 1,
+    "nodes_total": 1,
+    "prepared_images": 256,
+    "prepared_images_known_physical_bytes": 344734863360,
+    "prepared_images_physical_bytes": 344734863360,
+    "prepared_images_physical_complete": true,
+    "prepared_images_unknown_size": 0,
+    "sandboxes_total": 0,
+    "stopped": 0,
+    "transitional": 0,
+    "unknown": 0
+  },
+  "passed": true
+}

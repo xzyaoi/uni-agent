@@ -1,0 +1,52 @@
+{
+  "submitted_at": "2026-10-18T17:04:16.528146+00:00",
+  "job_id": "3691843",
+  "state": "CANCELLED",
+  "cluster": "clariden",
+  "partition": "preemptable",
+  "account": "infra02",
+  "model": "Qwen3.5-27B",
+  "benchmark": "SWE-bench Pro V2",
+  "dataset_rows": 642,
+  "nodes": 2,
+  "gpus": 8,
+  "time_limit": "00:45:00",
+  "trainer_mode": "colocate_async",
+  "tp": 4,
+  "pp": 2,
+  "rollout_tp": 4,
+  "prompts_per_batch": 4,
+  "responses_per_prompt": 2,
+  "concurrency": 8,
+  "training_steps_target": 5,
+  "checkpoint_every_steps": 1,
+  "remote_run_dir": "/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_swepro_flash_2n45m_20261018",
+  "output": "/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_swepro_flash_2n45m_20261018/training.out",
+  "aws_instance_id": "i-0db8e7f4fd51493ea",
+  "aws_ami": "ami-0d04783cd08f6525a",
+  "aws_commit": "7d9cba5d328a12632e0a0e29297f4a4891a02e37",
+  "scheduler_endpoint": "http://172.28.38.18:28090/",
+  "relay_bridge_unit": "uni-agent-flash-training-20261018-socketbridge.service",
+  "aws_pro_image_preflight_passed": true,
+  "previous_attempts": [
+    {
+      "job_id": "3691834",
+      "state": "FAILED",
+      "elapsed": "00:00:13",
+      "reason": "launch preflight accessed namespace-package __file__; fixed before model startup",
+      "remote_receipts": "/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_swepro_flash_2n45m_20261018/attempts/3691834"
+    }
+  ],
+  "phase": "superseded by requested Verified concurrency-512 run",
+  "nodes_allocated": [
+    "nid007602",
+    "nid007620"
+  ],
+  "two_node_preflight_passed": true,
+  "verified_at": "2026-10-18T17:07:28.336482+00:00",
+  "ray_job_id": "raysubmit_ea1m2tbPU1Q7GG35",
+  "megatron_import_passed": true,
+  "ray_submission_passed": true,
+  "cancelled_at": "2026-10-18T17:19:38.384515+00:00",
+  "replacement_run_dir": "/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_verified_flash_2n45m_c512_20261018"
+}

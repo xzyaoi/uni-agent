@@ -1,0 +1,16 @@
+{
+  "task_path": "/iopsstor/scratch/cscs/xyao/data/uni_agent/harbor_verified_native_20261016_v2/tasks/astropy__astropy-12907",
+  "image": "ghcr.io/swe-images/sweb.eval.x86_64.astropy_1776_astropy-12907:latest",
+  "endpoint": "http://172.28.38.18:28090/",
+  "backend": "firecracker",
+  "cpus": 4,
+  "memory_mb": 8192,
+  "passed": true,
+  "start_seconds": 8.174,
+  "sandbox_id": "268d4481-098a-4cfb-bc05-80dfbc6e6cfe",
+  "stdout": "/root/.local/bin/uv\nuv 0.7.13\nPython 3.11.5\nVERIFIED_PREFLIGHT_OK\n",
+  "official_verifier_shell_syntax": "passed",
+  "official_embedded_parser_syntax": "passed",
+  "cleanup_requested": true,
+  "elapsed_seconds": 13.891
+}

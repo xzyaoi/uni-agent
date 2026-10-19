@@ -13,10 +13,11 @@ set -euo pipefail
 set +x
 set -a
 source "${SLURM_SUBMIT_DIR}/launch.env"
+sweep_agentenv_endpoint=${AGENTENV_ENDPOINT}
 source "${AGENTENV_SECRET_DIR}/client.env"
 set +a
 # Explicit run endpoint takes precedence over the credential file's endpoint.
-export AGENTENV_ENDPOINT=http://ec2-3-229-113-27.compute-1.amazonaws.com:8000
+export AGENTENV_ENDPOINT=${sweep_agentenv_endpoint}
 export EDF_PATH="${REPO_DIR}"
 export TMPDIR=/tmp
 if [[ -n ${PREVIOUS_RUN_DIR:-} ]]; then
@@ -25,7 +26,7 @@ fi
 mapfile -t nodes < <(scontrol show hostnames "${SLURM_JOB_NODELIST}")
 export HEAD_NODE=${nodes[0]}
 set +e
-srun --nodes=2 --ntasks=2 --ntasks-per-node=1 --export=ALL --environment=harbor-swe-megatron-clariden bash "${RUN_DIR}/node.sh"
+srun --kill-on-bad-exit=1 --nodes=2 --ntasks=2 --ntasks-per-node=1 --export=ALL --environment=harbor-swe-megatron-clariden bash "${RUN_DIR}/node.sh"
 run_rc=$?
 set -e
 if [[ ${SWEEP_DIAGNOSTICS:-False} = True && -d ${RUN_DIR}/diagnostics ]]; then

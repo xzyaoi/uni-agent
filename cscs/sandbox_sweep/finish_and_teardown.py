@@ -75,7 +75,27 @@ def main():
                 record('waiting_for_points', submitted=points)
                 time.sleep(60)
                 continue
-            active = run(cluster + [shlex.join(['squeue', '-h', '-j', ','.join(points.values()), '-o', '%i|%T'])]).strip()
+            try:
+                active = run(cluster + [shlex.join(['squeue', '-h', '-j', ','.join(points.values()), '-o', '%i|%T'])]).strip()
+            except RuntimeError as exc:
+                if 'Invalid job id' not in str(exc):
+                    raise
+                # Finished jobs can age out of squeue. Require exact accounting
+                # records in terminal states before allowing archive/teardown.
+                accounting = run(cluster + [shlex.join([
+                    'sacct', '-X', '-n', '-P', '-j', ','.join(points.values()),
+                    '--format=JobIDRaw,State'])])
+                states = {}
+                for line in accounting.splitlines():
+                    fields = line.strip().split('|')
+                    if len(fields) >= 2 and fields[0] in points.values():
+                        states[fields[0]] = fields[1].split()[0].rstrip('+')
+                terminal = {'COMPLETED', 'FAILED', 'CANCELLED', 'TIMEOUT',
+                            'OUT_OF_MEMORY', 'NODE_FAIL', 'PREEMPTED', 'BOOT_FAIL'}
+                if set(states) != set(points.values()) or not all(
+                        state in terminal for state in states.values()):
+                    raise RuntimeError('Cannot confirm all jobs are terminal in sacct')
+                active = ''
             missing = [level for level in points
                        if not (output / ('groups-%d' % level) / 'scheduler-final.json').exists()]
             if active or missing:

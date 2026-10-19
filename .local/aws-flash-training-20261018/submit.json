@@ -1,0 +1,11 @@
+{
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=preemptable",
+    "--export=ALL",
+    "--chdir=/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_swepro_flash_2n45m_20261018",
+    "/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_swepro_flash_2n45m_20261018/batch.sh"
+  ],
+  "run_dir": "/iopsstor/scratch/cscs/xyao/uni-agent/runs/qwen35_27b_swepro_flash_2n45m_20261018"
+}
