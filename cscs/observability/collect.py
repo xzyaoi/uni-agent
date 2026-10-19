@@ -9,11 +9,102 @@ import re
 import shutil
 import signal
 import socket
+import struct
 import subprocess
 import threading
 import time
 import urllib.request
 from pathlib import Path
+
+
+def vllm_address(host, port):
+    if host in ("*", "0.0.0.0"):
+        host = "127.0.0.1"
+    elif host == "::":
+        host = "::1"
+    return ("[" + host + "]" if ":" in host else host) + ":" + str(port)
+
+
+def proc_vllm_candidates(proc_root="/proc"):
+    """Read only LISTEN sockets owned by Ray vLLM HTTP actors, never arbitrary ports."""
+    root = Path(proc_root)
+    inodes = set()
+    info = {"method": "procfs", "peer_process_count": 0, "unreadable_proc_entries": 0}
+    try:
+        processes = list(root.iterdir())
+    except OSError:
+        info["unreadable_proc_entries"] += 1
+        return [], info
+    for process in processes:
+        if not process.name.isdigit():
+            continue
+        tags = []
+        for filename in ("comm", "cmdline"):
+            try:
+                tags.append((process / filename).read_bytes().split(b"\0", 1)[0].decode(errors="replace").strip())
+            except OSError:
+                pass
+        if not any(tag.startswith("ray::vLLMHttp") for tag in tags):
+            continue
+        info["peer_process_count"] += 1
+        try:
+            descriptors = list((process / "fd").iterdir())
+        except OSError:
+            info["unreadable_proc_entries"] += 1
+            continue
+        for descriptor in descriptors:
+            try:
+                match = re.fullmatch(r"socket:\[(\d+)\]", os.readlink(str(descriptor)))
+                if match:
+                    inodes.add(match[1])
+            except OSError:
+                info["unreadable_proc_entries"] += 1
+    candidates = set()
+    if not inodes:
+        return [], info
+    for filename in ("tcp", "tcp6"):
+        try:
+            lines = (root / "net" / filename).read_text().splitlines()[1:]
+        except OSError:
+            info["unreadable_proc_entries"] += 1
+            continue
+        for line in lines:
+            fields = line.split()
+            if len(fields) < 10 or fields[3] != "0A" or fields[9] not in inodes:
+                continue
+            try:
+                address, raw_port = fields[1].split(":")
+                port = int(raw_port, 16)
+                if not 0 < port <= 65535:
+                    continue
+                if filename == "tcp":
+                    host = socket.inet_ntoa(struct.pack("=I", int(address, 16)))
+                else:
+                    if len(address) != 32:
+                        continue
+                    raw = b"".join(struct.pack("=I", int(address[i:i + 8], 16)) for i in range(0, 32, 8))
+                    host = socket.inet_ntop(socket.AF_INET6, raw)
+                candidates.add(vllm_address(host, port))
+            except (ValueError, OSError, struct.error):
+                continue
+    return sorted(candidates), info
+
+
+def vllm_candidates(ss_result, proc_root="/proc"):
+    if ss_result.get("returncode") != 0:
+        return proc_vllm_candidates(proc_root)
+    candidates = set()
+    for line in ss_result.get("stdout", "").splitlines():
+        if "ray::vLLMHttp" not in line:
+            continue
+        fields = line.split()
+        if len(fields) < 4:
+            continue
+        host, separator, port = fields[3].rpartition(":")
+        if separator and port.isdigit() and 0 < int(port) <= 65535:
+            candidates.add(vllm_address(host.strip("[]"), int(port)))
+    return sorted(candidates), {"method": "ss"}
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--output", required=True)
@@ -122,6 +213,7 @@ if args.role == "sandbox":
                 service_logs[path] = (None, 0)
 started = time.monotonic()
 last_discovery = -100
+discovery_info = {"method": "not_started", "candidate_count": 0, "endpoint_count": 0}
 with (root / (node + "-host.jsonl")).open("a") as host, (root / (node + "-vllm.jsonl")).open("a") as vllm:
     try:
         while not stopping.is_set() and time.monotonic() - started < args.duration:
@@ -212,18 +304,13 @@ with (root / (node + "-host.jsonl")).open("a") as host, (root / (node + "-vllm.j
                     if line.startswith("0::"):
                         cgroup = line[3:]
                 if tick - last_discovery >= 30:
-                    sockets = command(["ss", "-ltnp"]).get("stdout", "")
-                    candidates = []
-                    for line in sockets.splitlines():
-                        if "ray::vLLMHttp" in line:
-                            address = line.split()[3]
-                            if address.startswith("*:"):
-                                address = "127.0.0.1:" + address.split(":")[-1]
-                            candidates.append(address)
+                    candidates, discovery_info = vllm_candidates(command(["ss", "-ltnp"]))
                     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
                         discovered = [item for item in pool.map(scrape, candidates) if item]
                     endpoints = [item["address"] for item in discovered]
+                    discovery_info.update(candidate_count=len(candidates), endpoint_count=len(endpoints))
                     last_discovery = tick
+                record["vllm_discovery"] = dict(discovery_info)
                 with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
                     for item in pool.map(scrape, endpoints):
                         if item:

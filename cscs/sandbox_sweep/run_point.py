@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+from importlib import metadata as package_metadata
 import inspect
 import json
 import os
@@ -241,11 +242,6 @@ def main() -> None:
                     "run_task_config_sha256": digest(point_config),
                     "model_config_sha256": digest(Path(args.model_path).expanduser() / "config.json")}
         manifest["selection_sha256"] = hashlib.sha256(json.dumps(identities, sort_keys=True).encode()).hexdigest()
-        atomic_json(run / "manifest.json", manifest)
-        # Only explicit public CLI settings; never serialize environment or the
-        # entire framework config, which may contain authentication settings.
-        atomic_json(run / "settings.json", {**vars(args), "concurrency_unit": "groups",
-                                            "max_concurrent_episodes": args.concurrency * args.responses})
         engine_args = argparse.Namespace(**vars(args))
         engine_args.concurrency = args.concurrency * args.responses
         init_kwargs = {"served_model_name": args.served_model_name}
@@ -268,6 +264,7 @@ def main() -> None:
             "actor_rollout_ref.rollout.max_model_len": args.prompt_length + args.response_length,
             "actor_rollout_ref.rollout.max_num_batched_tokens": args.prompt_length + args.response_length,
             "actor_rollout_ref.rollout.load_format": "auto",
+            "actor_rollout_ref.rollout.disable_log_stats": False,
             "actor_rollout_ref.rollout.engine_kwargs.vllm.kv_cache_dtype": args.kv_cache_dtype,
             "data.max_prompt_length": args.prompt_length,
             "data.max_response_length": args.response_length,
@@ -281,6 +278,22 @@ def main() -> None:
             "actor_rollout_ref.rollout.custom.agent_framework.max_concurrent_groups": args.concurrency,
         }.items():
             OmegaConf.update(config, key, value, force_add=True)
+        try:
+            vllm_version = package_metadata.version("vllm")
+        except package_metadata.PackageNotFoundError:
+            vllm_version = None
+        observability = {
+            "actor_rollout_ref.rollout.disable_log_stats": config.actor_rollout_ref.rollout.disable_log_stats,
+            "vllm_package_version": vllm_version,
+        }
+        manifest["observability"] = observability
+        outcome["observability"] = observability
+        atomic_json(run / "manifest.json", manifest)
+        # Record only explicit public settings and resolved observability controls;
+        # the full framework config may contain authentication settings.
+        atomic_json(run / "settings.json", {**vars(args), "concurrency_unit": "groups",
+                                            "max_concurrent_episodes": args.concurrency * args.responses,
+                                            "observability": observability})
         ray.init(address=os.environ.get("RAY_ADDRESS", "auto"), runtime_env={"env_vars": {
             "UNI_AGENT_TRACE_DIR": str(trace), "AGENTENV_TRACE_DIR": os.environ["AGENTENV_TRACE_DIR"],
         }})

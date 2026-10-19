@@ -1,0 +1,879 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-19T13:39:56.678415+00:00",
+  "benchmark": "swebench-verified",
+  "runtime_count": 2,
+  "rollout_gpus": 8,
+  "groups": 128,
+  "responses": 8,
+  "seed": 42,
+  "sha256": "d0188d004b0133d6603f5ccd0ecebf266f9d9307ecc62ce83f6822eccdd2345c",
+  "frozen_csv": {
+    "path": "meta/plot/data/verified_characterization_2hosts_20261019.csv",
+    "sha256": "d0188d004b0133d6603f5ccd0ecebf266f9d9307ecc62ce83f6822eccdd2345c",
+    "rows": 4,
+    "columns": [
+      "concurrency_episodes",
+      "rollout_wall_seconds",
+      "sandbox_cpu_mean_pct",
+      "sandbox_cpu_peak_5s_pct",
+      "sandbox_cpu_common_coverage_pct",
+      "gpu_busy_mean_pct",
+      "gpu_sm_active_mean_pct",
+      "gpu_tensor_active_mean_pct",
+      "active_requests_total_mean",
+      "active_requests_total_sampled_peak",
+      "waiting_requests_total_mean",
+      "waiting_requests_total_sampled_peak",
+      "kv_cache_mean_per_replica_pct",
+      "kv_cache_largest_replica_sampled_peak_pct",
+      "preemptions_observed",
+      "group_concurrency",
+      "job_id",
+      "result_state",
+      "scheduler_state",
+      "window_start_epoch",
+      "window_end_epoch",
+      "terminal_attempts",
+      "verified_attempts",
+      "incomplete_verifications",
+      "usable_trajectories",
+      "terminal_attempts_per_minute",
+      "verified_attempts_per_minute",
+      "sandbox_ram_mean_pct",
+      "sandbox_ram_peak_5s_pct",
+      "sandbox_ram_total_gib",
+      "sandbox_ram_common_coverage_pct"
+    ],
+    "original_utilization_columns": [
+      "concurrency_episodes",
+      "rollout_wall_seconds",
+      "sandbox_cpu_mean_pct",
+      "sandbox_cpu_peak_5s_pct",
+      "sandbox_cpu_common_coverage_pct",
+      "gpu_busy_mean_pct",
+      "gpu_sm_active_mean_pct",
+      "gpu_tensor_active_mean_pct",
+      "active_requests_total_mean",
+      "active_requests_total_sampled_peak",
+      "waiting_requests_total_mean",
+      "waiting_requests_total_sampled_peak",
+      "kv_cache_mean_per_replica_pct",
+      "kv_cache_largest_replica_sampled_peak_pct",
+      "preemptions_observed"
+    ]
+  },
+  "offline_contract": "This frozen CSV and provenance are sufficient for plotting. Ignored outputs sources are audit references only; loaders must not require them. No raw trajectory or telemetry files were copied.",
+  "sources": [
+    {
+      "path": "outputs/verified_multinode_2x_20261019/analysis/utilization_summary.csv",
+      "sha256": "4ae4541b5d8971c2b98b91954666622e1faba3872b5647c98c339c76f3ef5ccb"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/analysis/sandbox_cpu_summary.json",
+      "sha256": "a4973f9aa5c2db9d58c4ccd6ceb998dc0a01d2260c3d33a69c958226a55f3ec2"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/analysis/inference_summary.json",
+      "sha256": "c8113f4710c6bac1d6ee058a36576cf0dd9f407657c5349ace4689e57e3bb063"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/preparation/cohort.json",
+      "sha256": "432441c7b24ef90db6814762012627ea823a5f93c56f6592d72b47996179f051"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/deployment/cluster.json",
+      "sha256": "97f89ced3a66fe74893d0e0fb11e54216b706ea01e71a8ff35d020bf6e5d5a87"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-8/result.json",
+      "sha256": "f1eebda2a5ce9287d18f214ef6143a9c914df12d51237224c65d3fb65c41f603"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-8/manifest.json",
+      "sha256": "4a81b97c2448859aff2591f301a74d922892c44ef4c576a67a6b333d0b927dbb"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-8/settings.json",
+      "sha256": "7492441f58533f96138a7ca8db80545a8c9f78cae8b2597850d7d0bbbcc6238b"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-8/scheduler-final.json",
+      "sha256": "2421a81f5f27c7a30aeead2f67d5ab01ea7da08c1e1245b9edd42fd268678604"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-16/result.json",
+      "sha256": "edaf93bd7c59a7ec45b0cfbc728c0dc71aa4943d9c894edb6690d79789f1267b"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-16/manifest.json",
+      "sha256": "53a5b9752f25e08dc431d5fc87f8549d5f32b62842be18f0e2e594aec5562742"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-16/settings.json",
+      "sha256": "1fdf1ec85d86c83cba61bdaced8cfa431a1a93bc557baad6c7e679fd9c51166e"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-16/scheduler-final.json",
+      "sha256": "ec9f8faab4e83cd30676eadb431d01a38373e406e4c7ddea217e08277a6c39b1"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-32/result.json",
+      "sha256": "0d776200a9ad55a8e388ea2fe5ded61b99f6491578374aa0b5c0e9f5e953a7ee"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-32/manifest.json",
+      "sha256": "49e0b05295b851f1eb9ba7879fab8c25d0ac7283110207316be93762050a2a5b"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-32/settings.json",
+      "sha256": "82009764b0d3c4308ccb9d0e04d4033b93e248da33e93928bc8b14deb5480adb"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-32/scheduler-final.json",
+      "sha256": "a16c7f556dea35475d1084f1cbfd671818741ba6f373baaaaf2f76b0d0159715"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-64/result.json",
+      "sha256": "ebe95f97a7f0c4717ac6f2bc6819eeaebcd636f5b606a0b2378ac3bd837ba60d"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-64/manifest.json",
+      "sha256": "d207549ae5c36d4d0da83d327527591ebceced1df4ce6c447d05b9bcfa10dde8"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-64/settings.json",
+      "sha256": "13d2e8353008e461830424e83de604c5e83ed33f008a15320a939cab17a82c79"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-64/scheduler-final.json",
+      "sha256": "5f7c14cfc1776065e93c53b292ef60dca8699ce8e659574863cd892c4a7c9d3c"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/analysis/sandbox_memory_summary.json",
+      "sha256": "5c6b78061989c11dd5096fef2bd8e7dc624e3205864173bc638135a7ef415cd9"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-8/inputs/runtime-1/host.jsonl.gz",
+      "sha256": "5237305ec5f1327aa66d7dd9dc87649255fb4f3a0d6efa7e6b372d71c68ecb5e"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-8/inputs/runtime-2/host.jsonl.gz",
+      "sha256": "bf07453f56eaf4543d559938a5e3ebcc3b79cc6d1c6640d6fb771d73fbf06688"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-16/inputs/runtime-1/host.jsonl.gz",
+      "sha256": "bc7aa1f520b7112ff542a1d02ce510ac7aec228189e302973d699a4b51f3c8f9"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-16/inputs/runtime-2/host.jsonl.gz",
+      "sha256": "f64f85af9a6a2f750280208697fe2442c1e935887977c6ccceb189f8b328895a"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-32/inputs/runtime-1/host.jsonl.gz",
+      "sha256": "9cba66dfdc65625d62a33b373612fd6721cfbdc5d3d82fd78844449df43c0e0e"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-32/inputs/runtime-2/host.jsonl.gz",
+      "sha256": "1a195f14807b7f602941e2d78310340ceca678fdb78253eecda9fd694e2b3d37"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-64/inputs/runtime-1/host.jsonl.gz",
+      "sha256": "26806e891f4e40fde37e6a05ad5cf18451f4edf49531e4089c741043462a1d09"
+    },
+    {
+      "path": "outputs/verified_multinode_2x_20261019/results/groups-64/inputs/runtime-2/host.jsonl.gz",
+      "sha256": "234bea7631d722589f4b01c05181e92664183f0a5d3ed5f78987b4092a1bfb44"
+    }
+  ],
+  "definitions": {
+    "sandbox_cpu": {
+      "window": "[model_ready_at, model_ready_at + rollout_wall_seconds]; finished_at is not used as the endpoint",
+      "counter_fields": "First eight aggregate /proc/stat cpu ticks: user,nice,system,idle,iowait,irq,softirq,steal. guest and guest_nice columns excluded to avoid counting VM guest time twice; guest time remains included once through user/nice.",
+      "busy_pct": "100 * (sum(delta(first8)) - delta(idle) - delta(iowait)) / sum(delta(first8))",
+      "host_scope": "Whole AWS sandbox host including VM execution, AgentENV/control services, and OS; not isolated VM CPU attribution",
+      "host_capacity_vcpus": 96,
+      "combined_capacity_vcpus": 192,
+      "combined_mean": "For overlapping valid sample intervals, average the two equal-capacity host percentages, then weight by overlap duration. Missing coverage is excluded, never imputed as idle.",
+      "interval_assumption": "Each adjacent CPU counter delta describes a constant average rate on its observation interval; intervals are clipped to the requested window. Counter resets, nonpositive durations, and gaps over 15 seconds are excluded.",
+      "combined_peak": "Maximum combined mean in a complete 5-second bin anchored at model_ready_at, requiring full valid coverage from both hosts; derived by integrating overlapping raw interval averages. This is a resampled approximately-5-second peak, not instantaneous utilization.",
+      "per_host_peak": "Maximum valid adjacent-sample CPU average, with its clipped interval recorded; typically approximately 5 seconds.",
+      "minute_csv_comparison": "Existing cluster CSV arithmetic mean is reported only as a diagnostic. Equal weighting of partial minute bins differs from duration-weighted rollout CPU.",
+      "full_window_mean_bounds": "Conservative bounds assume all uncovered seconds range from 0 to 100% combined busy; the primary mean uses observed common coverage only."
+    },
+    "inference": {
+      "rollout_window": "model_ready_at <= sample timestamp <= model_ready_at + rollout_wall_seconds; initialization and cleanup excluded",
+      "hardware": "Two inference nodes, four GH200 GPUs per node, two TP4 vLLM replicas; eight GPUs total",
+      "gpu_utilization_mean_pct": "Arithmetic mean of eight NVIDIA utilization.gpu percent readings per aligned two-node sample, then equal-weight mean over paired samples; each node must report four GPU UUIDs",
+      "dcgm_mean_pct": "Equal-weight mean of per-GPU sample means across eight GPUs; SMACT/TENSO fractions multiplied by100",
+      "replica_alignment": "One-to-one chronological matching of nearest available samples with absolute timestamp skew <=1.0s; unmatched samples excluded from fleet request totals and NVIDIA fleet utilization; no interpolation or summing separate peaks",
+      "running_requests": "vllm:num_requests_running: requests in execution batches, not all live benchmark episodes",
+      "waiting_requests": "vllm:num_requests_waiting, summed across aligned replica samples",
+      "kv_cache": "vllm:kv_cache_usage_perc is a fraction,1=100%; values multiplied by100. Per-replica means use every valid in-window sample; fleet mean equally weights the two replica means. Largest peak is largest observed single-replica five-second sample",
+      "preemptions": "Sum of nonnegative successive deltas of vllm:num_preemptions_total per replica within the strict rollout window; counter resets counted; events before first in-window sample cannot be inferred",
+      "peaks": "Observed approximately five-second sampled values, not minute averages or continuous-time maxima",
+      "weighting": "Sample means, not time-integrated means; observed cadence/coverage included below"
+    },
+    "terminal_attempts": "Harbor terminal_results: trial finished, including incomplete verification. This is not resolved tasks.",
+    "verified_attempts": "Harbor evaluation_completed: completed verifier evaluation, including valid zero rewards.",
+    "incomplete_verifications": "Harbor evaluation_incomplete, or terminal_results minus evaluation_completed if that field is absent; verified+incomplete=1024 at every point.",
+    "usable_trajectories": "Final progress.episodes_with_usable_trajectory; distinct from completed verification and resolved attempts.",
+    "terminal_attempts_per_minute": "terminal_attempts *60 / result.rollout_wall_seconds. Model initialization excluded.",
+    "verified_attempts_per_minute": "verified_attempts *60 / result.rollout_wall_seconds. Model initialization excluded.",
+    "rollout_window_epochs": "window_start_epoch=result.model_ready_at; window_end_epoch=window_start_epoch+result.rollout_wall_seconds. Final artifact-writing/cleanup latency through finished_at is excluded.",
+    "job_id": "scheduler-final.json job_id, with scheduler_state=COMPLETED and result_state=completed required.",
+    "concurrency_episodes": "Maximum live benchmark episode ceiling: group_concurrency *8 responses. It differs from instantaneous active vLLM inference requests.",
+    "uncertainty": "One measurement per concurrency point; descriptive results only, without confidence intervals or replicate-based uncertainty.",
+    "sandbox_ram": {
+      "window": "[model_ready_at, model_ready_at + rollout_wall_seconds]; startup and final artifact/cleanup time excluded.",
+      "host_ram_used_bytes": "MemTotal - MemAvailable from Linux /proc/meminfo. Kernel kB values multiplied by1024.",
+      "host_ram_utilization_pct": "100 * (MemTotal - MemAvailable) / MemTotal.",
+      "fleet_ram_utilization_pct": "100 * sum(host MemTotal - host MemAvailable) / sum(host MemTotal), requiring both hosts simultaneously. Weighting is by RAM capacity, not vCPU count.",
+      "scope": "Whole AWS sandbox-host RAM, including operating system, VM/runtime/control services and other nonavailable memory. MemAvailable includes the kernel estimate of reclaimable memory. This is not aenv anonymous/cgroup memory, VM RSS alone, or GPU VRAM.",
+      "gauge_interpolation": "Zero-order hold: each valid memory sample applies from its timestamp until the next valid sample, with intervals clipped to the rollout window. No extrapolation before first or after last sample. Nonpositive intervals and gaps over15seconds excluded.",
+      "fleet_mean": "Duration-weighted mean of fleet RAM utilization over common valid coverage from both hosts; uncovered time is excluded, not zero-filled.",
+      "fleet_peak_5s": "Maximum duration-weighted fleet RAM utilization in a complete5-second bin anchored at model_ready_at, requiring full coverage from both hosts. This is a resampled5-second mean of held gauges, not an instantaneous maximum.",
+      "capacity_gib": "Sum of observed OS MemTotal bytes /2^30 across both sandbox hosts. This is usable kernel-reported capacity, not advertised hardware RAM.",
+      "mean_and_peak_used_gib": "Fleet used bytes summed across both hosts; mean time-weighted over common coverage; peak uses the same complete5-second bins.",
+      "per_host_peak": "Maximum observed in-window sample of100*(MemTotal-MemAvailable)/MemTotal; not plotted as the fleet peak.",
+      "full_window_mean_bounds": "Conservative bounds assign all uncovered seconds0% or100% fleet utilization; the primary mean only uses common observed coverage."
+    }
+  },
+  "raw_inference_schemas": {
+    "nvidia_host": {
+      "record_path": "host.gpus.stdout",
+      "format": "CSV without header; host.gpus.returncode must equal0",
+      "columns": [
+        "index",
+        "uuid",
+        "utilization.gpu(percent)",
+        "utilization.memory(percent)",
+        "memory.used(MiB)",
+        "memory.total(MiB)",
+        "power.draw(W)",
+        "power.limit(W)",
+        "clocks.sm(MHz)",
+        "clocks.mem(MHz)",
+        "temperature.gpu(C)"
+      ],
+      "required_devices_per_node": 4
+    },
+    "dcgm": {
+      "record_path": "dcgm.line",
+      "header": [
+        "Entity",
+        "GRACT",
+        "SMACT",
+        "SMOCC",
+        "TENSO",
+        "DRAMA"
+      ],
+      "data_columns": [
+        "GPU",
+        "local_gpu_index",
+        "graphics_active_fraction",
+        "sm_active_fraction",
+        "sm_occupancy_fraction",
+        "tensor_active_fraction",
+        "dram_active_fraction"
+      ],
+      "fractions_scale_to_percent": 100
+    },
+    "vllm": {
+      "record_path": "vllm.prometheus",
+      "replica_identity": [
+        "node",
+        "address"
+      ],
+      "exact_metric_names": {
+        "running": "vllm:num_requests_running",
+        "waiting": "vllm:num_requests_waiting",
+        "kv_fraction": "vllm:kv_cache_usage_perc",
+        "preemption_counter": "vllm:num_preemptions_total"
+      },
+      "nominal_capture_interval_seconds": 5,
+      "observed_series_per_metric_per_replica": 1,
+      "waiting_by_reason_not_added_to_waiting_total": true
+    }
+  },
+  "hardware": {
+    "sandbox_hosts": 2,
+    "sandbox_vcpus_per_host": 96,
+    "sandbox_vcpus_total": 192,
+    "inference_nodes": 2,
+    "rollout_gpus": 8,
+    "gpu_model": "GH200",
+    "gpus_per_inference_node": 4,
+    "vllm_replicas": 2,
+    "tensor_parallel_size_per_replica": 4,
+    "model_path": "/iopsstor/scratch/cscs/xyao/data/models/Qwen3.5-9B",
+    "served_model_name": "Qwen3.5-9B",
+    "gpu_memory_utilization": 0.45,
+    "sandbox_ram_memtotal_gib": 755.0046653747559
+  },
+  "cohort": {
+    "benchmark": "swebench-verified",
+    "groups": 128,
+    "responses": 8,
+    "seed": 42,
+    "selected_task_count": 128,
+    "selection_sha256": "ee3c6eecaa7700d7e57088aeb0300639022cd38571b10c939fbd33b06f6ce7a9",
+    "dataset_sha256": "5883ca03dfa3a2d3a16dee4d23af9aab7c140b676dea8a97c438fb3f03dcad57",
+    "baseline_manifest_sha256": "a0084d186dd4ea1c080a8d5501c443787aabb4a1671a135ec081a32ee26a295c",
+    "identical_ordered_task_identity_entries_across_points": true
+  },
+  "coverage": [
+    {
+      "concurrency_episodes": 64,
+      "sandbox_common_coverage_fraction": 0.9969800012314293,
+      "inference": {
+        "in_window_record_counts": {
+          "dcgm": 9248,
+          "host": 446,
+          "vllm": 446,
+          "pipeline": 255,
+          "model": 19526,
+          "native": 127384
+        },
+        "discarded_invalid_records": {},
+        "nvidia_nodes": {
+          "nid007653": {
+            "samples": 223,
+            "first_timestamp": 1792409331.6524053,
+            "last_timestamp": 1792410441.8342078,
+            "first_offset_seconds": 4.6699604988098145,
+            "last_gap_seconds": 3.529928207397461,
+            "median_interval_seconds": 4.9999412298202515,
+            "max_interval_seconds": 5.692591190338135,
+            "gpu_uuids": [
+              "GPU-6ec8ed37-1ecd-88dc-0c02-4f302f5ed9f4",
+              "GPU-9d90caa3-e8be-a138-f90d-255968177f65",
+              "GPU-b8eb6f53-2e8b-2faa-1b1e-c1793c215755",
+              "GPU-e5a0e4cb-2757-c51e-ade6-875e04b10c71"
+            ]
+          },
+          "nid007655": {
+            "samples": 223,
+            "first_timestamp": 1792409331.6137311,
+            "last_timestamp": 1792410441.6398277,
+            "first_offset_seconds": 4.631286382675171,
+            "last_gap_seconds": 3.7243082523345947,
+            "median_interval_seconds": 5.000882029533386,
+            "max_interval_seconds": 5.827848196029663,
+            "gpu_uuids": [
+              "GPU-4f650293-c215-c820-d501-04e5783810d6",
+              "GPU-5038b9a8-3bca-4ada-2c78-cfac6c05c43c",
+              "GPU-85e14940-63ea-cbc2-fe04-dc64c94c49b3",
+              "GPU-96f48e49-8930-1817-8aa4-b85a268d2198"
+            ]
+          }
+        },
+        "nvidia_aligned_samples": 223,
+        "nvidia_aligned_max_skew_seconds": 0.2069838047027588,
+        "vllm_aligned_samples": 223,
+        "vllm_aligned_max_skew_seconds": 0.2053225040435791,
+        "vllm_unmatched_samples_total": 0,
+        "dcgm_gpu_sample_counts": {
+          "('nid007653', '3')": {
+            "sm_active": 1116,
+            "tensor_active": 1116
+          },
+          "('nid007653', '2')": {
+            "sm_active": 1116,
+            "tensor_active": 1116
+          },
+          "('nid007653', '1')": {
+            "sm_active": 1116,
+            "tensor_active": 1116
+          },
+          "('nid007653', '0')": {
+            "sm_active": 1116,
+            "tensor_active": 1116
+          },
+          "('nid007655', '3')": {
+            "sm_active": 1117,
+            "tensor_active": 1117
+          },
+          "('nid007655', '2')": {
+            "sm_active": 1117,
+            "tensor_active": 1117
+          },
+          "('nid007655', '1')": {
+            "sm_active": 1117,
+            "tensor_active": 1117
+          },
+          "('nid007655', '0')": {
+            "sm_active": 1117,
+            "tensor_active": 1117
+          }
+        }
+      },
+      "replicas": [
+        {
+          "node": "nid007653",
+          "address": "172.28.46.156:33795",
+          "coverage": {
+            "samples": 223,
+            "first_timestamp": 1792409331.6449564,
+            "last_timestamp": 1792410441.8321173,
+            "first_offset_seconds": 4.662511587142944,
+            "last_gap_seconds": 3.5320186614990234,
+            "median_interval_seconds": 5.000235676765442,
+            "max_interval_seconds": 5.696918487548828
+          }
+        },
+        {
+          "node": "nid007655",
+          "address": "172.28.46.164:36051",
+          "coverage": {
+            "samples": 223,
+            "first_timestamp": 1792409331.6121294,
+            "last_timestamp": 1792410441.63826,
+            "first_offset_seconds": 4.629684686660767,
+            "last_gap_seconds": 3.7258760929107666,
+            "median_interval_seconds": 5.000261068344116,
+            "max_interval_seconds": 5.824790954589844
+          }
+        }
+      ],
+      "sandbox_ram_common_coverage_fraction": 0.9969800012314293,
+      "sandbox_ram_complete_5s_bins": 222
+    },
+    {
+      "concurrency_episodes": 128,
+      "sandbox_common_coverage_fraction": 0.9917742719412427,
+      "inference": {
+        "in_window_record_counts": {
+          "dcgm": 6128,
+          "host": 297,
+          "vllm": 297,
+          "pipeline": 255,
+          "model": 20030,
+          "native": 127868
+        },
+        "discarded_invalid_records": {},
+        "nvidia_nodes": {
+          "nid007653": {
+            "samples": 148,
+            "first_timestamp": 1792411292.539135,
+            "last_timestamp": 1792412027.5958383,
+            "first_offset_seconds": 0.8936474323272705,
+            "last_gap_seconds": 5.137521743774414,
+            "median_interval_seconds": 5.000154733657837,
+            "max_interval_seconds": 5.84907865524292,
+            "gpu_uuids": [
+              "GPU-6ec8ed37-1ecd-88dc-0c02-4f302f5ed9f4",
+              "GPU-9d90caa3-e8be-a138-f90d-255968177f65",
+              "GPU-b8eb6f53-2e8b-2faa-1b1e-c1793c215755",
+              "GPU-e5a0e4cb-2757-c51e-ade6-875e04b10c71"
+            ]
+          },
+          "nid007655": {
+            "samples": 149,
+            "first_timestamp": 1792411292.5395367,
+            "last_timestamp": 1792412032.6939123,
+            "first_offset_seconds": 0.8940491676330566,
+            "last_gap_seconds": 0.039447784423828125,
+            "median_interval_seconds": 5.000343203544617,
+            "max_interval_seconds": 6.160049915313721,
+            "gpu_uuids": [
+              "GPU-4f650293-c215-c820-d501-04e5783810d6",
+              "GPU-5038b9a8-3bca-4ada-2c78-cfac6c05c43c",
+              "GPU-85e14940-63ea-cbc2-fe04-dc64c94c49b3",
+              "GPU-96f48e49-8930-1817-8aa4-b85a268d2198"
+            ]
+          }
+        },
+        "nvidia_aligned_samples": 148,
+        "nvidia_aligned_max_skew_seconds": 0.3280959129333496,
+        "vllm_aligned_samples": 148,
+        "vllm_aligned_max_skew_seconds": 0.3282332420349121,
+        "vllm_unmatched_samples_total": 1,
+        "dcgm_gpu_sample_counts": {
+          "('nid007653', '3')": {
+            "sm_active": 740,
+            "tensor_active": 740
+          },
+          "('nid007653', '2')": {
+            "sm_active": 740,
+            "tensor_active": 740
+          },
+          "('nid007653', '1')": {
+            "sm_active": 740,
+            "tensor_active": 740
+          },
+          "('nid007653', '0')": {
+            "sm_active": 740,
+            "tensor_active": 740
+          },
+          "('nid007655', '3')": {
+            "sm_active": 739,
+            "tensor_active": 739
+          },
+          "('nid007655', '2')": {
+            "sm_active": 739,
+            "tensor_active": 739
+          },
+          "('nid007655', '1')": {
+            "sm_active": 739,
+            "tensor_active": 739
+          },
+          "('nid007655', '0')": {
+            "sm_active": 739,
+            "tensor_active": 739
+          }
+        }
+      },
+      "replicas": [
+        {
+          "node": "nid007653",
+          "address": "172.28.46.156:37627",
+          "coverage": {
+            "samples": 148,
+            "first_timestamp": 1792411292.536934,
+            "last_timestamp": 1792412027.5935578,
+            "first_offset_seconds": 0.8914463520050049,
+            "last_gap_seconds": 5.1398022174835205,
+            "median_interval_seconds": 4.999612092971802,
+            "max_interval_seconds": 5.8489391803741455
+          }
+        },
+        {
+          "node": "nid007655",
+          "address": "172.28.46.164:40483",
+          "coverage": {
+            "samples": 149,
+            "first_timestamp": 1792411292.53518,
+            "last_timestamp": 1792412032.6888711,
+            "first_offset_seconds": 0.8896925449371338,
+            "last_gap_seconds": 0.04448890686035156,
+            "median_interval_seconds": 5.000125050544739,
+            "max_interval_seconds": 6.15977144241333
+          }
+        }
+      ],
+      "sandbox_ram_common_coverage_fraction": 0.9917742719412427,
+      "sandbox_ram_complete_5s_bins": 146
+    },
+    {
+      "concurrency_episodes": 256,
+      "sandbox_common_coverage_fraction": 0.9965492295652646,
+      "inference": {
+        "in_window_record_counts": {
+          "dcgm": 4096,
+          "host": 198,
+          "vllm": 198,
+          "pipeline": 255,
+          "model": 19782,
+          "native": 127294
+        },
+        "discarded_invalid_records": {},
+        "nvidia_nodes": {
+          "nid007653": {
+            "samples": 99,
+            "first_timestamp": 1792412890.5155222,
+            "last_timestamp": 1792413380.4900491,
+            "first_offset_seconds": 2.140918493270874,
+            "last_gap_seconds": 4.111820220947266,
+            "median_interval_seconds": 4.9981547594070435,
+            "max_interval_seconds": 6.684246778488159,
+            "gpu_uuids": [
+              "GPU-6ec8ed37-1ecd-88dc-0c02-4f302f5ed9f4",
+              "GPU-9d90caa3-e8be-a138-f90d-255968177f65",
+              "GPU-b8eb6f53-2e8b-2faa-1b1e-c1793c215755",
+              "GPU-e5a0e4cb-2757-c51e-ade6-875e04b10c71"
+            ]
+          },
+          "nid007655": {
+            "samples": 99,
+            "first_timestamp": 1792412890.7061176,
+            "last_timestamp": 1792413380.7124352,
+            "first_offset_seconds": 2.3315138816833496,
+            "last_gap_seconds": 3.8894340991973877,
+            "median_interval_seconds": 4.99937903881073,
+            "max_interval_seconds": 6.6732354164123535,
+            "gpu_uuids": [
+              "GPU-4f650293-c215-c820-d501-04e5783810d6",
+              "GPU-5038b9a8-3bca-4ada-2c78-cfac6c05c43c",
+              "GPU-85e14940-63ea-cbc2-fe04-dc64c94c49b3",
+              "GPU-96f48e49-8930-1817-8aa4-b85a268d2198"
+            ]
+          }
+        },
+        "nvidia_aligned_samples": 99,
+        "nvidia_aligned_max_skew_seconds": 0.37081146240234375,
+        "vllm_aligned_samples": 99,
+        "vllm_aligned_max_skew_seconds": 0.3710954189300537,
+        "vllm_unmatched_samples_total": 0,
+        "dcgm_gpu_sample_counts": {
+          "('nid007653', '3')": {
+            "sm_active": 494,
+            "tensor_active": 494
+          },
+          "('nid007653', '2')": {
+            "sm_active": 494,
+            "tensor_active": 494
+          },
+          "('nid007653', '1')": {
+            "sm_active": 494,
+            "tensor_active": 494
+          },
+          "('nid007653', '0')": {
+            "sm_active": 494,
+            "tensor_active": 494
+          },
+          "('nid007655', '3')": {
+            "sm_active": 495,
+            "tensor_active": 495
+          },
+          "('nid007655', '2')": {
+            "sm_active": 495,
+            "tensor_active": 495
+          },
+          "('nid007655', '1')": {
+            "sm_active": 495,
+            "tensor_active": 495
+          },
+          "('nid007655', '0')": {
+            "sm_active": 495,
+            "tensor_active": 495
+          }
+        }
+      },
+      "replicas": [
+        {
+          "node": "nid007653",
+          "address": "172.28.46.156:33371",
+          "coverage": {
+            "samples": 99,
+            "first_timestamp": 1792412890.5082767,
+            "last_timestamp": 1792413380.4879181,
+            "first_offset_seconds": 2.1336729526519775,
+            "last_gap_seconds": 4.113951206207275,
+            "median_interval_seconds": 4.998620986938477,
+            "max_interval_seconds": 6.684213399887085
+          }
+        },
+        {
+          "node": "nid007655",
+          "address": "172.28.46.164:44485",
+          "coverage": {
+            "samples": 99,
+            "first_timestamp": 1792412890.7045412,
+            "last_timestamp": 1792413380.710933,
+            "first_offset_seconds": 2.32993745803833,
+            "last_gap_seconds": 3.8909363746643066,
+            "median_interval_seconds": 4.999555230140686,
+            "max_interval_seconds": 6.673119068145752
+          }
+        }
+      ],
+      "sandbox_ram_common_coverage_fraction": 0.9965492295652646,
+      "sandbox_ram_complete_5s_bins": 98
+    },
+    {
+      "concurrency_episodes": 512,
+      "sandbox_common_coverage_fraction": 0.996788270480417,
+      "inference": {
+        "in_window_record_counts": {
+          "dcgm": 4016,
+          "host": 195,
+          "vllm": 195,
+          "pipeline": 255,
+          "model": 20092,
+          "native": 127972
+        },
+        "discarded_invalid_records": {},
+        "nvidia_nodes": {
+          "nid006260": {
+            "samples": 97,
+            "first_timestamp": 1792414275.4822745,
+            "last_timestamp": 1792414755.4028044,
+            "first_offset_seconds": 1.9046993255615234,
+            "last_gap_seconds": 4.315128326416016,
+            "median_interval_seconds": 5.002736330032349,
+            "max_interval_seconds": 7.114503383636475,
+            "gpu_uuids": [
+              "GPU-50640397-a9e9-7e53-ede9-a615c38dcc41",
+              "GPU-9add258b-9f63-db35-8144-3a3499772d46",
+              "GPU-c0f343eb-6063-2e57-f0b6-8aae49d36f03",
+              "GPU-e3003340-16a8-56c8-0b87-f6954826fd8c"
+            ]
+          },
+          "nid006279": {
+            "samples": 98,
+            "first_timestamp": 1792414274.6453989,
+            "last_timestamp": 1792414759.489258,
+            "first_offset_seconds": 1.0678236484527588,
+            "last_gap_seconds": 0.22867465019226074,
+            "median_interval_seconds": 5.003269910812378,
+            "max_interval_seconds": 5.190575838088989,
+            "gpu_uuids": [
+              "GPU-6c724696-4b07-c639-6337-ca57c4001b7a",
+              "GPU-726d9837-0b9b-73bf-70f8-34f1a142aa23",
+              "GPU-b0725b7a-5107-0aa3-1850-4feeadbfab38",
+              "GPU-b8338846-e7b9-2d78-07ea-45994ec1c79b"
+            ]
+          }
+        },
+        "nvidia_aligned_samples": 96,
+        "nvidia_aligned_max_skew_seconds": 0.9730806350708008,
+        "vllm_aligned_samples": 96,
+        "vllm_aligned_max_skew_seconds": 0.9725151062011719,
+        "vllm_unmatched_samples_total": 3,
+        "dcgm_gpu_sample_counts": {
+          "('nid006260', '3')": {
+            "sm_active": 484,
+            "tensor_active": 484
+          },
+          "('nid006260', '2')": {
+            "sm_active": 484,
+            "tensor_active": 484
+          },
+          "('nid006260', '1')": {
+            "sm_active": 484,
+            "tensor_active": 484
+          },
+          "('nid006260', '0')": {
+            "sm_active": 484,
+            "tensor_active": 484
+          },
+          "('nid006279', '3')": {
+            "sm_active": 485,
+            "tensor_active": 485
+          },
+          "('nid006279', '2')": {
+            "sm_active": 485,
+            "tensor_active": 485
+          },
+          "('nid006279', '1')": {
+            "sm_active": 485,
+            "tensor_active": 485
+          },
+          "('nid006279', '0')": {
+            "sm_active": 485,
+            "tensor_active": 485
+          }
+        }
+      },
+      "replicas": [
+        {
+          "node": "nid006260",
+          "address": "172.28.27.240:36447",
+          "coverage": {
+            "samples": 97,
+            "first_timestamp": 1792414275.4744449,
+            "last_timestamp": 1792414755.4007795,
+            "first_offset_seconds": 1.8968696594238281,
+            "last_gap_seconds": 4.317153215408325,
+            "median_interval_seconds": 5.00307035446167,
+            "max_interval_seconds": 7.115720748901367
+          }
+        },
+        {
+          "node": "nid006279",
+          "address": "172.28.28.52:38567",
+          "coverage": {
+            "samples": 98,
+            "first_timestamp": 1792414274.644244,
+            "last_timestamp": 1792414759.4879653,
+            "first_offset_seconds": 1.0666687488555908,
+            "last_gap_seconds": 0.22996735572814941,
+            "median_interval_seconds": 5.001992702484131,
+            "max_interval_seconds": 5.191193342208862
+          }
+        }
+      ],
+      "sandbox_ram_common_coverage_fraction": 0.996788270480417,
+      "sandbox_ram_complete_5s_bins": 96
+    }
+  ],
+  "validation": {
+    "row_order": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "all_results_and_scheduler_states_completed": true,
+    "windows_match_cpu_and_inference_summaries": true,
+    "throughput_identities_checked": true,
+    "all_percentage_columns_within_0_100": true,
+    "verified_plus_incomplete_equals_1024": true,
+    "point_checks": [
+      {
+        "concurrency_episodes": 64,
+        "job_id": "3697836",
+        "window_start_epoch": 1792409326.9824448,
+        "window_end_epoch": 1792410445.364136,
+        "result_finished_at": 1792410446.0745158,
+        "result_finished_at_minus_window_end_seconds": 0.7103798389434814,
+        "terminal_attempts": 1024,
+        "verified_attempts": 1024,
+        "incomplete_verifications": 0,
+        "usable_trajectories": 1024
+      },
+      {
+        "concurrency_episodes": 128,
+        "job_id": "3698000",
+        "window_start_epoch": 1792411291.6454875,
+        "window_end_epoch": 1792412032.73336,
+        "result_finished_at": 1792412033.4522629,
+        "result_finished_at_minus_window_end_seconds": 0.7189028263092041,
+        "terminal_attempts": 1024,
+        "verified_attempts": 1024,
+        "incomplete_verifications": 0,
+        "usable_trajectories": 1024
+      },
+      {
+        "concurrency_episodes": 256,
+        "job_id": "3698165",
+        "window_start_epoch": 1792412888.3746037,
+        "window_end_epoch": 1792413384.6018693,
+        "result_finished_at": 1792413385.3028433,
+        "result_finished_at_minus_window_end_seconds": 0.7009739875793457,
+        "terminal_attempts": 1024,
+        "verified_attempts": 1023,
+        "incomplete_verifications": 1,
+        "usable_trajectories": 1024
+      },
+      {
+        "concurrency_episodes": 512,
+        "job_id": "3698410",
+        "window_start_epoch": 1792414273.5775752,
+        "window_end_epoch": 1792414759.7179327,
+        "result_finished_at": 1792414760.4165363,
+        "result_finished_at_minus_window_end_seconds": 0.698603630065918,
+        "terminal_attempts": 1024,
+        "verified_attempts": 1021,
+        "incomplete_verifications": 3,
+        "usable_trajectories": 1022
+      }
+    ],
+    "ram_extension_preserves_existing_csv_values": true,
+    "all_ram_percentages_within_0_100": true,
+    "ram_windows_match_existing_frozen_rows": true
+  },
+  "caveats": [
+    "One measurement per point; do not infer statistical significance.",
+    "CPU means are time-weighted over common host coverage; GPU/request/KV means are sampled means with their recorded coverage.",
+    "CPU peak is a fully covered resampled5-second mean. GPU/request/KV peaks are observed samples, not continuous-time maxima.",
+    "Inference request totals align replicas within1second; no sum of noncoincident replica peaks.",
+    "C256 has1incomplete verification; C512 has3incomplete verifications and1022usable trajectories.",
+    "Resolved task counts are distinct from completed verifications and are not used in these throughput rates.",
+    "Sandbox RAM is whole-host(MemTotal-MemAvailable)/MemTotal, not aenv anonymous memory or GPU VRAM; fleet mean uses common host coverage and peak is a fully covered resampled5-second mean of held gauges."
+  ],
+  "updated_at_utc": "2026-10-19T13:43:23.559518+00:00",
+  "memory_extension": {
+    "prior_csv_sha256": "7ad166e2a9c86350a00e0ff303839c6e1be0a357fe3f34a8136219eb9d541b22",
+    "added_columns": [
+      "sandbox_ram_mean_pct",
+      "sandbox_ram_peak_5s_pct",
+      "sandbox_ram_total_gib",
+      "sandbox_ram_common_coverage_pct"
+    ],
+    "summary_source": "outputs/verified_multinode_2x_20261019/analysis/sandbox_memory_summary.json",
+    "summary_sha256": "5c6b78061989c11dd5096fef2bd8e7dc624e3205864173bc638135a7ef415cd9",
+    "existing_csv_values_preserved": true
+  }
+}

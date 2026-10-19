@@ -1,0 +1,42 @@
+{
+  "price_source": "User-provided USD scenario rates, not fetched provider quotes.",
+  "cpu_host": "m5d.metal",
+  "cpu_host_usd_per_hour": 5.424,
+  "gpu_price_label": "8 \u00d7 H100",
+  "eight_gpu_allocation_usd_per_hour": 5.97,
+  "measured_gpu_hardware": "8 \u00d7 GH200",
+  "scope": "Modeled active configuration during rollout only. Charges one or two CPU hosts plus the full eight-GPU allocation concurrently. Excludes model initialization, image warmup, inactive allocated hosts, provisioning, storage, transfer, and taxes. This is not an experiment billing statement.",
+  "hardware_assumption": "Apply supplied GPU rate to measured GH200 runtimes; no H100 throughput equivalence was measured.",
+  "source": "data/cpu_host_scaling_c128_20261019.json",
+  "source_sha256": "7d56dd29b1d7b4df3e7d0ca1c497b74d9c48c2f32892ce756ccd1aec3f3a08ab",
+  "rows": [
+    {
+      "runtime_count": 1,
+      "cpu_host_usd_per_hour": 5.424,
+      "cpu_fleet_usd_per_hour": 5.424,
+      "eight_gpu_allocation_usd_per_hour": 5.97,
+      "total_usd_per_hour": 11.394,
+      "rollout_seconds": 1912.4070584889269,
+      "usable_trajectories": 1023,
+      "usable_trajectories_per_minute": 32.0956773964738,
+      "modeled_rollout_usd": 6.052768340117453,
+      "cpu_usd_per_1000_usable": 2.8165786589670736,
+      "gpu_usd_per_1000_usable": 3.1001059354781395,
+      "total_usd_per_1000_usable": 5.916684594445213
+    },
+    {
+      "runtime_count": 2,
+      "cpu_host_usd_per_hour": 5.424,
+      "cpu_fleet_usd_per_hour": 10.848,
+      "eight_gpu_allocation_usd_per_hour": 5.97,
+      "total_usd_per_hour": 16.818,
+      "rollout_seconds": 1446.2901608978864,
+      "usable_trajectories": 1024,
+      "usable_trajectories_per_minute": 42.48110210599566,
+      "modeled_rollout_usd": 6.756585534994626,
+      "cpu_usd_per_1000_usable": 4.256010108892218,
+      "gpu_usd_per_1000_usable": 2.342217952625971,
+      "total_usd_per_1000_usable": 6.598228061518189
+    }
+  ]
+}

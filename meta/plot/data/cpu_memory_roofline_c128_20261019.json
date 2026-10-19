@@ -1,0 +1,162 @@
+{
+  "model": "I=C/A; Y=C/T; Y <= min(P, M*I)",
+  "default_memory_basis": "anon",
+  "useful_trajectory_model": "N=retained useful trajectories attributed to in-window group terminals; c=C/N; d=A/N; R=60*N/T; conditional roof R(I)=60*min(P,M*I)/c.",
+  "reference": "../infersim/scripts/analyzer/plot_aws_replay_roofline.py; ../../flash-sandbox/meta/tools/roofline_profiler/README.md",
+  "definitions": {
+    "C": "Sum of aenv.service cumulative cpu.stat usage_usec deltas, converted to CPU seconds.",
+    "A": "Trapezoidal integral of memory.current in GiB, summed across active hosts.",
+    "A_anon": "Trapezoidal integral of memory.stat anon in GiB over the same common host window.",
+    "T": "Intersection of first/last host sample windows; interpolate each host at common boundaries.",
+    "P_and_M": "Nominal 96 logical CPUs and sampled MemTotal per host, not calibrated or enforced budgets.",
+    "useful_trajectory": "A final stored scored trajectory, reconciled with progress usable count; reward zero is included. Availability is credited at group_terminal.",
+    "c_and_d": "Same-window CPU and charged-memory-time cost per emitted useful trajectory, including resource costs of unfinished and unsuccessful work."
+  },
+  "limitations": [
+    "Exploratory accounting only; hollow markers are not strict-profiler-validated measurements.",
+    "Only wall timestamps and cgroup paths were retained; no monotonic clock, boot ID, or cgroup inode.",
+    "Approximately five-second sampling exceeds the reference renderer strict three-second gap rule; exploratory integration checks positive gaps no larger than six seconds.",
+    "Charged memory includes substantial file cache present before the run; no baseline subtraction.",
+    "Exclusive cgroup ownership and effective ancestor CPU quotas were not established from these exports.",
+    "Whole-fleet placements for the same Pro workload at two host counts; individual tasks are not attributed.",
+    "Nearness to the nominal envelope or side of the knee does not identify a proven operational bottleneck.",
+    "Useful trajectories are credited at group termination, not at an individually measured persistence time.",
+    "Resource windows exclude unsampled run edges; the final group of each run terminates outside the window.",
+    "Each useful-trajectory roof assumes that run-specific measured cost per trajectory remains fixed as intensity or capacity changes. This is a conditional accounting projection, not a calibrated roof.",
+    "The conditional roof includes only CPU and the selected memory basis; no GPU-serving roof was measured.",
+    "The anonymous-memory variant excludes file cache and kernel costs; it is not a complete working-set model."
+  ],
+  "runs": [
+    {
+      "runtime_count": 1,
+      "benchmark": "SWE-bench Pro V2",
+      "episode_ceiling": 128,
+      "selection_sha256": "1d82ee3b64bd91f1548ccdb7f265c1509e108b5218e23a438caaeeb2d7c0781c",
+      "common_window_start_epoch": 1792375132.0570889,
+      "common_window_end_epoch": 1792377042.2568161,
+      "window_seconds": 1910.1997272968292,
+      "sampled_fraction_of_rollout_wall_window": 0.9984489476072755,
+      "cpu_seconds": 120991.47967899998,
+      "charged_memory_gib_seconds": 470816.1667084643,
+      "anonymous_memory_gib_seconds": 165722.62704854907,
+      "mean_cpu_service": 63.33970105326002,
+      "mean_charged_memory_gib": 246.47483714947856,
+      "mean_anonymous_memory_gib": 86.7567012393344,
+      "mean_file_memory_gib": 157.1681551400636,
+      "intensity_cpu_eq_per_gib": 0.2569824237873283,
+      "anonymous_intensity_cpu_eq_per_gib": 0.7300842488066224,
+      "useful_trajectories_in_window": 1015,
+      "retained_usable_trajectories_full_run": 1023,
+      "terminal_groups_in_window": 127,
+      "excluded_group_terminals": [
+        {
+          "uid": "64809b73-53c8-428a-8025-24fdc3c98d47",
+          "timestamp": 1792377043.5319247,
+          "retained_trajectories": 8
+        }
+      ],
+      "useful_trajectories_per_minute": 31.881482930678192,
+      "cpu_seconds_per_useful_trajectory": 119.2034282551724,
+      "charged_memory_gib_seconds_per_useful_trajectory": 463.85829232361016,
+      "anonymous_memory_gib_seconds_per_useful_trajectory": 163.27352418576262,
+      "conditional_cpu_roof_trajectories_per_minute": 48.32075792040038,
+      "conditional_memory_roof_at_observation_trajectories_per_minute": 48.82987041387974,
+      "conditional_anonymous_memory_roof_trajectories_per_minute": 138.72512654774013,
+      "nominal_cpu_logical_processors": 96,
+      "nominal_host_ram_gib": 377.5023384094238,
+      "nominal_knee_cpu_eq_per_gib": 0.25430306049093204,
+      "max_sample_gap_seconds": 5.035930871963501,
+      "strict_profiler_compatible": false,
+      "nodes": [
+        {
+          "id": "runtime-1",
+          "sample_count": 383,
+          "first_charged_memory_gib": 133.21669006347656,
+          "first_file_memory_gib": 131.48285675048828,
+          "cpu_seconds": 120991.47967899998,
+          "charged_gib_seconds": 470816.1667084643,
+          "anonymous_gib_seconds": 165722.62704854907,
+          "file_gib_seconds": 300222.56708829524
+        }
+      ],
+      "source_hashes": {
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/result.json": "eb24b2bebfed684ab0d70a5415c165f5ca5a7ab83e16bbca8b653c218f5283fd",
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/cluster_metric_definitions.json": "042e25875b2208bf92fff34977b3569e3dc7b4b413a984cd303233fc5e6132b3",
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/manifest.json": "41ac390d844557c94eea377bf5e462e40e6578f6438e826a5abb554a507abcb5",
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/inputs/runtime-1/host.jsonl.gz": "c9efc9652cbc16cc4f5ef6617315b721f21b46b9c32c2fbcc45d7eeed306e873",
+        "outputs/pro_overnight_20261019_recovery2/points/pro_overnight_20261019_p01s_n1_c128/results/groups-16/inputs/demand.jsonl.gz": "40b862522e22eb89144d1e3e5a4d3f060153b56007b7f228671ab42434090715"
+      }
+    },
+    {
+      "runtime_count": 2,
+      "benchmark": "SWE-bench Pro V2",
+      "episode_ceiling": 128,
+      "selection_sha256": "1d82ee3b64bd91f1548ccdb7f265c1509e108b5218e23a438caaeeb2d7c0781c",
+      "common_window_start_epoch": 1792367358.5609949,
+      "common_window_end_epoch": 1792368797.8612835,
+      "window_seconds": 1439.3002886772156,
+      "sampled_fraction_of_rollout_wall_window": 0.9946636318837034,
+      "cpu_seconds": 82097.59452311898,
+      "charged_memory_gib_seconds": 928939.9668291598,
+      "anonymous_memory_gib_seconds": 106599.4702290915,
+      "mean_cpu_service": 57.03993473006979,
+      "mean_charged_memory_gib": 645.4108111677648,
+      "mean_anonymous_memory_gib": 74.06339807453344,
+      "mean_file_memory_gib": 567.9357856684609,
+      "intensity_cpu_eq_per_gib": 0.08837771810308755,
+      "anonymous_intensity_cpu_eq_per_gib": 0.770150117507002,
+      "useful_trajectories_in_window": 1016,
+      "retained_usable_trajectories_full_run": 1024,
+      "terminal_groups_in_window": 127,
+      "excluded_group_terminals": [
+        {
+          "uid": "e93a4518-6e10-48e2-abcb-35cb362183db",
+          "timestamp": 1792368801.9931617,
+          "retained_trajectories": 8
+        }
+      ],
+      "useful_trajectories_per_minute": 42.35391355060805,
+      "cpu_seconds_per_useful_trajectory": 80.80471901881789,
+      "charged_memory_gib_seconds_per_useful_trajectory": 914.3109909735824,
+      "anonymous_memory_gib_seconds_per_useful_trajectory": 104.92073841446013,
+      "conditional_cpu_roof_trajectories_per_minute": 142.56593104812615,
+      "conditional_memory_roof_at_observation_trajectories_per_minute": 49.545811403019904,
+      "conditional_anonymous_memory_roof_trajectories_per_minute": 431.75715885203954,
+      "nominal_cpu_logical_processors": 192,
+      "nominal_host_ram_gib": 755.0046653747559,
+      "nominal_knee_cpu_eq_per_gib": 0.25430306434556726,
+      "max_sample_gap_seconds": 5.046458721160889,
+      "strict_profiler_compatible": false,
+      "nodes": [
+        {
+          "id": "runtime-1",
+          "sample_count": 289,
+          "first_charged_memory_gib": 318.2679557800293,
+          "first_file_memory_gib": 316.8589401245117,
+          "cpu_seconds": 39839.53109770973,
+          "charged_gib_seconds": 467646.02788488986,
+          "anonymous_gib_seconds": 50719.96965676388,
+          "file_gib_seconds": 414500.9139298389
+        },
+        {
+          "id": "runtime-2",
+          "sample_count": 289,
+          "first_charged_memory_gib": 318.27399826049805,
+          "first_file_memory_gib": 316.86920166015625,
+          "cpu_seconds": 42258.06342540926,
+          "charged_gib_seconds": 461293.93894426984,
+          "anonymous_gib_seconds": 55879.50057232762,
+          "file_gib_seconds": 402929.2263328981
+        }
+      ],
+      "source_hashes": {
+        "outputs/pro_multinode_2x_20261018/results/groups-16/result.json": "66c27ddfbae1a14c253efb69b241a75eadd078342b8392134a4ea343bd17385b",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/cluster_metric_definitions.json": "98c933127156a4cc0bfa536a182eed6d72bd2c190d678569317ee0859b60b909",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/manifest.json": "8e89a5f61cc9e68177adb34e220e7f8ed6f286879f7e2e18c61f4ce41619f597",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/inputs/runtime-1/host.jsonl.gz": "3f9a09f3452685fbf76d4a68c87c5134f175de54f2c7aac670fcd07c575110f9",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/inputs/runtime-2/host.jsonl.gz": "8ee756b9a9dcd453d251892a42a0601a870f17393484b559241e39375af3bc7f",
+        "outputs/pro_multinode_2x_20261018/results/groups-16/inputs/demand.jsonl.gz": "9f75c776eddc22b9918c80061014715cd152617568bc1e7c8813e3119ea449c5"
+      }
+    }
+  ]
+}

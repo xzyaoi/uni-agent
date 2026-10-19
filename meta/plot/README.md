@@ -2,6 +2,154 @@
 
 ## One versus two CPU hosts at C=128
 
+### Exploratory CPU / memory-time roofline
+
+Anonymous-memory version (default):
+[PNG](figure/cpu_memory_roofline_anon_c128_pro.png) · [SVG](figure/cpu_memory_roofline_anon_c128_pro.svg) · [PDF](figure/cpu_memory_roofline_anon_c128_pro.pdf).
+Total charged-memory comparison:
+[PNG](figure/cpu_memory_roofline_c128_pro.png) · [SVG](figure/cpu_memory_roofline_c128_pro.svg) · [PDF](figure/cpu_memory_roofline_c128_pro.pdf).
+
+This uses the accounting model studied in the neighboring `infersim` project
+(`scripts/analyzer/plot_aws_replay_roofline.py`) and `flash-sandbox`'s
+`meta/tools/roofline_profiler/README.md`: `I=C/A`, `Y=C/T`, and the nominal
+reference envelope `Y <= min(P, M*I)`. `C` is cumulative cgroup CPU seconds;
+`A` is integrated memory-time (GiB-seconds), using `memory.stat anon` by default
+or total charged `memory.current` with `--memory-basis charged`.
+`P` is nominal logical-CPU count and `M` is host `MemTotal`. There is one panel
+per host configuration, using the same Pro C=128 task mixture in both.
+Each point represents a whole fleet observation, not an individual task.
+
+The default Y-axis is **useful trajectories per minute**, with `N` stored
+usable trajectories credited to group-terminal events within the resource
+window. Reward-zero trajectories count. With observed window costs `c=C/N`
+(CPU-seconds per useful trajectory) and `d=A/N` (GiB-seconds per useful
+trajectory), the plotted conditional CPU/RAM roof is
+`R_roof(I) = 60 * min(P, M*I) / c`. At the measured intensity this equals
+`60 * min(P/c, M/d)`; the observed point is `R=60*N/T`. Each host configuration
+uses its own measured CPU cost per useful trajectory. The curve holds that
+CPU cost fixed as intensity varies; it is not a common calibrated operational
+roof for both runs. No independent GPU-serving ceiling was measured.
+
+| Sampled-window measurement | 1 host | 2 hosts total |
+| --- | ---: | ---: |
+| Mean CPU service (CPU-s/s) | 63.34 | 57.04 |
+| Mean charged memory (GiB) | 246.47 | 645.41 |
+| Mean anonymous memory (GiB) | 86.76 | 74.06 |
+| CPU / anon-memory-time intensity (CPU-eq/GiB) | 0.730 | 0.770 |
+| CPU / charged-memory-time intensity (CPU-eq/GiB) | 0.257 | 0.088 |
+| Nominal CPU / RAM reference knee | 0.254 | 0.254 |
+| Useful trajectories credited within sampled window | 1,015 | 1,016 |
+| Observed useful trajectories/min | 31.88 | 42.35 |
+| Conditional CPU ceiling (trajectories/min) | 48.32 | 142.57 |
+| Conditional CPU/anon roof at observed intensity (trajectories/min) | 48.32 | 142.57 |
+| Conditional CPU/charged-memory roof at observed intensity (trajectories/min) | 48.32 | 49.55 |
+
+With anonymous memory, both points lie to the right of the nominal knee, on the
+horizontal CPU-reference branch. Their measured rates remain below that roof;
+this does not demonstrate CPU saturation. This view excludes kernel memory and
+file-cache costs, and uses full nominal RAM as an optimistic anonymous-memory
+budget. It is a conditional sensitivity view rather than a complete working-set
+capacity model.
+
+With total charged memory, the one-host point lies near the nominal reference
+knee and the two-host point lies on its memory-side branch.
+**This does not demonstrate a memory bottleneck.**
+Charged memory includes retained file cache already present at the start:
+approximately 131.5 GiB for the one-host run and 316.9 GiB on each host of the
+two-host run. There is no baseline subtraction in the charged-memory comparison.
+Cache history substantially affects that placement. The anonymous-memory view
+instead integrates the captured `memory.stat anon` samples on the same windows.
+
+“Charged” means accounted to the cgroup, not unreclaimable. Clean file cache
+can be reclaimed by Linux; dirty pages may require writeback first. In these
+windows, mean file memory is 157.17 GiB for one host and 567.94 GiB across two
+hosts, while mean anonymous memory is 86.76/74.06 GiB. The two-host fleet has
+455.59 GiB of mean inactive file pages. Treating all charged cache as a fixed
+per-trajectory memory requirement therefore gives a misleading RAM-capacity
+projection when cache can adapt under pressure. The plotted memory branch is
+an accounting reference under its fixed-cost assumption; a practical capacity
+roof requires working-set/reclaim and refault/latency measurements. Anonymous
+memory alone also omits kernel costs and performance-relevant file cache.
+See the kernel's [reclaim overview](https://docs.kernel.org/admin-guide/mm/concepts.html#reclaim)
+and [cgroup memory definitions](https://docs.kernel.org/admin-guide/cgroup-v2.html#memory).
+
+Hollow markers indicate exploratory placement: the exports retained wall
+timestamps and cgroup paths, but not host monotonic timestamps, boot IDs, or
+cgroup inodes. Thus they cannot satisfy the strict profiler's identity/clock
+checks. Sampling is about five seconds, exceeding the reference renderer's
+three-second strict gap criterion; this exploratory integration rejects
+nonpositive gaps, gaps over six seconds, path changes, and CPU counter resets.
+Nominal capacities are neither calibrated operational capacity nor enforced
+safe budgets. Scope exclusivity and effective ancestor quotas are unproven.
+
+For each fleet, CPU and memory-time use exactly the same intersection of its
+host sampling windows, with linear interpolation at common boundaries and
+trapezoidal memory integration. Unsampled rollout edges are excluded. The
+final group of each run terminates just after the last common resource sample,
+so its eight trajectories are excluded from the windowed rate. Full-run usable
+counts remain 1,023/1,024. Group-terminal timestamps are joined by UID to final
+stored-session score counts, whose totals reconcile to the independent usable
+counts. Individual trajectory persistence timestamps were not captured, so
+availability is attributed at group termination. Resource costs retain all
+in-flight and unsuccessful work in that same window. These conditional
+per-output costs include boundary effects, shared cache, and idle time.
+Both axes are linear, with shared ranges of 0–1.2 CPU-eq/GiB for anonymous
+memory (0–0.6 for total charged memory) and
+0–160 useful trajectories/min.
+It uses a 9 × 3.75-inch canvas with minimum 12 pt visible text.
+
+```bash
+python meta/plot/plot_cpu_memory_roofline.py
+# Optional: refresh from the existing local raw host exports.
+python meta/plot/plot_cpu_memory_roofline.py --refresh-data
+# Reproduce the separate charged-memory comparison:
+python meta/plot/plot_cpu_memory_roofline.py --memory-basis charged
+# Optional original CPU-service view (saved with a separate cpu_service stem):
+python meta/plot/plot_cpu_memory_roofline.py --memory-basis charged --y-axis cpu-service
+```
+
+Frozen measurements, window coverage, initial cache, limitations, and raw-source
+hashes are in `data/cpu_memory_roofline_c128_20261019.json`.
+
+### Modeled pricing at supplied rates
+
+[PNG](figure/cpu_host_pricing_c128_pro.png) · [SVG](figure/cpu_host_pricing_c128_pro.svg) · [PDF](figure/cpu_host_pricing_c128_pro.pdf) · [CSV](figure/cpu_host_pricing_c128_pro.csv)
+
+The pricing figure uses the user's supplied **$5.424/hour per m5d.metal host**
+and **$5.970/hour for the entire eight-GPU allocation**, charged concurrently.
+Stacked bars compare hourly allocation cost and cost per 1,000 usable
+trajectories, with CPU and GPU contributions shown separately. It uses the
+same 9 × 3.75-inch canvas, `font_scale=2`, and minimum 12 pt visible text.
+
+| Modeled metric | 1 CPU host | 2 CPU hosts |
+| --- | ---: | ---: |
+| CPU + GPU allocation (USD/hour) | 11.394 | 16.818 |
+| Measured rollout cost (USD) | 6.05 | 6.76 |
+| Cost / 1,000 usable trajectories (USD) | 5.92 | 6.60 |
+
+Two hosts cost 47.6% more per hour and 11.5% more per usable trajectory while
+delivering 32.4% higher usable-trajectory throughput in the measured runs.
+Cost is `(hosts × CPU hourly price + GPU hourly price) × rollout_seconds / 3600`;
+divide by stored usable trajectories for unit cost.
+
+This is an active-configuration cost scenario, not an experiment billing
+statement: one-host execution excludes the inactive allocated host. Model
+initialization, image warmup, provisioning, storage, transfer, and taxes are
+excluded. The supplied GPU price is for **8 × H100**, whereas the measured
+rollout timings used **8 × GH200**. Applying that price assumes the measured
+runtime for this scenario; no H100 throughput equivalence was measured.
+
+```bash
+python meta/plot/plot_cpu_host_pricing.py
+# Optional alternative rates (GPU price is for the whole eight-GPU allocation):
+python meta/plot/plot_cpu_host_pricing.py --cpu-hourly 5.424 --gpu-hourly 5.970
+```
+
+Assumptions, inputs, source hash, and computed values are saved in
+`data/cpu_host_pricing_c128_20261019.json`.
+
+### Throughput and resource comparison
+
 [SVG](figure/cpu_host_scaling_c128_pro.svg) · [PNG](figure/cpu_host_scaling_c128_pro.png) · [PDF](figure/cpu_host_scaling_c128_pro.pdf) · [Metrics CSV](figure/cpu_host_scaling_c128_pro.csv)
 
 The SWE-bench Pro V2 comparison uses the throughput/resource layout, colors,
@@ -46,6 +194,91 @@ python meta/plot/plot_cpu_host_scaling.py --refresh-data
 Rendering requires Matplotlib, NumPy, and Seaborn and uses only
 `data/cpu_host_scaling_c128_20261019.json`. The adjacent provenance JSON records
 source hashes, job IDs, windows, matching checks, and metric definitions.
+
+### GPU activity and model demand over time
+
+Compact throughput/request comparison:
+[PNG](figure/cpu_host_throughput_requests_c128_pro.png) · [SVG](figure/cpu_host_throughput_requests_c128_pro.svg) · [PDF](figure/cpu_host_throughput_requests_c128_pro.pdf).
+The left panel plots usable-trajectory throughput against CPU host count,
+matching the original campaign bar style: 1,023/1,024 stored usable trajectories
+divided by rollout duration gives 32.10/42.48 trajectories/min for one/two hosts.
+The right panel overlays
+active client requests for one host (blue) and two hosts (violet), aligned to
+model readiness. Lines show exact interval-overlap means in 10-second bins,
+including zero-request time through each run's completion. Neither line extends
+beyond its observation window. These client counts include gateway/network
+waits and are not vLLM running-queue measurements.
+
+```bash
+python meta/plot/plot_cpu_host_throughput_requests.py
+```
+
+Output-token-rate variant:
+[PNG](figure/cpu_host_throughput_output_tokens_c128_pro.png) · [SVG](figure/cpu_host_throughput_output_tokens_c128_pro.svg) · [PDF](figure/cpu_host_throughput_output_tokens_c128_pro.pdf).
+It keeps usable-trajectory throughput on the left and overlays aggregate
+delivered output tokens/s on the right, with the same host colors. Counts sum
+`usage.completion_tokens` across client model-call completions in each
+10-second bin, divided by its duration. Each call is counted once across all
+rollout replicas; these are completion-time delivery rates rather than
+instantaneous GPU token-generation rates. Run totals are 670,765 output tokens
+for one host and 655,987 for two hosts.
+Matching-color dashed lines show duration-weighted mean output rates over each
+full telemetry rollout window, including idle time after the last model call:
+**350.60 tokens/s** for one host and **453.34 tokens/s** for two hosts. Each mean
+line ends at its own run's completion and is labeled with its numeric value.
+Arrows annotate the observed gain from one to two CPU hosts: **+32.4% usable
+trajectories/min** and **+29.3% mean output tokens/s**, calculated from the
+unrounded values. These are descriptive differences between the two runs.
+
+```bash
+python meta/plot/plot_cpu_host_throughput_requests.py --metric output-tokens
+```
+
+The compact renderer uses the existing frozen scaling and timeline JSON files.
+It exports a 9 × 3.75-inch canvas with the original fonts, palette, and legend
+style. The output-token variant omits the bottom caption; metric definitions
+and run provenance remain documented here. It uses Seaborn `font_scale=2`,
+at least 12 pt for all visible text, and an exact 9 × 3.75-inch export canvas.
+
+Mean resident sandbox VM counts are **84.66** with one host and **74.52 total**
+across two hosts, averaging full-node-coverage complete rollout minutes (31/23
+bins respectively). The two-host figure is a fleet total, not a per-host value.
+These host process counts include resident idle VMs and do not establish the
+number of sandboxes actively executing commands. The average includes the
+observed post-generation portion of each rollout window.
+
+[PNG](figure/cpu_host_timeline_c128_pro.png) · [SVG](figure/cpu_host_timeline_c128_pro.svg) · [PDF](figure/cpu_host_timeline_c128_pro.pdf) · [10-second metrics CSV](figure/cpu_host_timeline_c128_pro.csv)
+
+The two-column timeline aligns each run to model readiness and shows GPU busy,
+SM/tensor activity, client model requests in flight, delivered output tokens/s,
+CPU utilization, and resident sandbox VM counts. GPU/request/token series use
+10-second bins; CPU/VM series retain complete one-minute bins. Full-run mean
+client requests in flight are 4.16/6.55 for one/two hosts, with instantaneous
+peaks 124/127. Every client begin event has a matching terminal event
+(6,301/6,385 calls). Request means integrate interval overlap, and peaks use
+event boundaries rather than periodic snapshots. Last model completion occurs
+at 21.93/14.44 minutes; batch completion occurs at 31.89/24.12 minutes on the
+wall-clock telemetry window. The throughput denominator uses the independently
+recorded monotonic rollout duration (31.87/24.10 minutes).
+
+These are **client requests**, including gateway/network waits. Neither run
+captured vLLM running/waiting queue scrapes, so engine batch size, engine queue
+length, and KV-cache occupancy are unavailable. Output tokens are assigned to
+request completion time. Post-generation elapsed time does not by itself
+identify verification or cleanup duration. These rollout-only observations
+contain no trainer updates. The separate 27B training job 3692513 has no
+retained historical GPU utilization percentages in its local usage export.
+
+```bash
+python meta/plot/plot_cpu_host_timeline.py
+# Refresh the frozen timeline from local raw exports:
+python meta/plot/plot_cpu_host_timeline.py --refresh-data
+```
+
+Frozen inputs, source hashes, metric definitions, and summary statistics are in
+`data/cpu_host_timeline_c128_20261019.json`. Rendering needs no raw exports or
+remote access. CPU/VM minute series are retained in that JSON; the CSV contains
+the 10-second GPU/request/token series.
 
 ## SWE-bench Pro and Verified episode timelines
 
@@ -132,3 +365,23 @@ use complete one-minute bins after model readiness and have different counter
 definitions. There is one run per point, with no statistical error bars. The
 128-active-group point was skipped because 64 did not meet the clean-completion
 gate. Reward verification completion includes reward-zero outcomes.
+
+
+## Verified characterization on two AWS hosts (2026-10-19)
+
+`characterization.ipynb` renders a two-panel figure from frozen data: usable
+samples/min versus concurrency on the left; mean active inference requests,
+sandbox CPU utilization, and sandbox host RAM utilization on the right. CPU/RAM
+bars have solid bases ending at the mean and hatched extensions ending at the
+sampled peak. Requests use the right count axis and sum both TP4 replicas.
+
+Host RAM is `(MemTotal - MemAvailable) / MemTotal` across the two hosts; it
+includes the OS/runtime/VMs. CPU and RAM peaks use complete aligned five-second
+fleet-average bins. Model startup and cleanup are excluded, while tool and
+verification waits remain included. Each point attempts 128 tasks × 8 responses;
+usable sample counts are 1,024 / 1,024 / 1,024 / 1,022.
+
+Run all notebook cells from the repository root or `meta/plot`. Inputs are
+`data/verified_characterization_2hosts_20261019.csv` and its `.provenance.json`
+(source hashes, exact windows, aggregation rules, and coverage). Rendering needs
+no cluster access. Exports: `figure/concurrency_characterization_verified.{png,pdf,svg}`.
