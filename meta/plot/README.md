@@ -367,21 +367,38 @@ definitions. There is one run per point, with no statistical error bars. The
 gate. Reward verification completion includes reward-zero outcomes.
 
 
-## Verified characterization on two AWS hosts (2026-10-19)
+## One-host Verified and Pro characterization
 
-`characterization.ipynb` renders a two-panel figure from frozen data: usable
-samples/min versus concurrency on the left; mean active inference requests,
-sandbox CPU utilization, and sandbox host RAM utilization on the right. CPU/RAM
-bars have solid bases ending at the mean and hatched extensions ending at the
-sampled peak. Requests use the right count axis and sum both TP4 replicas.
+`characterization.ipynb` renders a 2×2 figure: one sandbox host running SWE-bench
+Verified on the first row, and one host running SWE-bench Pro on the second.
+The left column shows stored usable samples/min at C=64/128/256/512; the right
+shows mean client model calls in flight, sandbox CPU, and sandbox host RAM.
+CPU/RAM bars have solid bases ending at the mean and equal-width hatched
+extensions ending at the sampled peak. Client calls use the right count axis,
+integrating matched call begin/end/error intervals across both TP4 replicas.
+This includes waiting calls; historical Pro lacks actual vLLM running-request
+telemetry, so both rows use the same client-side definition.
 
-Host RAM is `(MemTotal - MemAvailable) / MemTotal` across the two hosts; it
-includes the OS/runtime/VMs. CPU and RAM peaks use complete aligned five-second
-fleet-average bins. Model startup and cleanup are excluded, while tool and
-verification waits remain included. Each point attempts 128 tasks × 8 responses;
-usable sample counts are 1,024 / 1,024 / 1,024 / 1,022.
+Verified uses the completed October 19 one-host sweep, with usable counts
+1,024 / 1,024 / 1,023 / 1,024. Pro uses the only complete historical one-host
+sweep (October 15), with counts 1,024 / 1,020 / 1,020 / 319. **All four historical
+Pro points used an unintended 180-second verifier command cap; C=512 also had
+an engine failure.** The plot marks these limitations. This is not a clean
+matched comparison between benchmarks; the newer clean Pro C=128 run is not
+spliced into the old series.
+
+Each sandbox host has 96 vCPUs. Host RAM is `(MemTotal - MemAvailable) / MemTotal`,
+including the OS/runtime/VMs. CPU/RAM means are duration-weighted over available
+telemetry; peaks use complete aligned five-second bins. Model startup and
+cleanup are excluded, while tool and verification waits remain included.
 
 Run all notebook cells from the repository root or `meta/plot`. Inputs are
-`data/verified_characterization_2hosts_20261019.csv` and its `.provenance.json`
-(source hashes, exact windows, aggregation rules, and coverage). Rendering needs
-no cluster access. Exports: `figure/concurrency_characterization_verified.{png,pdf,svg}`.
+`data/verified_characterization_1host_20261019.csv`,
+`data/pro_characterization_1host_20261015.csv`, and their `.provenance.json`
+files (source hashes, windows, aggregation rules, coverage, and limitations).
+Rendering needs no cluster access. Exports:
+`figure/concurrency_characterization_1host.{png,pdf,svg}`.
+
+The earlier two-host Verified inputs and
+`figure/concurrency_characterization_verified.{png,pdf,svg}` remain available
+as separate historical artifacts.

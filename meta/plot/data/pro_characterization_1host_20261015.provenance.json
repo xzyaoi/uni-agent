@@ -1,0 +1,528 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-19T16:09:24.924294+00:00",
+  "benchmark": "swebench-pro",
+  "runtime_count": 1,
+  "rollout_gpus": 8,
+  "groups": 128,
+  "responses": 8,
+  "seed": 42,
+  "sha256": "f38ed95ff64c6c738f1a95c9cb9f952b58df6eec16aec7ee885a97bbd3da3103",
+  "frozen_csv": {
+    "path": "meta/plot/data/pro_characterization_1host_20261015.csv",
+    "sha256": "f38ed95ff64c6c738f1a95c9cb9f952b58df6eec16aec7ee885a97bbd3da3103",
+    "rows": 4,
+    "columns": [
+      "concurrency_episodes",
+      "rollout_wall_seconds",
+      "sandbox_cpu_mean_pct",
+      "sandbox_cpu_peak_5s_pct",
+      "sandbox_cpu_common_coverage_pct",
+      "sandbox_ram_mean_pct",
+      "sandbox_ram_peak_5s_pct",
+      "sandbox_ram_total_gib",
+      "sandbox_ram_common_coverage_pct",
+      "client_active_requests_mean",
+      "client_active_requests_peak",
+      "group_concurrency",
+      "job_id",
+      "result_state",
+      "scheduler_state",
+      "window_start_epoch",
+      "window_end_epoch",
+      "terminal_attempts",
+      "verified_attempts",
+      "incomplete_verifications",
+      "usable_trajectories",
+      "usable_trajectories_per_minute",
+      "terminal_attempts_per_minute",
+      "verified_attempts_per_minute",
+      "benchmark",
+      "runtime_count",
+      "verifier_exec_timeout_seconds",
+      "engine_failure",
+      "point_quality"
+    ]
+  },
+  "offline_contract": "This frozen CSV and provenance are sufficient for plotting; ignored outputs sources are audit references only. Plot loaders must not require raw outputs. No raw telemetry or trajectory bodies were copied.",
+  "definitions": {
+    "rollout_window": "[model_ready_at, model_ready_at + rollout_wall_seconds], using each result.json. Model/framework startup and final artifact/cleanup latency excluded.",
+    "usable_trajectories": "result.progress.episodes_with_usable_trajectory; this is stored usable training trajectories, not reward verification success or resolved tasks.",
+    "usable_trajectories_per_minute": "usable_trajectories *60 / rollout_wall_seconds.",
+    "terminal_attempts": "Harbor terminal_results, including incomplete verification. This is not a count of successful evaluations.",
+    "verified_attempts": "Harbor evaluation_completed, including completed zero rewards.",
+    "sandbox_cpu": "Aggregate /proc/stat first8 ticks user,nice,system,idle,iowait,irq,softirq,steal. Busy%=100*(sum(delta(first8))-delta(idle)-delta(iowait))/sum(delta(first8)); guest/guest_nice columns excluded to avoid counting guest time twice.",
+    "sandbox_ram": "Whole sandbox-host RAM100*(MemTotal-MemAvailable)/MemTotal, using Linux /proc/meminfo kB*1024; includes OS/runtime/VM nonavailable memory, not aenv anonymous memory or GPU VRAM.",
+    "sample_intervals": "CPU delta average is constant on each adjacent sample interval; RAM gauge holds the left sample to the next sample. Clip intervals to the strict rollout window; exclude nonpositive intervals, gaps>15s, and invalid/reset CPU deltas. No extrapolation outside available sample pairs.",
+    "resource_means": "Duration-weighted utilization over observed valid intervals; uncovered time is excluded, not imputed as idle. Single AWS sandbox host only.",
+    "resource_peak_5s": "Maximum fully covered resampled5-second mean anchored at model_ready_at. Bins require complete valid coverage with tolerance1e-5seconds. These are approximately5-second averages, not instantaneous peaks.",
+    "sandbox_ram_total_gib": "Observed MemTotal bytes/2^30 on the single AWS sandbox host; constant across samples.",
+    "client_active_requests_mean": "Sum of clipped model RPC begin-to-end/error durations divided by the full rollout wall time; pairs matched by(model_client_id,operation_id). This counts client requests in flight, including server queues, network time and failed-call waiting. It is NOT vLLM engine-running requests.",
+    "client_active_requests_peak": "Exact maximum concurrent model RPC intervals from event order, with terminal events processed before begin events at equal timestamps. This is an event-derived peak, not a sampled engine request count.",
+    "verifier_exec_timeout_seconds": "Historical accidental180-second native SDK command timeout; it truncated verifier commands even when Harbor phase deadlines were longer.",
+    "engine_failure": "True only at C512: EngineDeadError appears in the training log and702 model RPCs end in error.",
+    "result_vs_scheduler_state": "The rollout runner wrote a completed result after128 terminal groups; all four Slurm jobs later reportedFAILED during Ray teardown. Result completion does not establish all trajectories or verifications succeeded.",
+    "uncertainty": "One stochastic run per concurrency, without replicate-based uncertainty. Image cache state and trajectories can vary."
+  },
+  "sources": [
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-8/result.json",
+      "sha256": "7983089186779838f75e497e77619471c5a5469da1b0fcc088df866cd78032e9"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-8/manifest.json",
+      "sha256": "b6372cbf998e6ae7967f6a7ff135982456f169f8cd0d716b336f5f4f631299b4"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-8/settings.json",
+      "sha256": "d632d54f17d10f037bbcbf7581e414161e6f261a110a15abb9729596ae31abae"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-8/scheduler-final.json",
+      "sha256": "7958f73f30cb0e1ed7246501b3640816e30f8259c2b15f08e8dda52bdf7daa54"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-8/inputs/cloudlab.jsonl.gz",
+      "sha256": "c1cf75c220043ba08cbb557fffbf52391ea4bd19cb2cb7d6c5d6fe8d3f0a710e"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-8/inputs/demand.jsonl.gz",
+      "sha256": "f69479165969914eff0ed8e1d66333cd11b9af88a574a9a306bee37dafbc07ef"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-8/inputs/training.out",
+      "sha256": "280537c275d8786e7446fc2a2f16cbdd1c7fb86303a1c13a71352e72e027e8d3"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-8/STATUS.md",
+      "sha256": "54230d31e896c3080f287a4e6da4f19e3c1d1b9c876dc2c019de623eb09e9023"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-16/result.json",
+      "sha256": "f7b1909a5d88db5068e7603508bae705e054e8540dfb0722fba3b872891ae8a4"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-16/manifest.json",
+      "sha256": "db8cd3d5d997b31cc81a0551a40f98fd7721f1a572f9409c6977d7883b59ac6c"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-16/settings.json",
+      "sha256": "f1a84cffcddcec3f0f23fa4d38e3cf11ff45020c9f4018b7d69e17bbf4442d0e"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-16/scheduler-final.json",
+      "sha256": "444be38a2cdc9382a0afc90605c74cf9b1bb817f629802796894be4f0b6609c4"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-16/inputs/cloudlab.jsonl.gz",
+      "sha256": "6cde59285343f64b3ccd8edb859510c2d81fabc91e2df63c248baecdb9fcc105"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-16/inputs/demand.jsonl.gz",
+      "sha256": "cc4ad0703fec1e68a2ed1e438bfee04b1dfe31341b87bd70d3662e151601c354"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-16/inputs/training.out",
+      "sha256": "96a6b83e1679c9faedc58e79631ecf3928df4ce792e7ffbd17b9b5f2023ffb91"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-16/STATUS.md",
+      "sha256": "c47735b2cc52021db59018f985d80281e12f7dc2a946ad59441ff7a77c44b8af"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-32/result.json",
+      "sha256": "3bab2ca2b438bbafa6c274a3ea0aa0b4bf1d5ab1f59b214eecb148eaaa0f4302"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-32/manifest.json",
+      "sha256": "08f1582e7331741f1d8a0064de43967723a9292c82c10b4986aa5390823729a5"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-32/settings.json",
+      "sha256": "34c409eded4f1438a941aea28ba14d253ac0424052384e177a0acac499af292b"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-32/scheduler-final.json",
+      "sha256": "366467061fb8618ce240ddeb5ad78381aeaef81c8433f2ac46600fe9d76eba7e"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-32/inputs/cloudlab.jsonl.gz",
+      "sha256": "9dbac30cd113ca3c46c31afb0ce1897d126349ad63e8208066c18bc6b53a2a3d"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-32/inputs/demand.jsonl.gz",
+      "sha256": "7eee161d45e3d4b3a45836c4eb88b5233d2e879b6e358a1991c6008228331e38"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-32/inputs/training.out",
+      "sha256": "b97e58c4c5816f462890f8347f7f639b83a877f447506901d2f529f43f14ad65"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-32/STATUS.md",
+      "sha256": "88e3f01bbd91a48d13d587c952a2d015013dad7a1fddd1c14d9debaf85fb9892"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-64/result.json",
+      "sha256": "9bbd15f2551197af56e3dff01e4b21b510d8af5a0745dcd7491d30ac0b9699aa"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-64/manifest.json",
+      "sha256": "90b14874a527e21ececec8472c0d8c236ebf0d4d0fbd23dff8c0f966b61cb0bb"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-64/settings.json",
+      "sha256": "6df6129773952e920555f95f71f582c91fe868da4426be003418e72724e5f5d1"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-64/scheduler-final.json",
+      "sha256": "ca16b78d40cbb7d18e1f91bd264f69e9213542fb1e71529c5d9f5aed367dfb9f"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-64/inputs/cloudlab.jsonl.gz",
+      "sha256": "ddc7584e13afff92234568ce208c440637ba8ea7dd57bb744ec0e4369beeac69"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-64/inputs/demand.jsonl.gz",
+      "sha256": "c9aac92054f059ca45153721415867e04b673ca0c1f089168bd7d1c972dbb74f"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-64/inputs/training.out",
+      "sha256": "5d2ff2bffdb79e48ec548338e252cc0305c2dcf61e69f92d8ecc7eb413d13fd2"
+    },
+    {
+      "path": "outputs/sandbox-sweep-20261015_193213Z/groups-64/STATUS.md",
+      "sha256": "3bc07bdc3d6515c3dffddc75449e9327e19490e72ae5dff41d6cbd2a86d77d5a"
+    },
+    {
+      "path": "meta/plot/data/sandbox_sweep_20261015.provenance.json",
+      "sha256": "9670f04078b84dfde6d4d920de62881badcecc61c3fa7cecb9699b9abdec2635"
+    },
+    {
+      "path": "cscs/sandbox_sweep/README.md",
+      "sha256": "7395bf08dc146857cde5466cffdb354e1dce730d7ca1ba8b80a0f73194874d45"
+    }
+  ],
+  "hardware": {
+    "sandbox_hosts": 1,
+    "sandbox_vcpus_per_host": 96,
+    "sandbox_ram_memtotal_gib": 377.5023498535156,
+    "inference_nodes": 2,
+    "gpus_per_inference_node": 4,
+    "rollout_gpus": 8,
+    "vllm_replicas": 2,
+    "tensor_parallel_size_per_replica": 4,
+    "model": "Qwen3.5-9B"
+  },
+  "cohort": {
+    "seed": 42,
+    "groups": 128,
+    "responses": 8,
+    "selected_task_count": 128,
+    "selection_sha256": "20aeadbd738f18b51dabb5c728965de68826807c740884df3e2a8d5f11c4216c",
+    "all_four_ordered_task_identity_entries_equal": true,
+    "model_config_sha256": "d0883072e01861ed0b2d47be3c16c36a8e81c224c7ffaa310c6558fb3f932b05"
+  },
+  "points": [
+    {
+      "concurrency_episodes": 64,
+      "source_directory": "outputs/sandbox-sweep-20261015_193213Z/groups-8",
+      "result_source": "outputs/sandbox-sweep-20261015_193213Z/groups-8/result.json",
+      "host_source": "outputs/sandbox-sweep-20261015_193213Z/groups-8/inputs/cloudlab.jsonl.gz",
+      "model_source": "outputs/sandbox-sweep-20261015_193213Z/groups-8/inputs/demand.jsonl.gz",
+      "window_start_epoch": 1792093042.4602666,
+      "window_end_epoch": 1792095188.9196475,
+      "window_start_utc": "2026-10-15T19:37:22.460267+00:00",
+      "window_end_utc": "2026-10-15T20:13:08.919647+00:00",
+      "rollout_wall_seconds": 2146.459380827,
+      "finished_at_minus_window_end_seconds": 0.7932944297790527,
+      "host_nodes": [
+        "ip-172-31-71-232"
+      ],
+      "host_records": 508,
+      "invalid_host_records_or_intervals": {},
+      "host_sample_interval_seconds": {
+        "min": 4.897574424743652,
+        "median": 5.000073194503784,
+        "max": 5.102430582046509
+      },
+      "cpu": {
+        "mean_pct": 40.1564652160886,
+        "peak_5s_pct": 68.40007744203488,
+        "peak_5s_start_utc": "2026-10-15T19:58:47.460267+00:00",
+        "peak_5s_end_utc": "2026-10-15T19:58:52.460267+00:00",
+        "coverage_fraction": 1.0000000000177487,
+        "covered_seconds": 2146.459380865097,
+        "complete_5s_bins": 429
+      },
+      "ram": {
+        "mean_pct": 10.426021075926407,
+        "peak_5s_pct": 20.38395917431644,
+        "total_gib": 377.5023498535156,
+        "mean_used_gib": 39.35847455784498,
+        "peak_5s_used_gib": 76.94992487622585,
+        "peak_5s_start_utc": "2026-10-15T20:05:12.460267+00:00",
+        "peak_5s_end_utc": "2026-10-15T20:05:17.460267+00:00",
+        "coverage_fraction": 1.0000000000177487,
+        "covered_seconds": 2146.459380865097,
+        "complete_5s_bins": 429
+      },
+      "client_inflight": {
+        "mean": 2.844412113341406,
+        "peak": 29,
+        "event_counts": {
+          "begin": 6260,
+          "end": 6260
+        },
+        "paired_calls": 6260,
+        "unmatched_begins": 0,
+        "unmatched_terminals": 0,
+        "duplicate_or_missing_key_counts": {},
+        "end_or_error_duration_sum_seconds": 6105.415063619614,
+        "actual_vllm_samples": 0
+      },
+      "quality": {
+        "result_state": "completed",
+        "scheduler_state": "FAILED",
+        "legacy_native_exec_timeout_seconds": 180,
+        "engine_failure": false,
+        "engine_dead_error_mentions_in_training_log": 0,
+        "terminal_attempts": 1024,
+        "usable_trajectories": 1024,
+        "verified_attempts": 887,
+        "incomplete_verifications": 137
+      }
+    },
+    {
+      "concurrency_episodes": 128,
+      "source_directory": "outputs/sandbox-sweep-20261015_193213Z/groups-16",
+      "result_source": "outputs/sandbox-sweep-20261015_193213Z/groups-16/result.json",
+      "host_source": "outputs/sandbox-sweep-20261015_193213Z/groups-16/inputs/cloudlab.jsonl.gz",
+      "model_source": "outputs/sandbox-sweep-20261015_193213Z/groups-16/inputs/demand.jsonl.gz",
+      "window_start_epoch": 1792095841.7698526,
+      "window_end_epoch": 1792096919.9341254,
+      "window_start_utc": "2026-10-15T20:24:01.769853+00:00",
+      "window_end_utc": "2026-10-15T20:41:59.934125+00:00",
+      "rollout_wall_seconds": 1078.164272686001,
+      "finished_at_minus_window_end_seconds": 0.7175819873809814,
+      "host_nodes": [
+        "ip-172-31-71-232"
+      ],
+      "host_records": 339,
+      "invalid_host_records_or_intervals": {},
+      "host_sample_interval_seconds": {
+        "min": 4.964710712432861,
+        "median": 4.999985337257385,
+        "max": 5.059686183929443
+      },
+      "cpu": {
+        "mean_pct": 87.99943592848982,
+        "peak_5s_pct": 99.90716282638348,
+        "peak_5s_start_utc": "2026-10-15T20:26:11.769853+00:00",
+        "peak_5s_end_utc": "2026-10-15T20:26:16.769853+00:00",
+        "coverage_fraction": 1.000000000091995,
+        "covered_seconds": 1078.1642727851868,
+        "complete_5s_bins": 215
+      },
+      "ram": {
+        "mean_pct": 21.641462180211732,
+        "peak_5s_pct": 31.035327479023596,
+        "total_gib": 377.5023498535156,
+        "mean_used_gib": 81.69702827295916,
+        "peak_5s_used_gib": 117.15909051804792,
+        "peak_5s_start_utc": "2026-10-15T20:37:26.769853+00:00",
+        "peak_5s_end_utc": "2026-10-15T20:37:31.769853+00:00",
+        "coverage_fraction": 1.000000000091995,
+        "covered_seconds": 1078.1642727851868,
+        "complete_5s_bins": 215
+      },
+      "client_inflight": {
+        "mean": 7.460841720433764,
+        "peak": 123,
+        "event_counts": {
+          "begin": 6226,
+          "end": 6226
+        },
+        "paired_calls": 6226,
+        "unmatched_begins": 0,
+        "unmatched_terminals": 0,
+        "duplicate_or_missing_key_counts": {},
+        "end_or_error_duration_sum_seconds": 8044.012987136841,
+        "actual_vllm_samples": 0
+      },
+      "quality": {
+        "result_state": "completed",
+        "scheduler_state": "FAILED",
+        "legacy_native_exec_timeout_seconds": 180,
+        "engine_failure": false,
+        "engine_dead_error_mentions_in_training_log": 0,
+        "terminal_attempts": 1024,
+        "usable_trajectories": 1020,
+        "verified_attempts": 784,
+        "incomplete_verifications": 240
+      }
+    },
+    {
+      "concurrency_episodes": 256,
+      "source_directory": "outputs/sandbox-sweep-20261015_193213Z/groups-32",
+      "result_source": "outputs/sandbox-sweep-20261015_193213Z/groups-32/result.json",
+      "host_source": "outputs/sandbox-sweep-20261015_193213Z/groups-32/inputs/cloudlab.jsonl.gz",
+      "model_source": "outputs/sandbox-sweep-20261015_193213Z/groups-32/inputs/demand.jsonl.gz",
+      "window_start_epoch": 1792097568.2565362,
+      "window_end_epoch": 1792098335.7561872,
+      "window_start_utc": "2026-10-15T20:52:48.256536+00:00",
+      "window_end_utc": "2026-10-15T21:05:35.756187+00:00",
+      "rollout_wall_seconds": 767.4996509479824,
+      "finished_at_minus_window_end_seconds": 0.6941876411437988,
+      "host_nodes": [
+        "ip-172-31-71-232"
+      ],
+      "host_records": 276,
+      "invalid_host_records_or_intervals": {},
+      "host_sample_interval_seconds": {
+        "min": 4.9547131061553955,
+        "median": 5.000284671783447,
+        "max": 5.049827337265015
+      },
+      "cpu": {
+        "mean_pct": 90.68755192548724,
+        "peak_5s_pct": 99.95177187496864,
+        "peak_5s_start_utc": "2026-10-15T20:56:03.256536+00:00",
+        "peak_5s_end_utc": "2026-10-15T20:56:08.256536+00:00",
+        "coverage_fraction": 1.0000000000094043,
+        "covered_seconds": 767.4996509552002,
+        "complete_5s_bins": 153
+      },
+      "ram": {
+        "mean_pct": 32.374766841168004,
+        "peak_5s_pct": 48.81099830910125,
+        "total_gib": 377.5023498535156,
+        "mean_used_gib": 122.215505585006,
+        "peak_5s_used_gib": 184.262665603817,
+        "peak_5s_start_utc": "2026-10-15T20:56:13.256536+00:00",
+        "peak_5s_end_utc": "2026-10-15T20:56:18.256536+00:00",
+        "coverage_fraction": 1.0000000000094043,
+        "covered_seconds": 767.4996509552002,
+        "complete_5s_bins": 153
+      },
+      "client_inflight": {
+        "mean": 15.050135855054858,
+        "peak": 236,
+        "event_counts": {
+          "begin": 6284,
+          "end": 6284
+        },
+        "paired_calls": 6284,
+        "unmatched_begins": 0,
+        "unmatched_terminals": 0,
+        "duplicate_or_missing_key_counts": {},
+        "end_or_error_duration_sum_seconds": 11550.97401547432,
+        "actual_vllm_samples": 0
+      },
+      "quality": {
+        "result_state": "completed",
+        "scheduler_state": "FAILED",
+        "legacy_native_exec_timeout_seconds": 180,
+        "engine_failure": false,
+        "engine_dead_error_mentions_in_training_log": 0,
+        "terminal_attempts": 1024,
+        "usable_trajectories": 1020,
+        "verified_attempts": 536,
+        "incomplete_verifications": 488
+      }
+    },
+    {
+      "concurrency_episodes": 512,
+      "source_directory": "outputs/sandbox-sweep-20261015_193213Z/groups-64",
+      "result_source": "outputs/sandbox-sweep-20261015_193213Z/groups-64/result.json",
+      "host_source": "outputs/sandbox-sweep-20261015_193213Z/groups-64/inputs/cloudlab.jsonl.gz",
+      "model_source": "outputs/sandbox-sweep-20261015_193213Z/groups-64/inputs/demand.jsonl.gz",
+      "window_start_epoch": 1792098984.3456972,
+      "window_end_epoch": 1792099781.6434517,
+      "window_start_utc": "2026-10-15T21:16:24.345697+00:00",
+      "window_end_utc": "2026-10-15T21:29:41.643452+00:00",
+      "rollout_wall_seconds": 797.2977544820169,
+      "finished_at_minus_window_end_seconds": 1.2059423923492432,
+      "host_nodes": [
+        "ip-172-31-71-232"
+      ],
+      "host_records": 284,
+      "invalid_host_records_or_intervals": {},
+      "host_sample_interval_seconds": {
+        "min": 4.9374377727508545,
+        "median": 5.000166177749634,
+        "max": 5.085798978805542
+      },
+      "cpu": {
+        "mean_pct": 81.4339092394985,
+        "peak_5s_pct": 99.97482688791759,
+        "peak_5s_start_utc": "2026-10-15T21:24:54.345697+00:00",
+        "peak_5s_end_utc": "2026-10-15T21:24:59.345697+00:00",
+        "coverage_fraction": 1.0000000000553386,
+        "covered_seconds": 797.2977545261383,
+        "complete_5s_bins": 159
+      },
+      "ram": {
+        "mean_pct": 38.09186710264677,
+        "peak_5s_pct": 55.92924436970922,
+        "total_gib": 377.5023498535156,
+        "mean_used_gib": 143.79769341556985,
+        "peak_5s_used_gib": 211.13421175096738,
+        "peak_5s_start_utc": "2026-10-15T21:24:44.345697+00:00",
+        "peak_5s_end_utc": "2026-10-15T21:24:49.345697+00:00",
+        "coverage_fraction": 1.0000000000553386,
+        "covered_seconds": 797.2977545261383,
+        "complete_5s_bins": 159
+      },
+      "client_inflight": {
+        "mean": 115.53390220247674,
+        "peak": 501,
+        "event_counts": {
+          "begin": 2663,
+          "error": 702,
+          "end": 1961
+        },
+        "paired_calls": 2663,
+        "unmatched_begins": 0,
+        "unmatched_terminals": 0,
+        "duplicate_or_missing_key_counts": {},
+        "end_or_error_duration_sum_seconds": 92114.92079257965,
+        "actual_vllm_samples": 0
+      },
+      "quality": {
+        "result_state": "completed",
+        "scheduler_state": "FAILED",
+        "legacy_native_exec_timeout_seconds": 180,
+        "engine_failure": true,
+        "engine_dead_error_mentions_in_training_log": 1,
+        "terminal_attempts": 1024,
+        "usable_trajectories": 319,
+        "verified_attempts": 489,
+        "incomplete_verifications": 535
+      }
+    }
+  ],
+  "validation": {
+    "row_order": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "all_four_result_states_completed": true,
+    "all_four_scheduler_states_failed_after_result_written": true,
+    "same_ordered_task_cohort": true,
+    "all_model_intervals_fully_paired": true,
+    "cpu_ram_percentages_within_0_100": true,
+    "verified_plus_incomplete_equals1024": true
+  },
+  "caveats": [
+    "Historical Oct15 observations, not a recent clean controlled single-host sweep.",
+    "All four points had an accidental180-second native verifier command deadline; many reward evaluations were incomplete.",
+    "C512 had an engine failure:319usable trajectories and702 failed model RPCs; mark this point visibly in plots.",
+    "All Slurm jobs failed during Ray teardown after rollout results were persisted.",
+    "Client-inflight RPC counts are a trace-derived proxy; no actual vLLM active-request scrapes were captured. Do not label these as engine-running requests.",
+    "One observation per concurrency, stochastic trajectories and cache/order effects; no confidence intervals.",
+    "Means and peaks are measured host utilization; configured Harbor CPU metadata is not proof of actual per-VM CPU allocation."
+  ],
+  "benchmark_variant": "swebench-pro-v2"
+}
