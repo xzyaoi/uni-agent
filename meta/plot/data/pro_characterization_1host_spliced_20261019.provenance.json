@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-19T18:03:16.559935+00:00",
+  "benchmark": "swebench-pro",
+  "runtime_count": 1,
+  "rollout_gpus": 8,
+  "groups": 128,
+  "responses": 8,
+  "seed": 42,
+  "sha256": "9926d67437cbd93562ea86a054dfeb81ce43ffda895654bcec256134d386c786",
+  "frozen_csv": {
+    "path": "meta/plot/data/pro_characterization_1host_spliced_20261019.csv",
+    "rows": 4
+  },
+  "offline_contract": "Only this CSV and provenance are needed for plotting; output source paths are audit references, not notebook dependencies.",
+  "point_splice": {
+    "concurrency_episodes": 64,
+    "replaced": {
+      "csv": "meta/plot/data/pro_characterization_1host_20261015.csv",
+      "provenance_sha256": "7cc304c2f43d4257fd8b9539afbeea8efde248ed5f21ec9c7f8fc3f5ede60d5f",
+      "job_id": 3671169,
+      "benchmark": "swebench-pro",
+      "usable_trajectories_per_minute": 28.623882,
+      "reason": "first point on a cold host: ~31% of window was sandbox image materialization; 180 s verifier cap truncated 137 verifications"
+    },
+    "replacement": {
+      "campaign": "outputs/pro_singlehost_c64_20261019",
+      "job_id": 3701571,
+      "benchmark": "swebench-pro-v2",
+      "prewarmed_images": true,
+      "verifier_exec_timeout_seconds": null,
+      "usable_trajectories_per_minute": 29.59267571812821,
+      "verified_attempts": 1024,
+      "incomplete_verifications": 0
+    },
+    "inherited_rows": "C=128/256/512 rows are byte-identical to the October 15 frozen CSV."
+  },
+  "sources": [
+    {
+      "path": "outputs/pro_singlehost_c64_20261019/results/groups-8/result.json",
+      "sha256": "75168776b0c9760603ba6f5df08339ca38317a4e8f86db9b21f02d31be0a5e2d",
+      "bytes": 19240
+    },
+    {
+      "path": "outputs/pro_singlehost_c64_20261019/results/groups-8/scheduler-final.json",
+      "sha256": "365d2b71bb7ac33e82791916cb38cd48f4515f56f9101afeeb4c25f264a364f6",
+      "bytes": 50
+    },
+    {
+      "path": "outputs/pro_singlehost_c64_20261019/results/groups-8/settings.json",
+      "sha256": "4e1ab3491f388230e653b66cb2173581b4dc426fceb28d90a8ff8ac318b35290",
+      "bytes": 1297
+    },
+    {
+      "path": "outputs/pro_singlehost_c64_20261019/results/groups-8/inputs/runtime-1/host.jsonl.gz",
+      "sha256": "23156f058ee9e01104fff3f258c40eaa158311117d104eb1352acd0f7246885c",
+      "bytes": 2589395
+    },
+    {
+      "path": "outputs/pro_singlehost_c64_20261019/results/groups-8/inputs/demand.jsonl.gz",
+      "sha256": "5ce3c7d9fc74492ca1c842de2bbc955a8527fa328aeb8a43c96300373a811106",
+      "bytes": 17523216
+    },
+    {
+      "path": "outputs/pro_singlehost_c64_20261019/jobs.tsv",
+      "sha256": "a31dfe7410176b3cd00ec64279adcd91cbaac61c3825898878a9a181767f31dc",
+      "bytes": 90
+    }
+  ],
+  "definitions": {
+    "rollout_window": "[model_ready_at, model_ready_at + rollout_wall_seconds], using each result.json. Model/framework startup and final artifact/cleanup latency excluded.",
+    "usable_trajectories": "result.progress.episodes_with_usable_trajectory; this is stored usable training trajectories, not reward verification success or resolved tasks.",
+    "usable_trajectories_per_minute": "usable_trajectories *60 / rollout_wall_seconds.",
+    "terminal_attempts": "Harbor terminal_results, including incomplete verification. This is not a count of successful evaluations.",
+    "verified_attempts": "Harbor evaluation_completed, including completed zero rewards.",
+    "sandbox_cpu": "Aggregate /proc/stat first8 ticks user,nice,system,idle,iowait,irq,softirq,steal. Busy%=100*(sum(delta(first8))-delta(idle)-delta(iowait))/sum(delta(first8)); guest/guest_nice columns excluded to avoid counting guest time twice.",
+    "sandbox_ram": "Whole sandbox-host RAM100*(MemTotal-MemAvailable)/MemTotal, using Linux /proc/meminfo kB*1024; includes OS/runtime/VM nonavailable memory, not aenv anonymous memory or GPU VRAM.",
+    "sample_intervals": "CPU delta average is constant on each adjacent sample interval; RAM gauge holds the left sample to the next sample. Clip intervals to the strict rollout window; exclude nonpositive intervals, gaps>15s, and invalid/reset CPU deltas. No extrapolation outside available sample pairs.",
+    "resource_means": "Duration-weighted utilization over observed valid intervals; uncovered time is excluded, not imputed as idle. Single AWS sandbox host only.",
+    "resource_peak_5s": "Maximum fully covered resampled5-second mean anchored at model_ready_at. Bins require complete valid coverage with tolerance1e-5seconds. These are approximately5-second averages, not instantaneous peaks.",
+    "sandbox_ram_total_gib": "Observed MemTotal bytes/2^30 on the single AWS sandbox host; constant across samples.",
+    "client_active_requests_mean": "Sum of clipped model RPC begin-to-end/error durations divided by the full rollout wall time; pairs matched by(model_client_id,operation_id). This counts client requests in flight, including server queues, network time and failed-call waiting. It is NOT vLLM engine-running requests.",
+    "client_active_requests_peak": "Exact maximum concurrent model RPC intervals from event order, with terminal events processed before begin events at equal timestamps. This is an event-derived peak, not a sampled engine request count.",
+    "verifier_exec_timeout_seconds": "Historical accidental 180-second native SDK command timeout on October 15 rows; the spliced C=64 rerun uses the corrected deadline (null).",
+    "engine_failure": "True only at C512: EngineDeadError appears in the training log and702 model RPCs end in error.",
+    "result_vs_scheduler_state": "The rollout runner wrote a completed result after128 terminal groups; all four Slurm jobs later reportedFAILED during Ray teardown. Result completion does not establish all trajectories or verifications succeeded.",
+    "uncertainty": "One stochastic run per concurrency, without replicate-based uncertainty. Image cache state and trajectories can vary.",
+    "benchmark_revision": "C=64 row is swebench-pro-v2 (clean rerun); C=128/256/512 rows are swebench-pro (October 15 sweep)."
+  },
+  "hardware": {
+    "sandbox_hosts": 1,
+    "sandbox_vcpus_per_host": 96,
+    "sandbox_ram_memtotal_gib": 377.5023498535156,
+    "inference_nodes": 2,
+    "gpus_per_inference_node": 4,
+    "rollout_gpus": 8,
+    "vllm_replicas": 2,
+    "tensor_parallel_size_per_replica": 4,
+    "model": "Qwen3.5-9B"
+  }
+}

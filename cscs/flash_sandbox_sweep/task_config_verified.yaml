@@ -1,0 +1,14 @@
+# Exact baseline tasks; only environment backend and explicit 1-vCPU resources differ.
+- name: harbor
+  harbor_executable: harbor-flash
+  harbor_env: cscs.flash_sandbox_sweep.environment:OwnedFlashSandboxEnvironment
+  artifacts_dir: harbor
+  override_cpus: 1
+  override_memory_mb: 4096
+  agent:
+    name: uni_agent.tasks.harbor.react_agent:UniAgentReAct
+    timeout_sec: 3600
+    kwargs:
+      max_steps: 200
+      temperature: 1.0
+      top_p: 1.0

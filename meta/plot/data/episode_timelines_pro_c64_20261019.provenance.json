@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-19T18:03:26.367439+00:00",
+  "benchmark": "swebench-pro",
+  "concurrency_episodes": 64,
+  "sha256": "d2e2e4c6358899b4e47da906cad2bcc33a768852895a6d49a9a49400af6fcda6",
+  "frozen_json": {
+    "path": "meta/plot/data/episode_timelines_pro_c64_20261019.json",
+    "points": 1,
+    "episodes": 4
+  },
+  "offline_contract": "Only this JSON and provenance are needed for the C=64 episode-timeline figure; output source paths are audit references, not notebook dependencies.",
+  "extraction": "meta/plot/extract_episode_timelines.py load_point(groups=8) with the shared selection/classification metadata embedded in this JSON.",
+  "sources": [
+    {
+      "path": "outputs/pro_singlehost_c64_20261019/results/groups-8/inputs/demand.jsonl.gz",
+      "sha256": "5ce3c7d9fc74492ca1c842de2bbc955a8527fa328aeb8a43c96300373a811106",
+      "bytes": 17523216
+    },
+    {
+      "path": "outputs/pro_singlehost_c64_20261019/results/groups-8/result.json",
+      "sha256": "75168776b0c9760603ba6f5df08339ca38317a4e8f86db9b21f02d31be0a5e2d",
+      "bytes": 19240
+    }
+  ],
+  "same_sweep_as": "meta/plot/data/pro_characterization_1host_spliced_20261019.csv"
+}

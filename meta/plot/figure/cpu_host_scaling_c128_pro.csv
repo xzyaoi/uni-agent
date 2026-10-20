@@ -1,3 +1,0 @@
-runtime_count,vcpus,episode_ceiling,state,wall_seconds,completed_episodes,verified_episodes,incomplete_verifications,usable_episodes,sandbox_cpu_busy_pct_mean,sandbox_cpu_busy_pct_peak_1min,cpu_minutes,rollout_sm_active_pct_mean,gpu_minutes,gpu_minutes_with_all_eight_devices,peak_anonymous_memory_gib,memory_full_coverage_5s_bins,completed_episodes_per_minute,verified_episodes_per_minute
-1,96,128,completed,1912.4070584889269,1024,1020,4,1023,68.35359331960572,99.90815549153838,31,7.807597530947863,31,31,161.15755081176758,383,32.12705147017515,32.001555175369774
-2,192,128,completed,1446.2901608978864,1024,1024,0,1024,31.037439316549825,61.734088901159055,23,8.683804500060894,23,23,173.96133422851562,289,42.48110210599566,42.48110210599566

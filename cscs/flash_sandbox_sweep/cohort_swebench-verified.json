@@ -1,0 +1,1306 @@
+{
+  "groups": 128,
+  "responses": 8,
+  "seed": 42,
+  "selected_tasks": [
+    {
+      "dataset_index": 164,
+      "instance_id": "swebench-verified/django__django-14672",
+      "task_toml_sha256": "c9bb2e61279db34c30cd7e7b827bc1e20d60fb097afabe701e8b856ed0215a78"
+    },
+    {
+      "dataset_index": 383,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-10449",
+      "task_toml_sha256": "a40d009453eb5cd0e985ef32a3dc80f80efd6870a52afdabac65ac143412e7c6"
+    },
+    {
+      "dataset_index": 45,
+      "instance_id": "swebench-verified/django__django-11299",
+      "task_toml_sha256": "6252c74d48911360f78fdd9aa90acf9aaccc3e2dc7fbc88d11d6e149e91fa9d3"
+    },
+    {
+      "dataset_index": 156,
+      "instance_id": "swebench-verified/django__django-14493",
+      "task_toml_sha256": "b2b998ded064c11dc4000c61be3199a188258cab4b3257452afa864fd623b8c2"
+    },
+    {
+      "dataset_index": 53,
+      "instance_id": "swebench-verified/django__django-11551",
+      "task_toml_sha256": "6393f1948b4f787a61797ad22acafef53f1ed4cb80cdbc6919fc0a3063202c38"
+    },
+    {
+      "dataset_index": 72,
+      "instance_id": "swebench-verified/django__django-12143",
+      "task_toml_sha256": "e638696514f40ed376e8493fdad6eb77d8fc26e28f9b470847986eeee098bb00"
+    },
+    {
+      "dataset_index": 315,
+      "instance_id": "swebench-verified/pydata__xarray-6938",
+      "task_toml_sha256": "c05cb2b23fddfda4bf40c6f5cd59f6b1e0b71eda9d118d5b8631bf631e6c15ae"
+    },
+    {
+      "dataset_index": 209,
+      "instance_id": "swebench-verified/django__django-15916",
+      "task_toml_sha256": "a7911400f41106e60b52b53f54398e07e836950682c206288be2e65f1ce0bbb3"
+    },
+    {
+      "dataset_index": 74,
+      "instance_id": "swebench-verified/django__django-12193",
+      "task_toml_sha256": "885b741f6f117c813abf69e70ed09e015d469cc70e0e6da6bc05547c51a34c3a"
+    },
+    {
+      "dataset_index": 333,
+      "instance_id": "swebench-verified/pytest-dev__pytest-5262",
+      "task_toml_sha256": "d7e6d61d5416b5f8662b77c75db21bbac1aa5806f7c0369fb7da15c254df17f0"
+    },
+    {
+      "dataset_index": 403,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-8459",
+      "task_toml_sha256": "0cf20018cc06a03962ebc4847ad26805988944dd85203b9ff8cf56d4b702231e"
+    },
+    {
+      "dataset_index": 415,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-9281",
+      "task_toml_sha256": "f66574f15677297b4adcccfc73b54a5ca7240ad976017e7d57a92f71fd70ba99"
+    },
+    {
+      "dataset_index": 92,
+      "instance_id": "swebench-verified/django__django-13012",
+      "task_toml_sha256": "1d927c0a81533895fe25125b669fa0685f8ad916fa3f9965b7bb03c181cefcdf"
+    },
+    {
+      "dataset_index": 215,
+      "instance_id": "swebench-verified/django__django-16082",
+      "task_toml_sha256": "352fcfcb8998c72bed80af49eaae7545170aeba5b656b36cb05f35a3a2a873a3"
+    },
+    {
+      "dataset_index": 479,
+      "instance_id": "swebench-verified/sympy__sympy-20916",
+      "task_toml_sha256": "4bb679f581db9dbc36a2fed561d32d2083887ce893bb91124126c054156b4e04"
+    },
+    {
+      "dataset_index": 59,
+      "instance_id": "swebench-verified/django__django-11749",
+      "task_toml_sha256": "1e4f6646dcfbf7bd1fd6e855e985fbd86c7be99bafba1526e2b8e5093b971f86"
+    },
+    {
+      "dataset_index": 368,
+      "instance_id": "swebench-verified/scikit-learn__scikit-learn-14629",
+      "task_toml_sha256": "01b542d944279522cdad83479042a86acd6cdb8444c5edc1c1e999445ffc6e2c"
+    },
+    {
+      "dataset_index": 163,
+      "instance_id": "swebench-verified/django__django-14631",
+      "task_toml_sha256": "eccbf0878b19e73bb81e8eacfb5e6e571b7e1f84fda289f49f4bd9230a6837f7"
+    },
+    {
+      "dataset_index": 210,
+      "instance_id": "swebench-verified/django__django-15930",
+      "task_toml_sha256": "ac32ac47f3a4b7e656031e67a6ee7986b0e5eeb06db51b25e7285a176cca21c3"
+    },
+    {
+      "dataset_index": 251,
+      "instance_id": "swebench-verified/django__django-7530",
+      "task_toml_sha256": "55c38829187388b4f7489e5948b5d3cbcd936a68ada476b5913c467b09f3e638"
+    },
+    {
+      "dataset_index": 443,
+      "instance_id": "swebench-verified/sympy__sympy-14248",
+      "task_toml_sha256": "935470a8b75d3e6b38db8eb4f9c4e0287430443458d4b5c5efebcec6f1055433"
+    },
+    {
+      "dataset_index": 320,
+      "instance_id": "swebench-verified/pylint-dev__pylint-4551",
+      "task_toml_sha256": "923fb9b9fcc9721ce8269f001e43893b4f8b1db4b9fc12e861b19309b4c82932"
+    },
+    {
+      "dataset_index": 289,
+      "instance_id": "swebench-verified/pallets__flask-5014",
+      "task_toml_sha256": "0b45369ac1a6425750a3eee797cb295df8de1f4de4f3f100b53f358798c10fcc"
+    },
+    {
+      "dataset_index": 389,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-7440",
+      "task_toml_sha256": "641cac94ec6d3561f4415fc0f3eaee1f3b47ba3ba95cca2866bf70fd5cc32f57"
+    },
+    {
+      "dataset_index": 7,
+      "instance_id": "swebench-verified/astropy__astropy-14096",
+      "task_toml_sha256": "65abc616a85d44e42573f97dd655a76557dbfb5683ea5fe915808664bc17077f"
+    },
+    {
+      "dataset_index": 462,
+      "instance_id": "swebench-verified/sympy__sympy-17655",
+      "task_toml_sha256": "238e30e228dd05e98e11ddd492d8921a5ec258861343fab165ed4ddbbdb6fb57"
+    },
+    {
+      "dataset_index": 249,
+      "instance_id": "swebench-verified/django__django-17084",
+      "task_toml_sha256": "36ac36b47ab158e4decec35458de98310ebbee6acb685cd8dbd4a9167ea9d135"
+    },
+    {
+      "dataset_index": 228,
+      "instance_id": "swebench-verified/django__django-16485",
+      "task_toml_sha256": "273e201122e2236f3679a34e41bf9321a7f9bfbfd29c3ebbac5d2f25ec1a60d0"
+    },
+    {
+      "dataset_index": 245,
+      "instance_id": "swebench-verified/django__django-16901",
+      "task_toml_sha256": "52f7a1e56601198a956043b727e70fc608b7a1a8d96d7642b7871d691175042c"
+    },
+    {
+      "dataset_index": 211,
+      "instance_id": "swebench-verified/django__django-15957",
+      "task_toml_sha256": "0e9474b80da21f2d6d28a6f3fb13ce2d21d355ca784456d32bba899e7c5bc2dd"
+    },
+    {
+      "dataset_index": 129,
+      "instance_id": "swebench-verified/django__django-13809",
+      "task_toml_sha256": "6348307c96942870f78fe6aa2a3f4b24b262e08c325e6cabaad2cf9c932febab"
+    },
+    {
+      "dataset_index": 162,
+      "instance_id": "swebench-verified/django__django-14608",
+      "task_toml_sha256": "af92961b65e7723c6a40029da420e7e0ed34b6919c178312cb4fe4fd9c1885e0"
+    },
+    {
+      "dataset_index": 223,
+      "instance_id": "swebench-verified/django__django-16263",
+      "task_toml_sha256": "1e36976bb95b16c0534f8286d5747eb1355ba16d8b15f208a30dd6d502389bfe"
+    },
+    {
+      "dataset_index": 41,
+      "instance_id": "swebench-verified/django__django-11239",
+      "task_toml_sha256": "f8e7b3ffb228b529966aca9470664a85439c6898653e52917d917d333d408e8d"
+    },
+    {
+      "dataset_index": 278,
+      "instance_id": "swebench-verified/matplotlib__matplotlib-25332",
+      "task_toml_sha256": "ebab8eddb7b6d5147cd1215e16a1c0f9a8641c15b28b82233910da12e2fb3ae2"
+    },
+    {
+      "dataset_index": 21,
+      "instance_id": "swebench-verified/astropy__astropy-8872",
+      "task_toml_sha256": "2b249aea161866a37508352bc31e00221e62cfd9b180f258c1f5c2818f78e2be"
+    },
+    {
+      "dataset_index": 434,
+      "instance_id": "swebench-verified/sympy__sympy-13551",
+      "task_toml_sha256": "2d4d408767cd7c5ea12ae07dd74a2e47c654dfcf03594948e940ede0a475cdea"
+    },
+    {
+      "dataset_index": 68,
+      "instance_id": "swebench-verified/django__django-11999",
+      "task_toml_sha256": "e7bbf46c1538a98ffc089541ed09424a0135214fdb1789da8376fb5bb1939ced"
+    },
+    {
+      "dataset_index": 227,
+      "instance_id": "swebench-verified/django__django-16454",
+      "task_toml_sha256": "7bd45c343dd5645fc62248893fb4ce55086499f2526e0ba3961d076b8a94879c"
+    },
+    {
+      "dataset_index": 151,
+      "instance_id": "swebench-verified/django__django-14351",
+      "task_toml_sha256": "9a688c2aa4288fa6fedf6ee0873478abbe3de103be602d23dece592e5c324ad6"
+    },
+    {
+      "dataset_index": 369,
+      "instance_id": "swebench-verified/scikit-learn__scikit-learn-14710",
+      "task_toml_sha256": "976040226a5dbc912943ba846bbcdfbd8c2ebe082747d97f76a9ceef6060bd95"
+    },
+    {
+      "dataset_index": 217,
+      "instance_id": "swebench-verified/django__django-16116",
+      "task_toml_sha256": "ac5c0fb400926880551fa77bbca4ce5ab7a8130a97fd8f64d287806634e06412"
+    },
+    {
+      "dataset_index": 154,
+      "instance_id": "swebench-verified/django__django-14404",
+      "task_toml_sha256": "c5f9d60c3182fea8ffa28d80d3d1e039a463e9f169051fd0b0f6bc1dc4c44971"
+    },
+    {
+      "dataset_index": 177,
+      "instance_id": "swebench-verified/django__django-15103",
+      "task_toml_sha256": "eced1a222fe8c41ed4c507020a08cf7842e39a3ebd7f1a3e44d6d933608d12ec"
+    },
+    {
+      "dataset_index": 397,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-7985",
+      "task_toml_sha256": "49faf8aac66046fff5fa1e19c9b1db128c106dec35740636dd2729ac03e2767f"
+    },
+    {
+      "dataset_index": 139,
+      "instance_id": "swebench-verified/django__django-14017",
+      "task_toml_sha256": "70a22ddc14509c67dd1c29e78f1662d88cfa10262fd8f0ba8cd85c75db7f8ea6"
+    },
+    {
+      "dataset_index": 141,
+      "instance_id": "swebench-verified/django__django-14053",
+      "task_toml_sha256": "bf88165e221f7887119e595f2ddd390bfab59251b7f082869d6b9a1641dca3e3"
+    },
+    {
+      "dataset_index": 326,
+      "instance_id": "swebench-verified/pylint-dev__pylint-6903",
+      "task_toml_sha256": "01be0f59721d8d85637d807f09df7d94f68d1fbf52b25b0dcbdedefe7d94d684"
+    },
+    {
+      "dataset_index": 175,
+      "instance_id": "swebench-verified/django__django-15037",
+      "task_toml_sha256": "0e06d1c8fb3ce4c896a3409bd314e8379e6da4b1614974a79a950dac36bd247e"
+    },
+    {
+      "dataset_index": 170,
+      "instance_id": "swebench-verified/django__django-14792",
+      "task_toml_sha256": "423a886bbfba4f5a7224e7843db1032578acba510f022f9952b0d6f6f7de59d6"
+    },
+    {
+      "dataset_index": 88,
+      "instance_id": "swebench-verified/django__django-12754",
+      "task_toml_sha256": "79e1ed0bcc4c7a703ec0040b06dda5d2d823f0fc16d0e24dece3a7fbcbec0467"
+    },
+    {
+      "dataset_index": 96,
+      "instance_id": "swebench-verified/django__django-13089",
+      "task_toml_sha256": "99242a43cac0397aa512d422b8b6a9a4ecb370c784aced7fcc3aec7d4ce14853"
+    },
+    {
+      "dataset_index": 439,
+      "instance_id": "swebench-verified/sympy__sympy-13852",
+      "task_toml_sha256": "f1ace721ed89165dc5afec9a71e6f59ca4a391bc250f69eadfc8501d990378a7"
+    },
+    {
+      "dataset_index": 303,
+      "instance_id": "swebench-verified/pydata__xarray-3993",
+      "task_toml_sha256": "f7c4a841f16c4d938fd850a437b052b28ebaead78b238aea1a9d6ac5c818244c"
+    },
+    {
+      "dataset_index": 50,
+      "instance_id": "swebench-verified/django__django-11477",
+      "task_toml_sha256": "f2bf8a4a486d47c53621054084385c9f040abb542cd2f3be59f4eed71eff6111"
+    },
+    {
+      "dataset_index": 199,
+      "instance_id": "swebench-verified/django__django-15569",
+      "task_toml_sha256": "b5cce4aa86d9b168a09fb0bd3ad13e6d54ff559c47e85c6865c1946662d1a23c"
+    },
+    {
+      "dataset_index": 297,
+      "instance_id": "swebench-verified/psf__requests-6028",
+      "task_toml_sha256": "dc4c715ff1d8b05dfc1d8bdcc0ac31d1f599e909fbb48e684792ae28e0300b71"
+    },
+    {
+      "dataset_index": 131,
+      "instance_id": "swebench-verified/django__django-13820",
+      "task_toml_sha256": "97450ea4c51f44ac9d5c624b47f2aee9566c17e42ac4f0103c2654d7e7270f90"
+    },
+    {
+      "dataset_index": 120,
+      "instance_id": "swebench-verified/django__django-13568",
+      "task_toml_sha256": "25e9d460d0421a495950e891685e5db53fae8a2558b8952ae8f7363250811375"
+    },
+    {
+      "dataset_index": 358,
+      "instance_id": "swebench-verified/scikit-learn__scikit-learn-13135",
+      "task_toml_sha256": "764aef62f9eea66f5a111605c484435f37e3da71e1e2e4fba5e2741952765239"
+    },
+    {
+      "dataset_index": 180,
+      "instance_id": "swebench-verified/django__django-15128",
+      "task_toml_sha256": "6aa41996cb87b5912f61c9839facfdc7028840c38225079e2cce80134209bba2"
+    },
+    {
+      "dataset_index": 370,
+      "instance_id": "swebench-verified/scikit-learn__scikit-learn-14894",
+      "task_toml_sha256": "0d65731493dad48e2e0621fb01802cf1c6ccd915164502df741aaf0da679d953"
+    },
+    {
+      "dataset_index": 37,
+      "instance_id": "swebench-verified/django__django-11163",
+      "task_toml_sha256": "aeace4ff99cf15b8b783ce41953f13bab97197d7b855657e1f8b3dc1160851e0"
+    },
+    {
+      "dataset_index": 160,
+      "instance_id": "swebench-verified/django__django-14559",
+      "task_toml_sha256": "260f996e710385be67a1379ea9d1519dc45b81591e3f5c1cd517631104975281"
+    },
+    {
+      "dataset_index": 4,
+      "instance_id": "swebench-verified/astropy__astropy-13453",
+      "task_toml_sha256": "f8354ff8e2361a11bb2b76559cf5c88a20e1dd0499acbacf2e55b4c5a455fbd2"
+    },
+    {
+      "dataset_index": 93,
+      "instance_id": "swebench-verified/django__django-13023",
+      "task_toml_sha256": "91c6646ca94f91e2533160708da282c13f5c98cacfeb7aa48573dea1d198feda"
+    },
+    {
+      "dataset_index": 304,
+      "instance_id": "swebench-verified/pydata__xarray-4075",
+      "task_toml_sha256": "ef21156e3bb39129c7c9d0041c0846d47aab1aa583c061dd435627826e4d470c"
+    },
+    {
+      "dataset_index": 188,
+      "instance_id": "swebench-verified/django__django-15368",
+      "task_toml_sha256": "e794e8b8a970d1b9dc3d4924640a4036eac56adf3a93a8d2f5a1d923b410260f"
+    },
+    {
+      "dataset_index": 374,
+      "instance_id": "swebench-verified/scikit-learn__scikit-learn-25232",
+      "task_toml_sha256": "d2d66c7ddc43581e6e6d8b79c45d44c3bec80ba611f65121d4dabb7314533989"
+    },
+    {
+      "dataset_index": 453,
+      "instance_id": "swebench-verified/sympy__sympy-15976",
+      "task_toml_sha256": "1fb0f0d186a074fbb4060b79d90b2c53a56b44589d647e28bab5cf13415e582a"
+    },
+    {
+      "dataset_index": 94,
+      "instance_id": "swebench-verified/django__django-13028",
+      "task_toml_sha256": "b9fe286ef98c7d1104f5eb56ef2ce057f65e97a037e06e702795bd8ce16872e5"
+    },
+    {
+      "dataset_index": 468,
+      "instance_id": "swebench-verified/sympy__sympy-19040",
+      "task_toml_sha256": "caaf954779ccddc23f8b718e97a20e041f4402bd305802c2d40bebb8eeb49a8c"
+    },
+    {
+      "dataset_index": 292,
+      "instance_id": "swebench-verified/psf__requests-1766",
+      "task_toml_sha256": "9eddc37303badb8c700744c405634f4343e5e77a30619d674f0eba9b51f8ebac"
+    },
+    {
+      "dataset_index": 340,
+      "instance_id": "swebench-verified/pytest-dev__pytest-7205",
+      "task_toml_sha256": "57c0f764e2db1615dde255912b232374b1cef2f648f91a07c05d83a3d51e893c"
+    },
+    {
+      "dataset_index": 407,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-8593",
+      "task_toml_sha256": "0ea3ca08373010eba8d0666a8fa0729a7e19e55d6aaee0cbe40faf5c7da6d4aa"
+    },
+    {
+      "dataset_index": 408,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-8595",
+      "task_toml_sha256": "2cfb59e11e89bb896fcc78d03aae6cd74ed765bc5fdab3df4e8935ac05c13c73"
+    },
+    {
+      "dataset_index": 187,
+      "instance_id": "swebench-verified/django__django-15315",
+      "task_toml_sha256": "d13bea70998cb96c0e24d9a881e3acd082a6bbd37ba5d7a96bcc8955fcf0d291"
+    },
+    {
+      "dataset_index": 334,
+      "instance_id": "swebench-verified/pytest-dev__pytest-5631",
+      "task_toml_sha256": "72e4d7ec0c2be29d8e7687c2d574869c4132773e8535fead77bac2e0100bc1d3"
+    },
+    {
+      "dataset_index": 213,
+      "instance_id": "swebench-verified/django__django-15987",
+      "task_toml_sha256": "db2c11af580d3a75a0ff761cd8c3cc63303e848e9ce6d4c5b8dea58909f3bd5a"
+    },
+    {
+      "dataset_index": 127,
+      "instance_id": "swebench-verified/django__django-13794",
+      "task_toml_sha256": "b5627d33f8755120b3bed4bacbad3cc508d3dd1af82abb662696bd5d2cf25e75"
+    },
+    {
+      "dataset_index": 11,
+      "instance_id": "swebench-verified/astropy__astropy-14369",
+      "task_toml_sha256": "f9a0c89da1f214e32ca2edeb4aa1505243b80c052801af9f7350686837cf9270"
+    },
+    {
+      "dataset_index": 6,
+      "instance_id": "swebench-verified/astropy__astropy-13977",
+      "task_toml_sha256": "369d618c34aa507d4b0e05d28540bd44be1eb89876887eb3b1a2ddfecd617e47"
+    },
+    {
+      "dataset_index": 442,
+      "instance_id": "swebench-verified/sympy__sympy-13974",
+      "task_toml_sha256": "86d78ca73b99eb90ac8e42ac4b556cbf9166a9f7f94ae1bd093c931ecc98efe2"
+    },
+    {
+      "dataset_index": 246,
+      "instance_id": "swebench-verified/django__django-16938",
+      "task_toml_sha256": "2d22735365569a75e451639d718e044850a456ca9cdb38396e0b620b67f11e76"
+    },
+    {
+      "dataset_index": 396,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-7910",
+      "task_toml_sha256": "9a174eb6c0f75d16641c8935636f8ac58306b6a224b4bd4f9a832102b43a2a97"
+    },
+    {
+      "dataset_index": 425,
+      "instance_id": "swebench-verified/sympy__sympy-11618",
+      "task_toml_sha256": "9439ba3da5489072cd1abb1ab8f2c1f88e843181880de81ea62a25871e9ff72d"
+    },
+    {
+      "dataset_index": 345,
+      "instance_id": "swebench-verified/pytest-dev__pytest-7521",
+      "task_toml_sha256": "b95bd14054eb3df4c5b90206ecb4a45a2922b6400ceb33eb49e6aae0d6a0f7db"
+    },
+    {
+      "dataset_index": 89,
+      "instance_id": "swebench-verified/django__django-12774",
+      "task_toml_sha256": "819ec3caf13e6bbdedc77a0ce637aa8fca50dda54f1fa8058d0e1a1a22450e89"
+    },
+    {
+      "dataset_index": 426,
+      "instance_id": "swebench-verified/sympy__sympy-12096",
+      "task_toml_sha256": "ee1de64f7c9bd4d51deba5cac3b7a4099ad76c830b398852df6e381b6f37ea3d"
+    },
+    {
+      "dataset_index": 26,
+      "instance_id": "swebench-verified/django__django-10973",
+      "task_toml_sha256": "a8fd3d3f78396e5d6491f6b73905c2b9aed436fad31432da6da847d18696a922"
+    },
+    {
+      "dataset_index": 77,
+      "instance_id": "swebench-verified/django__django-12273",
+      "task_toml_sha256": "1b9885f9de17953b24011da4e5b193552880842ac700072ada0e0d2931fd2c89"
+    },
+    {
+      "dataset_index": 184,
+      "instance_id": "swebench-verified/django__django-15277",
+      "task_toml_sha256": "2045d0e193f983600324f462dfabecbfe8ad89bc3eff42f798780fc0f3f836d7"
+    },
+    {
+      "dataset_index": 262,
+      "instance_id": "swebench-verified/matplotlib__matplotlib-22871",
+      "task_toml_sha256": "5052ebc7593b55a05176752d9894bc2388f5920e1dc3c9bbf1459eaff48274ae"
+    },
+    {
+      "dataset_index": 207,
+      "instance_id": "swebench-verified/django__django-15851",
+      "task_toml_sha256": "1946d89053a08c013487fed9aa9f977472768df726a084131a51ea359f5238f6"
+    },
+    {
+      "dataset_index": 182,
+      "instance_id": "swebench-verified/django__django-15252",
+      "task_toml_sha256": "e260249dd205ea5205cf7fb36e52e3210941836e6dd84a06400633f53d5904b2"
+    },
+    {
+      "dataset_index": 95,
+      "instance_id": "swebench-verified/django__django-13033",
+      "task_toml_sha256": "1566cc42343bc03c589b4e393d7176b9bcb069e862c6a1c21db3ec2521cd2665"
+    },
+    {
+      "dataset_index": 100,
+      "instance_id": "swebench-verified/django__django-13128",
+      "task_toml_sha256": "9239c8346e085cf3318ee0d3522bad61b569057457097d53f623354791588732"
+    },
+    {
+      "dataset_index": 419,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-9591",
+      "task_toml_sha256": "9a439fdaa2da24f6b03d0ec43ddb357c401555f2e216903b70ca2c2518f914a3"
+    },
+    {
+      "dataset_index": 394,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-7757",
+      "task_toml_sha256": "a71d7bfc449e1ad7dfa3170a1ee8b8b8fab7ffd7c62f65cfec2bd2b8cb84245c"
+    },
+    {
+      "dataset_index": 155,
+      "instance_id": "swebench-verified/django__django-14434",
+      "task_toml_sha256": "ed42aa69f717cd5411ce0b6ffea4bc7801187a0ffc190617f86b77066a432baf"
+    },
+    {
+      "dataset_index": 230,
+      "instance_id": "swebench-verified/django__django-16502",
+      "task_toml_sha256": "6decfda89540553096d755bfae95b6b7aed1d497e6535b39e99b69dfbe1ed089"
+    },
+    {
+      "dataset_index": 362,
+      "instance_id": "swebench-verified/scikit-learn__scikit-learn-13496",
+      "task_toml_sha256": "7a6c835496fd0eecb35ef0e3d7d0eac79bcd9860db2b737293e864ec29f3f486"
+    },
+    {
+      "dataset_index": 237,
+      "instance_id": "swebench-verified/django__django-16642",
+      "task_toml_sha256": "bcd718937e4863eb77562714812c4a3dec92d15f84a763c05ba86e33d2efc739"
+    },
+    {
+      "dataset_index": 353,
+      "instance_id": "swebench-verified/scikit-learn__scikit-learn-11578",
+      "task_toml_sha256": "af17949cf8bd5d734aecdda1503cf52848b33caa2612d336f9c0f5395041fef5"
+    },
+    {
+      "dataset_index": 85,
+      "instance_id": "swebench-verified/django__django-12708",
+      "task_toml_sha256": "7eaf41d2ac5b0e28be31ee318c09d9234676c2ed6b69e8989a36cbf19829f23f"
+    },
+    {
+      "dataset_index": 323,
+      "instance_id": "swebench-verified/pylint-dev__pylint-4970",
+      "task_toml_sha256": "68480746fd3f92d35c49b05a2adbd0c1e23f6068516b39eb7b503a11f8fee025"
+    },
+    {
+      "dataset_index": 171,
+      "instance_id": "swebench-verified/django__django-14855",
+      "task_toml_sha256": "f775c7af760f9c95da051aff453fb3c61c3dc2fb5f87151c2f1977c4095bef1d"
+    },
+    {
+      "dataset_index": 393,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-7748",
+      "task_toml_sha256": "5bba44baf92a636c8b2f2a5c154828d38e01fb6fed9973bfd55276edce8de978"
+    },
+    {
+      "dataset_index": 153,
+      "instance_id": "swebench-verified/django__django-14376",
+      "task_toml_sha256": "ab58af2fd6e36a17596c9e207e6c2ac487f89e93532b3003dc61d752c15b4b5a"
+    },
+    {
+      "dataset_index": 313,
+      "instance_id": "swebench-verified/pydata__xarray-6721",
+      "task_toml_sha256": "f22b84881a3388ebeef724374f09eaeb4b9592410c89c3b8ae899d4f72e981ed"
+    },
+    {
+      "dataset_index": 38,
+      "instance_id": "swebench-verified/django__django-11179",
+      "task_toml_sha256": "9a8c7d855601e8085f9dd8b5b8bd2eb1557b13462530730a01fcf6ca8220939b"
+    },
+    {
+      "dataset_index": 392,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-7590",
+      "task_toml_sha256": "51f28925993aaaf8e36c174717789341ab31386f281e06b11fa4b3ce0ecb50a4"
+    },
+    {
+      "dataset_index": 69,
+      "instance_id": "swebench-verified/django__django-12039",
+      "task_toml_sha256": "cf15b9e8b6f688feb90d4b69d90a8a96431b02560ab620013946b1e07e196949"
+    },
+    {
+      "dataset_index": 106,
+      "instance_id": "swebench-verified/django__django-13315",
+      "task_toml_sha256": "403b883544e53e4190d70464f2b3814f71b35d1344987ab96a91f7901221cd58"
+    },
+    {
+      "dataset_index": 348,
+      "instance_id": "swebench-verified/pytest-dev__pytest-8399",
+      "task_toml_sha256": "9f9fe4895daf832ac5711d3df9dd7157231bde97bc5507631633b07ee7a05723"
+    },
+    {
+      "dataset_index": 489,
+      "instance_id": "swebench-verified/sympy__sympy-23262",
+      "task_toml_sha256": "22e648ccaa35131e4132aab69a591de925b61f0ed5e9e6ff61d2259bb2ad3e7f"
+    },
+    {
+      "dataset_index": 428,
+      "instance_id": "swebench-verified/sympy__sympy-12481",
+      "task_toml_sha256": "1cb5c0ada58699134a70206df0c801bf513d6846922ede35ced0f9e6971d715b"
+    },
+    {
+      "dataset_index": 158,
+      "instance_id": "swebench-verified/django__django-14534",
+      "task_toml_sha256": "f307207546975ba4c251ce51cc6b707cd88d03065c471211578049ca7b3f2e8c"
+    },
+    {
+      "dataset_index": 31,
+      "instance_id": "swebench-verified/django__django-11099",
+      "task_toml_sha256": "321d93cd6e406f453dfe970eb5173d86cc53993661a0172098b0017c35a7009c"
+    },
+    {
+      "dataset_index": 244,
+      "instance_id": "swebench-verified/django__django-16899",
+      "task_toml_sha256": "67d4021e7d44e74a1ba4d7762b909256a08087093bcdacf536db2f44b62b5fca"
+    },
+    {
+      "dataset_index": 8,
+      "instance_id": "swebench-verified/astropy__astropy-14182",
+      "task_toml_sha256": "fc07a8bb586348415d7cec2ccc3b07bbafadadb448fd3d45e5f5b898f694148e"
+    },
+    {
+      "dataset_index": 267,
+      "instance_id": "swebench-verified/matplotlib__matplotlib-24026",
+      "task_toml_sha256": "96381c1a6e2056390594eb85a165b3ddec99aa4cf09837cfd0489e138d5f9129"
+    },
+    {
+      "dataset_index": 485,
+      "instance_id": "swebench-verified/sympy__sympy-22080",
+      "task_toml_sha256": "74096f8f0455b690a6b99314fa6f0609ac9d2d5b847a65049448bc1776195af1"
+    },
+    {
+      "dataset_index": 233,
+      "instance_id": "swebench-verified/django__django-16569",
+      "task_toml_sha256": "b06103215def101a0320821bed8a7dbe9a5d6bb2d84ae22456b32ef8cf02cce4"
+    },
+    {
+      "dataset_index": 261,
+      "instance_id": "swebench-verified/matplotlib__matplotlib-22865",
+      "task_toml_sha256": "73910ec8ccac1a397bf90c79ae582610d21f6cbf5f976331c06f0b72332c3664"
+    },
+    {
+      "dataset_index": 401,
+      "instance_id": "swebench-verified/sphinx-doc__sphinx-8265",
+      "task_toml_sha256": "38b2c9f19f26548f1093bd282d2e860e8c4f4ca82d5098ed4e92c6e28295071d"
+    },
+    {
+      "dataset_index": 291,
+      "instance_id": "swebench-verified/psf__requests-1724",
+      "task_toml_sha256": "4624e996dc941c26ffc4f6ea5af7e9f0eecb5041685d2554c49ff47bbbc98289"
+    },
+    {
+      "dataset_index": 198,
+      "instance_id": "swebench-verified/django__django-15563",
+      "task_toml_sha256": "abfd11146ff08bf8066a1bf2d45baa8ccb89a9f28d20a52dce577b7c46e2d034"
+    }
+  ],
+  "selection_sha256": "ee3c6eecaa7700d7e57088aeb0300639022cd38571b10c939fbd33b06f6ce7a9",
+  "model_config_sha256": "d0883072e01861ed0b2d47be3c16c36a8e81c224c7ffaa310c6558fb3f932b05",
+  "benchmark": "swebench-verified",
+  "dataset": "/iopsstor/scratch/cscs/xyao/data/uni_agent/verified_multinode_2x_20261019/swebench_verified_harbor.parquet",
+  "dataset_sha256": "5883ca03dfa3a2d3a16dee4d23af9aab7c140b676dea8a97c438fb3f03dcad57",
+  "rows": 500,
+  "baseline_manifest": "outputs/verified_singlehost_c256_20261019/results/groups-32/manifest.json",
+  "baseline_manifest_sha256": "663a867bb9612d40cbb18a320a8340faef10d4148d4bc156dd0bfe92d3311d1f",
+  "native_bootstrap": {
+    "architecture": "x86_64",
+    "archive_bytes": 17791244,
+    "asset_path": "/iopsstor/scratch/cscs/xyao/data/uni_agent/assets/uv-0.7.13-uv-x86_64-unknown-linux-gnu.tar.gz",
+    "installed_directory": "/root/.local/bin",
+    "sha256": "909278eb197c5ed0e9b5f16317d1255270d1f9ea4196e7179ce934d48c4c2545",
+    "source_url": "https://github.com/astral-sh/uv/releases/download/0.7.13/uv-x86_64-unknown-linux-gnu.tar.gz",
+    "version": "0.7.13"
+  },
+  "selected_file_sha256": {
+    "swebench-verified/django__django-14672": {
+      "instruction.md": "47f5c2f18b6e64d2f48851e821f95047425600983019ba4ace27157e0ac42e8b",
+      "tests/test.sh": "88939e047038cf0780edfab0492eaf71b76f95fe2c1c685829143988be8d4cd1",
+      "tests/config.json": "5c7521d6711f7eedec41206c0030b10013e8d9a170e08e628967e0f15bd3d513"
+    },
+    "swebench-verified/sphinx-doc__sphinx-10449": {
+      "instruction.md": "0183a0fabfe0276a52a424fc3c303ad3d0b8b8f67c0ecdfaa6fdaed36028ae66",
+      "tests/test.sh": "904042e6ddbed069787735f90fd31a627fbc1cc2f5e8b142cc8759cac9b76865",
+      "tests/config.json": "00c54bbe19b9d8bfbd5c7a623c670794ded828aec711ff047069de9daf13ab0e"
+    },
+    "swebench-verified/django__django-11299": {
+      "instruction.md": "3544df4d5625938a7706094a900a170778533849f86f8a025a4b6edb5337fc3b",
+      "tests/test.sh": "65cfb7cb4e5098f359151394e6e281938647c5e0ea3dbb924f0a4811e536722b",
+      "tests/config.json": "96e788092e0bbe5888d844a84ce6c968b8af94fe60b7ff451e55dcbd2b3049fc"
+    },
+    "swebench-verified/django__django-14493": {
+      "instruction.md": "6620c6f7714315a2d853d676b67f576f0abbf2f28745121dfc2d0ced8429e82f",
+      "tests/test.sh": "e8f6487da8a05a290273a4cda6c41485fd8c5a66b7fe022564b3edff8074241c",
+      "tests/config.json": "45ec018ee094ac95f30ac1139bbc7aea31f55fbe2fe7384c40e1c1ed42a36b6b"
+    },
+    "swebench-verified/django__django-11551": {
+      "instruction.md": "2c3cdc95ef8f9a49016d7061699364b376777eb5788b6b31d7e9e8dc35addf66",
+      "tests/test.sh": "11646563e208c3a356b69995025dee90d19e450698c3c2ffd9866af65c1b18b1",
+      "tests/config.json": "129d89c9576c472128437ad686cb57ad0805622d42b4adc2fbdda79e5e008f44"
+    },
+    "swebench-verified/django__django-12143": {
+      "instruction.md": "4c59f6682964db72e25f2c6b28e071cba0f70e268b44a0e0da6ff564a8c429c0",
+      "tests/test.sh": "f2bcd07bee85884f1bea5444118e0ac537c9c4bffde641ef68ad06e7d8c6b480",
+      "tests/config.json": "bdbe75d33f3f11626ac277b93d90d6907f5404228b56af2d65754ed7129264f4"
+    },
+    "swebench-verified/pydata__xarray-6938": {
+      "instruction.md": "6763f091123b2f9cf5f8755a791cbcee40df30c8beb38a06958a61093d485af0",
+      "tests/test.sh": "817eca83b639c3bdd4626e178dea3287424411f8a19f0bd48f702eba34c8795d",
+      "tests/config.json": "601d6b4453a4dedd79ebfa4995136a68b2c2a41120c4b68f521cfe533e68dfa2"
+    },
+    "swebench-verified/django__django-15916": {
+      "instruction.md": "b20f485578d23d910208b0a1917a2207e89cdc030fe469246944fe2f9d79bdd6",
+      "tests/test.sh": "3920001445343826b312e5a1cc257f4f0b3aad98032601305c095b86e15d3c9c",
+      "tests/config.json": "786da0ec3347f2110032d507c5bccdc6d1af957286fa96d7a465005ce22e7e12"
+    },
+    "swebench-verified/django__django-12193": {
+      "instruction.md": "49e3fbd16b7f98c71f537d25ecb99aee5973040fc604360139f9115bb415b73e",
+      "tests/test.sh": "e9ef6b38681d25e4e1c6cf59d075b6f336e3d4f362c294acca6743a59971a5c0",
+      "tests/config.json": "041bd763745f6e9a96e0cf9396b2acc0267c46afe30ede6078e8aa6e397d4d28"
+    },
+    "swebench-verified/pytest-dev__pytest-5262": {
+      "instruction.md": "4565099469f20a2f9b5ece6a96938dbad3c1316039f9ca1d6bc2746c778b8d6a",
+      "tests/test.sh": "0aa9aade39799d79a12da2192fdd41c9ed8fcbcd77b785c476f577ff4a402c22",
+      "tests/config.json": "6a8b7929b9b02d4196c97ed1c85823f0a53503fb0cf47b1cb9933eeb2263ac1d"
+    },
+    "swebench-verified/sphinx-doc__sphinx-8459": {
+      "instruction.md": "d6da37dc64f3b89f9e727a459024535e77f8d5828e6cc67895f6daef572dbfa2",
+      "tests/test.sh": "8d80808a809cc83d303f791fc2e57933edd7d050915f292079431d3fa68c73f1",
+      "tests/config.json": "01c5d23df9863d8326d1667cbf49e1a84bc5218a7283b661d6d89b41da6546bc"
+    },
+    "swebench-verified/sphinx-doc__sphinx-9281": {
+      "instruction.md": "61fc986f2378de0bc922494c7a3484618f0760d4f534c3fdcbc92e037e8c38ec",
+      "tests/test.sh": "b8c6ea251908b463f39ed3570df2122dc585760f09dcd6e53cbd7acb4e6b9152",
+      "tests/config.json": "4f2d4db541278c3b73ea463f3b865dd14687446e85c3065c5e0068b0059bc6ae"
+    },
+    "swebench-verified/django__django-13012": {
+      "instruction.md": "2210bf02b2eb87393383b9e9156e23b9f2dc92a85ade94f404412d698b87af40",
+      "tests/test.sh": "7aebfbd3bb066976870bfe4b37670357e0d7b4e8ffaf763ef7a89b78c7669f75",
+      "tests/config.json": "8e60d32d200baf386d77c5db766f634edcad489715d9f2c51b1de2f7e719f27d"
+    },
+    "swebench-verified/django__django-16082": {
+      "instruction.md": "e19d70a914f38df8690dedc071556711a3a135533da18052ffc31b15887555b6",
+      "tests/test.sh": "346de0b9999e8a4f33a8e71669d8e13a1826ed6d0bbc6c1a520c651afda6e206",
+      "tests/config.json": "aa9295dbc940d3b38008226ea9af3ff6fc25911a09d7595c39adb374ce740576"
+    },
+    "swebench-verified/sympy__sympy-20916": {
+      "instruction.md": "2417efccce08d8b78ae0a48b7928fbe87801484a68abe070e3eb351451c4b7a7",
+      "tests/test.sh": "c527904fb8b3f8bea209de7708190239a16b799f4846fd246ebbcb2be73d070c",
+      "tests/config.json": "11ff8748cdd416f3d92134966dd7663a1ed59879d648a7596b3ba295c5b97a72"
+    },
+    "swebench-verified/django__django-11749": {
+      "instruction.md": "634716811c1ce1219e538f88b367079ccabfc0e6d71ef358de507d70b8b28b6e",
+      "tests/test.sh": "360f450cbf5d3b8c0365ceaa78e46dd7fe0255a471978bb42bc2463c4e0d3b3c",
+      "tests/config.json": "6d449aff4ef567cab5bf2dc45318896d3fb91c93d26f7262df55795367aac072"
+    },
+    "swebench-verified/scikit-learn__scikit-learn-14629": {
+      "instruction.md": "57f897ab2b9147c7161acde25ebec1908e87238b704c754863beb519910157b4",
+      "tests/test.sh": "8365ae8d0d281d8c36567941c05cabe8de9e98dda55d1951cbdd420d72d2d2ac",
+      "tests/config.json": "feabb2aedcb0a5417d0e17ee0ae8ef8c81a681f63624027e096332da6c156650"
+    },
+    "swebench-verified/django__django-14631": {
+      "instruction.md": "32fe93fa8211d29666f3ffbf61b2d72a511a335fa1df1272cf15e9f152d2b061",
+      "tests/test.sh": "dcb3bc0583c7439b0ae4196de1c7e98c6690ae00529b743765b281ef37add3c8",
+      "tests/config.json": "09595b73823cd2743043cda9cd0712e0eacff875d785fe06ea2e4495c1659e0c"
+    },
+    "swebench-verified/django__django-15930": {
+      "instruction.md": "2b449b809079b4a45730886c940bf0d87580d93842661b1a5d1ead21048a8f46",
+      "tests/test.sh": "aa73330218812e0eb3faabc93ddb05e61ab85f152880d3b552cda34af763e0dc",
+      "tests/config.json": "fc3e14de798a9b36f3664553c5e6f32c3e1f4e11844d6d87b6c66e08454bb15f"
+    },
+    "swebench-verified/django__django-7530": {
+      "instruction.md": "8594b9d6099cf4347d3109678601ccc4e1ced5619df9b385a8fe90861503d65a",
+      "tests/test.sh": "d3a8fec8c7ab1568b0d74ec4b0308ae3409271d03344b808e0bd2003bfe1fc33",
+      "tests/config.json": "74085e96eebe4704e99258eaea335dd319a828e82ad5e32236c1fd006a641f45"
+    },
+    "swebench-verified/sympy__sympy-14248": {
+      "instruction.md": "056549bbb76a727325fc85b052ecb5d1c9ba9d70d702cf011b407e3877e5c383",
+      "tests/test.sh": "689ac078d058272181cb85dda7f29dccf4eedf929b38bcb8fda793c67173f72b",
+      "tests/config.json": "fdc7f230297dfb699149ac97f576aae55a9f0ff50192ff67f7a75f7b01e4fa7f"
+    },
+    "swebench-verified/pylint-dev__pylint-4551": {
+      "instruction.md": "fa219e71df3a84f843bf9e51f1e74fe9c6046b038d7e2cad64d8171ccfa4eaf7",
+      "tests/test.sh": "949f6513a67c47fad9d7b610fc36c9b9f6907050741cc4219033326c2956bdbd",
+      "tests/config.json": "5ddfeed7e86e18e1afa5d886586fd40c8cba2268f205deff515fcf605d825941"
+    },
+    "swebench-verified/pallets__flask-5014": {
+      "instruction.md": "f77d8eab7dd608172aa78b3b50dfa7e0e9b3a6a1c52d14a1cb02417eb5a0ab00",
+      "tests/test.sh": "987d5367bc37e3128128e62951e07154d74aa54cc432c2480b109b26f5e027ab",
+      "tests/config.json": "b59c895e752ade47f118f0228d603c48f272a030c7aaa6ff9c3de7ad4f79a5c2"
+    },
+    "swebench-verified/sphinx-doc__sphinx-7440": {
+      "instruction.md": "c7bb66ac0197caa032cc663e284a67b59d8b1bc5ed5db63e101026314b0a4a28",
+      "tests/test.sh": "747ef2ebb0ccf5a7f3491f5017523f10b4c53dc36ef43050a65c6cb26b8d1c5e",
+      "tests/config.json": "bfb74c3b903ca5225477ab9b6d4b805c28d2febae24718772f1a412792f9b342"
+    },
+    "swebench-verified/astropy__astropy-14096": {
+      "instruction.md": "938971021e89cd882f6ea33d61202fe7aa0091d7be4748b100ddc7e164db90cd",
+      "tests/test.sh": "a0cb6cb603721712289f475dbf2443a2f27ba573c8502381446415f8b6324364",
+      "tests/config.json": "b7a4f00d5513a490d2d143982e1b7b06c090fb1ae116e8a4285f00a423916c31"
+    },
+    "swebench-verified/sympy__sympy-17655": {
+      "instruction.md": "933042963b8cdfbe2ba70d5a221c3a40e00b60595f5b865417d4494c0b566af0",
+      "tests/test.sh": "25b78c0b77f18b34990083d9584125ec711bb2cd5b4eba5d033fc1056f36f5c0",
+      "tests/config.json": "2085601ff2c41b07f4207b5008ec426b47457bcf378390141338583fdaa417f0"
+    },
+    "swebench-verified/django__django-17084": {
+      "instruction.md": "9f7b53f6125e76d00b9bedab80a85cfcc2d002f33b979c9912a21f882038e8ab",
+      "tests/test.sh": "b2e5e04a52170b552b6412559fcfeb730cd94e50546e5eaf37f10d9a207872c8",
+      "tests/config.json": "f6b842d457161e131e1bc59df7972453ba7200e1abfc5f3559905aae17b32f16"
+    },
+    "swebench-verified/django__django-16485": {
+      "instruction.md": "8a53e65ece3438a33ee0c6a38b5cb92ab4d352c2697f3b87e3ab08c73d7d9b02",
+      "tests/test.sh": "eb251e062d100cd97ec9e6e96843c1443e91d306b7709940394ceaff38b3d1db",
+      "tests/config.json": "72f028d100e4912ae34db4c8aa4cdb91f125aee21e3156c20dfab3cdf4b6c05a"
+    },
+    "swebench-verified/django__django-16901": {
+      "instruction.md": "479cceb4c63d862cff2b9f58ddc60c24c359f0f8a48aa193e9e5e49ac79916bc",
+      "tests/test.sh": "321e6e584c944b4a2f853e4901b99b48d9d3b7006a8c671b1abdc2f96a6aba68",
+      "tests/config.json": "4ab56ba1641a8793782de5ab81955f9767da40fb3c1f9801ace36c40ceb309ca"
+    },
+    "swebench-verified/django__django-15957": {
+      "instruction.md": "76c85513ec1bc2da3872e053781cdf0bdbcfa8814c47b7c405a76876c14cf89f",
+      "tests/test.sh": "5bfaf1e8d329bdf1a4629c1974e2a0a4f8e336c9234330e2b4cbf0c4ba967441",
+      "tests/config.json": "1991abf513465798163f4ea4d8ed838b362c65ef495e11a067e80e93cef9e000"
+    },
+    "swebench-verified/django__django-13809": {
+      "instruction.md": "cb563a0c70278a3b81d014cfe0e01a283649008f3c2e74dfb4ab550204747f0c",
+      "tests/test.sh": "bf45e914feb4d7b3d89cb253b5c666571ff7ed9b536587aa399a9fd02e031b8f",
+      "tests/config.json": "045242d4f0d03e9e80ab41a29cb428aac6bd0e334ef1414c47164ee97c4872f2"
+    },
+    "swebench-verified/django__django-14608": {
+      "instruction.md": "f80ad2fd7af3b9d1db3a58c3dff7adf0954933a26aea1990d7b501ea800137d1",
+      "tests/test.sh": "c4ad200c4db3222b72bad4d13a8f60c103e84966f95ea471d832efec7f3181f6",
+      "tests/config.json": "f63379092b812df3006235e075385d402a63572ffb4786cdd1ff44b743c7e463"
+    },
+    "swebench-verified/django__django-16263": {
+      "instruction.md": "49f0f8ba18c1039ccc975e1898a299c377f53d0c5626ab1f0fbb1dec81554f86",
+      "tests/test.sh": "7b9e46d5356f69dfe1fa76879daa94fe7ef2358a183b17676cb5a84bb575cfcc",
+      "tests/config.json": "3a250555725712725cb204d7e0882720e074480af7dcc35bcd8de3630d75a6b6"
+    },
+    "swebench-verified/django__django-11239": {
+      "instruction.md": "3bcce961147cb8ebe68ea067a64ad3b303f1a7114302e78ddbb4df29f42cee85",
+      "tests/test.sh": "ef076aec6258da4d0497c98285db1139e03fc040ba605d2b000d25f66f76cc04",
+      "tests/config.json": "67b0a6767f7a982a5ce420b9caee7a412566ae41a1842a420c6830ebeb563617"
+    },
+    "swebench-verified/matplotlib__matplotlib-25332": {
+      "instruction.md": "86c03c9b73bf970095097ed7e90516f96639aaf8b1a81a8ba3ddd8f620e0eee4",
+      "tests/test.sh": "445aea8cde580b6670beefdfbe4fd939bab60bf51996df9a88fe9d8f669aa019",
+      "tests/config.json": "52acbdf57343b4dcca7d0dc7d6e744300e30f56fc787dd35e92f8870ca2b4bc2"
+    },
+    "swebench-verified/astropy__astropy-8872": {
+      "instruction.md": "495ed57c2183a49ff489deab1cf1f0a4fafe7e6fad6d6af79a407426de354746",
+      "tests/test.sh": "4e11ddcd921e972ee965dc2425f3c960d2dcc0475c6e7fd0981606ae49d8c488",
+      "tests/config.json": "f1ede35c1c38d36f29d418fab3d759103ae27db9e3b8f623cd42edad763d95d3"
+    },
+    "swebench-verified/sympy__sympy-13551": {
+      "instruction.md": "9ab38d31087d297db60978aeca658666788926a0235df297346836b93872311f",
+      "tests/test.sh": "428cb5e567c48fd2d38d6ae07ee0663824136df06f1514a2c15f66a44d01d055",
+      "tests/config.json": "ebe4ab8e59e1c89181e34495149ad259c1a33a8af514b574b09852032f426719"
+    },
+    "swebench-verified/django__django-11999": {
+      "instruction.md": "a218957f3dfca1105aa36fe62657ebc2b1f85b344833ab0c6985d7b9babbddd7",
+      "tests/test.sh": "4ce6ad46bb73afa921dc8072c31d0093e9f6ae9a5c716087a7c429b7808235d5",
+      "tests/config.json": "43e2ab5b37b55c33319d63651d862bf6bd26e066ad25a64859eb06d493782ff5"
+    },
+    "swebench-verified/django__django-16454": {
+      "instruction.md": "cea76ffeca3a74eaed26fc570523d7a256904a15862f7affab824aee5f241196",
+      "tests/test.sh": "1dd23e765c7b4649b745a72ba091e3d510ca28e59933af2bf47e097667a73aeb",
+      "tests/config.json": "3a51798cd945b5140332c957fc647a61390e7b27dc80f074130c75fdfb93be88"
+    },
+    "swebench-verified/django__django-14351": {
+      "instruction.md": "16ca48ec815f0f0b6bdd11249c77fdee663d3b04800e3d8b9a7d439a486f0f51",
+      "tests/test.sh": "91b855da4329137ddbf6f25922abfb705fe14406bedd6be945e09623a863f975",
+      "tests/config.json": "86684e9f59a760a9cf50b5d16b88ba1e65fc9250855f086384e702a07d703b9b"
+    },
+    "swebench-verified/scikit-learn__scikit-learn-14710": {
+      "instruction.md": "a2ab68a76bfcf2cb56a50c1e385a1b1bcbdc8ec024121323193d7034f2075d4f",
+      "tests/test.sh": "bcb1bb705c15f8ee9e8cf6c037c00fe964907234954ad91f2cdf826dc07c4e8b",
+      "tests/config.json": "90f0161dd27e317d191b36a2c72ea04931ba43334291978aac36fce942a71f89"
+    },
+    "swebench-verified/django__django-16116": {
+      "instruction.md": "880cc9e05f956b013f8e5c55198731150454919372bb47c0bc8fc3f6370d02d9",
+      "tests/test.sh": "525b8894013e4897f0d31e54854eb049b0549641a120020e8f544ccd8b96f65e",
+      "tests/config.json": "d5bae292ae4fe7b19b2c3e66a441e24bf32b58982830ae3745ad95f5e10a0457"
+    },
+    "swebench-verified/django__django-14404": {
+      "instruction.md": "54df87b25f10dd651a04a51ebbd5d93906f89c2cb27cfec50ea0a2489c01b0fc",
+      "tests/test.sh": "57a3b66f98e9fa4683f56614215e295b7a9fdbf8e9b4d563ecc78b19d9a3b82c",
+      "tests/config.json": "ea3e332a8faa32fed6799d96508daef13d51ea30ac6de63b6ca144541fbbd8f0"
+    },
+    "swebench-verified/django__django-15103": {
+      "instruction.md": "3a7642bc97056db6f959238e75ba0b266777fbd08020061a6c0e4c2f7115c14d",
+      "tests/test.sh": "95b39ed2458d9494d3f89586fc1cfbf8930d3158e20b84e77eada58b5fd54ad2",
+      "tests/config.json": "8276b47dbe5dc135932e56e24d2fbca97d1b9de207287d3b37d58d80041822f2"
+    },
+    "swebench-verified/sphinx-doc__sphinx-7985": {
+      "instruction.md": "d6ea21759d42bb143d7e3af7326ec9d78ce5817c7d615ca31c01f9ef515b8eb0",
+      "tests/test.sh": "6c1dc2b6b6397db3e917ee832425bef1dc712bca7cb25f11987cd7e751a2f7f9",
+      "tests/config.json": "14b0c0760a852bc8e1cd33437d3f5aa92598b723e66f4a7fa111e204f19a7547"
+    },
+    "swebench-verified/django__django-14017": {
+      "instruction.md": "b22bf8c1e1f6443da5b9883966b6472885a134e8edea0803fe1f0078e9e7d8e4",
+      "tests/test.sh": "b33f2532b2c304c55405bccfb6a40a65ea31af269953842c52fc68c172a80e8c",
+      "tests/config.json": "cee86e95813675a206bcc44ee94b00304b1807a2cd31ed8573ae162bc3b6632d"
+    },
+    "swebench-verified/django__django-14053": {
+      "instruction.md": "8d88b4efd90e896cba9ecd2d2ca5cdc72409dc3651477d33716a9461205c0e1e",
+      "tests/test.sh": "b115a96abbea6763d0320b307b90011b24af2895d5009a8f95cf78e02d41ec23",
+      "tests/config.json": "d3c6e964bb663caccf733beb2890e0903e505977e8fb9ec607bee2b8e3f5abe7"
+    },
+    "swebench-verified/pylint-dev__pylint-6903": {
+      "instruction.md": "5b236da9e3dbb09d3bf45598d1cc24596fa01daf96d7280482e081345f4ed50f",
+      "tests/test.sh": "14470233e9b9190bbfcc207fcbe6eaa4642b93939ad432094825ce323bbb6fa5",
+      "tests/config.json": "6286e80e482afb12268e78bf40d2a96c8e502e56fcdc17859bd0293967f6bf99"
+    },
+    "swebench-verified/django__django-15037": {
+      "instruction.md": "30d62d2fba56e8a0b3b3676ee4ae903fdcc4b6df4d6d294a048c3d135e2a7b32",
+      "tests/test.sh": "226bc0ae2c38643492c492c43255f2b2ba1aba15286edcfacc655b6646e7f060",
+      "tests/config.json": "4d6b919c18dae21812d9cd42eec93c44c960ffd1183434e4099a9ea4edd0678a"
+    },
+    "swebench-verified/django__django-14792": {
+      "instruction.md": "31e3dd08458f15a0181341368800ae236427a17dab0b93128e1e5fe685a91690",
+      "tests/test.sh": "5a0c8bd9dd76bb38a084d128630a7a7f9aa2cf821e366091e9486d6923f95365",
+      "tests/config.json": "48b93a28ebf57d770b489ff03a3eaba024739283d024c0c56f08f48f05671294"
+    },
+    "swebench-verified/django__django-12754": {
+      "instruction.md": "63468fef96ac35faa4d2125b140c1d645de75504df6ad1f591942030a10b196a",
+      "tests/test.sh": "e4353abd4989301551d05772d7979b85827a3e346c9454e90376da1ee54887b9",
+      "tests/config.json": "f93f7c9debc1d331d18b6061fbd755937649ac06496c173df2bc5b590416e31c"
+    },
+    "swebench-verified/django__django-13089": {
+      "instruction.md": "c5bd4beffa278fe3dedde1da8bef37a92cbcfabfff335dc1648ac121fa7c3fd0",
+      "tests/test.sh": "11e1fe3488220605338fff220ea7c5c00b56dad05f152247242e5c54126ae8ba",
+      "tests/config.json": "587012d75415b8540e59d6cca7531830f5a6b491793b775e1e6007387ad5cd9f"
+    },
+    "swebench-verified/sympy__sympy-13852": {
+      "instruction.md": "c471b98847bedf7f450d7eb35b7b2c74907fbdacfd3d6fe532316adb6b30861e",
+      "tests/test.sh": "2b16d91f8d458accc1c251523701565f5cb1374fe7cf4e8d3a8822bd0385753f",
+      "tests/config.json": "5c3d2e1fa18281fbeaa0b62d2988c7edf4ab992b86f8b045d45474adf8fd3152"
+    },
+    "swebench-verified/pydata__xarray-3993": {
+      "instruction.md": "b7f8e162b05ebbe95f2b62eed7b66d1e8e7862e951cde71a9f02b75fee09787e",
+      "tests/test.sh": "9c204def8f4d6ff9ce5a7fe7592fb8abd9c5b3067cf7c6dc49487a09bf3b8edc",
+      "tests/config.json": "637e4a0e97b6420e4f42231350a4f0853e5ab7a9e1077ff0272ad10a5e83450a"
+    },
+    "swebench-verified/django__django-11477": {
+      "instruction.md": "acf0d23c2d152351ccd9b1c59bf10c9a62b1f43c09ad8255d83cf51c28c78915",
+      "tests/test.sh": "454a26a5663cfebc81081f4f0fba19191c97a1f670dedf7de370813afe8f0e91",
+      "tests/config.json": "93014ae378abbaf11d705f510eb3d74906f623b55ee218d0b26e81d03d3dfc5a"
+    },
+    "swebench-verified/django__django-15569": {
+      "instruction.md": "2aeeb8ff3f2c7420f0cd17e245243d29b08efc104c3c15bdd84e5c30620170d5",
+      "tests/test.sh": "245d139110781141fda70b8e6b5dfd5975ea565444e24b9d43c3b33b3adabf6c",
+      "tests/config.json": "844216bcd30de29b31d6b52a33381511747cececfb97553517f2174e4ece1fae"
+    },
+    "swebench-verified/psf__requests-6028": {
+      "instruction.md": "1d82b6998adb429d6d13a59c0c321de5ea24889a19843d4de7ea4dff06739cc0",
+      "tests/test.sh": "7dd7568f6f64b66867467ca0b3c506739f093a2209bf4a03bb7a06784ec0caba",
+      "tests/config.json": "edf938312deac464b6c76f233642aa7bf99a7afb16599f86799bf299d8c52a4e"
+    },
+    "swebench-verified/django__django-13820": {
+      "instruction.md": "e14c59a422bd5d1ec4b3872a333ed2dd6e5439c0f15204b57d0f57f395f249ee",
+      "tests/test.sh": "2e37d84bb307529d6c3328fda8987a1402f363d8a970672bb1b1f0476989e819",
+      "tests/config.json": "a150e07eeef1af1b3d6017df23cdf7f10e1677f9883ccc942ed883f12ee764b4"
+    },
+    "swebench-verified/django__django-13568": {
+      "instruction.md": "a02f6de530628706923e6d6137329c8968929098c8131c28955d8b1b67ccd79c",
+      "tests/test.sh": "9a444ce9a50d572b41b22c16bb2f4e6d0a9e91655dadb443468db6bb2572bab3",
+      "tests/config.json": "ef08b280f70a4af375cf915cd6e408b76226cb6b2cd7b83ab629eb3b5e16434b"
+    },
+    "swebench-verified/scikit-learn__scikit-learn-13135": {
+      "instruction.md": "70bf3f801d0015c516f4f229e8bb3b89fdc72247f845d222272895dc1940efb9",
+      "tests/test.sh": "a8a0ee1695b1f609e96072cdfd3f9f177f7c0248c7db70c75e3ed9fd65cee3a9",
+      "tests/config.json": "ca1bbd4bef14c314feb91933adf613823bbd4870fef92d18d693a89467fd6e8b"
+    },
+    "swebench-verified/django__django-15128": {
+      "instruction.md": "a5f796e63ccfda0e46346a19519b3951720cc1a470a3fcf0ead0ea39ff9b22b2",
+      "tests/test.sh": "84f33e83fad6962c7710f2ea73e93ddcd4fe78e744342c8f107ca5e9859693ff",
+      "tests/config.json": "e5083a16cc1ec249a73094a8fceac55641401e160b3929334d0c560b18cd9652"
+    },
+    "swebench-verified/scikit-learn__scikit-learn-14894": {
+      "instruction.md": "0cf2009aebab59ce0221a4ccda59465d8506a274a5d76a4f9e35338c5373ced5",
+      "tests/test.sh": "66eadeeb9b2f2554ef0a9b2b867247d1baeea88a9bd38adad5ab0d116158b098",
+      "tests/config.json": "2ba0c0767ebb94c556e61a58f2bfb60f3d2f1c3a9fb1e00d0666c62133e61080"
+    },
+    "swebench-verified/django__django-11163": {
+      "instruction.md": "bf9f25c3955001d2c7cd88dce3d71e609f8ad1625945bd4d5ccfe61a843927ce",
+      "tests/test.sh": "28b7dccaf64f0e33afe5e04c6e7728241b636a80fc0e701b0726f09dbaaf84bf",
+      "tests/config.json": "6aa2470ebda9ee160564cca2342eb43d325677157c738e6f750764bcd01af7e5"
+    },
+    "swebench-verified/django__django-14559": {
+      "instruction.md": "a2984bf6aa2dccf987cf6086f8dc74b4a874dfe278fd6c9f6b48fa8db685f31c",
+      "tests/test.sh": "e8b295a0e712f1d7c73f1e320a08c744f5e706f037d01b5cc38807fcd9c9e2da",
+      "tests/config.json": "c5578cd29154d9652f5e7dd545d2078b24ee356b513d52291275d376ae823fc4"
+    },
+    "swebench-verified/astropy__astropy-13453": {
+      "instruction.md": "c95de552c4c269b07ca57ce63f0cceed542ce222c47efae567bbc6c69b58b477",
+      "tests/test.sh": "7571a95da76f7c858d0ce64c7300c35316abb9fe10f7bf4554046f51ff03ac8d",
+      "tests/config.json": "31a06fd47b6ec1d38afdea0dca7acce9a638054232f2b9a52054b5e5ec41bb01"
+    },
+    "swebench-verified/django__django-13023": {
+      "instruction.md": "71768f61ebf0ab0a5326aa34ac4251cddc6e841268fde519148516768e075622",
+      "tests/test.sh": "13dd98840f2538a55bb7afa7fe900da4e77767bbd3cce7422e9488dfa31192e9",
+      "tests/config.json": "a752e85a7abd760d3b3c17349ba42f7cd0aa2fe00413bed272b82538cedb083f"
+    },
+    "swebench-verified/pydata__xarray-4075": {
+      "instruction.md": "5c48e910f0a678f9c7b19ec42c63515a617e5667c1a17dc77255fc24a97a7456",
+      "tests/test.sh": "28c2b4e03bd177212e792751588acb7d5b4fb143fb3bd002d033a92c9d39a157",
+      "tests/config.json": "a445773e055bae2465ce0c63ae59c9ef697ba5f5cacf40338e98e2b3036445dc"
+    },
+    "swebench-verified/django__django-15368": {
+      "instruction.md": "62018bacd29e3e671328d6b2a8ea6dde5137b040ad7931090bdadbf1a15fbca5",
+      "tests/test.sh": "1ca09d68bb2c360d15df8758760a77e3267b834516ec1f986f4ba44bef683505",
+      "tests/config.json": "7b6a8e826776025e1bd9b1db2dd4dfe4112f816bd8dcda127655481d8673f352"
+    },
+    "swebench-verified/scikit-learn__scikit-learn-25232": {
+      "instruction.md": "e5c9f486382e80b0206deb50925b3428f89ae5b5ba499e3374eb34e2736bef74",
+      "tests/test.sh": "d6fa10b3fb13b45af08a9a91650c1314e53af49de190c4b4ae2dacd51e32d2ad",
+      "tests/config.json": "c50e6f1da65f90e0aca395e91ab2bdf8929aec7da02c2c9493c541857203bfbc"
+    },
+    "swebench-verified/sympy__sympy-15976": {
+      "instruction.md": "2b1a85414c4df764477586489a407c5be000ef58e9ae013aef7711bb9c2f4f75",
+      "tests/test.sh": "fb1b118b311eb3c2696b3e272052ecd7b30773e0237fdcccb8e4566577187ef4",
+      "tests/config.json": "ca2d471aabbb7ec3ec8cabdbaf21b6a935f0edd8e82ae028f90f08a05cdba595"
+    },
+    "swebench-verified/django__django-13028": {
+      "instruction.md": "4a819c84cbc0a7397a77d82b366051c631eb68d6a46859f40567659a9c626d1e",
+      "tests/test.sh": "66e2250725e5724461ab3205dbabf82e2206caa2e7b019d328c66bb67eb623f0",
+      "tests/config.json": "a620c551bdcf371bd9ed97bc9124c613bd5b6aafa9a2c8ad00075ba9714a02a5"
+    },
+    "swebench-verified/sympy__sympy-19040": {
+      "instruction.md": "42bb887eb79aa3dcd7183824fdce7ccc38d867dff8242d8edad92a705e0bbd58",
+      "tests/test.sh": "7eb20c9357af8ba115fde98ab8ddcb981d10aaa25c194a1432d88a52aaef6c21",
+      "tests/config.json": "7b3a99c037443bee41aeb2c0fef774ae8ad5996deee544e3f0d9edd8a914fbc0"
+    },
+    "swebench-verified/psf__requests-1766": {
+      "instruction.md": "40ec9ed5fde894d0ddb6db372204c9a94411b7647cb5744cb54db655d618de2e",
+      "tests/test.sh": "df9c44e2428ff4fbe28202a1004dfb0fe1413869e7f6df2ded5787bf87a32f0e",
+      "tests/config.json": "823237ebcfa42a3e354fe5d1ae283443c2e8709c9981629814d7ae6ae492034d"
+    },
+    "swebench-verified/pytest-dev__pytest-7205": {
+      "instruction.md": "f6e1d99fdf9e06684edf04320d1e60e65ae19534e716df11e284a82b6608fc3e",
+      "tests/test.sh": "0f5f8e6f3435678c46839b7c36dd513335b9eca2a9efc82f4499e34114f223d5",
+      "tests/config.json": "4f34e11e8ea1b55d25a325abe983f701809ce18cc554a2026af1b2afe3adb53b"
+    },
+    "swebench-verified/sphinx-doc__sphinx-8593": {
+      "instruction.md": "045886a62b5fa90557dc8a742a167caa9d203288dbbdd392f0a7ed37e73589bd",
+      "tests/test.sh": "879fd9d4069b741c866849e2eb58f08cc16627a99fbcdd1d9c7625484db5502c",
+      "tests/config.json": "9e41bb397e9d82725fcb3640125bfc18bcaf9d170f1eaeb296893caa023040c5"
+    },
+    "swebench-verified/sphinx-doc__sphinx-8595": {
+      "instruction.md": "f5549e64af66510e584758f04371935b8c6c3a5fec4fda812b8571a7bd733be4",
+      "tests/test.sh": "5673b947bb06e61d931185bb5a2c4b5f43c71891a51c67f13acb3c353656c677",
+      "tests/config.json": "3920d162045f0a41abcecd02efecac109f779c4692f141539550e332e79d20c9"
+    },
+    "swebench-verified/django__django-15315": {
+      "instruction.md": "7ec7760025ad2816057e7bc95e1de725483e9d4491c825e43d564897fb90db9d",
+      "tests/test.sh": "7740fee9eb3e1925a3a3b721bb4f3b5d1096fdecab253fbd1b36592faf4ff282",
+      "tests/config.json": "a94ad61cf9906058c2592b331b5af26fa59b564d9c50ce988882ced09076c369"
+    },
+    "swebench-verified/pytest-dev__pytest-5631": {
+      "instruction.md": "1e9120fbb21d881c388af3596eaa479bad2f604703eb79bd19898b5d7b18af03",
+      "tests/test.sh": "083a1681ea92276eb5c613838ec94808fb27a4c9ffffca29492a1b23fde8d230",
+      "tests/config.json": "bd3d05e5fd84bcf903e2a545080fe5a59a292535bc042944ff77c7d6eaab394c"
+    },
+    "swebench-verified/django__django-15987": {
+      "instruction.md": "3e9b440229230adf40fd953ee70c5c8faa6f0f422e149334217de4df4e6dc392",
+      "tests/test.sh": "0c1230aa976f7c03d68230b6178039d3f60a4b325cac963e63ac67ba0d6ce97a",
+      "tests/config.json": "2de3523f17d0ecefefd3872ed7f4f5d24a293f2f8b9cfec71f8c664dfed28c70"
+    },
+    "swebench-verified/django__django-13794": {
+      "instruction.md": "761fc978d26ce24518f472f8ebc6ae3e1af12d0690eec09387866d9099401fb2",
+      "tests/test.sh": "8d586aa9cab7f946875c04ad38ba1612af6203929d16b3196b1231b53c32ecd5",
+      "tests/config.json": "372e7d21faf7c16d9bc274677f735052023dbfc5c5f5b745e7a724a10e57a6a4"
+    },
+    "swebench-verified/astropy__astropy-14369": {
+      "instruction.md": "689c8f338ffb0a1801bf07a31c4d7de54651a568033c33ee792436682bbb72cb",
+      "tests/test.sh": "be60498a07cef60f33f341c0aa680c3a9e40275ad79de8bc8c7bbf648711d0a3",
+      "tests/config.json": "4d12cc3b6bcefe6822a3264270e3826164a0bc2bcdf60d6e4f152bb96f2cc00a"
+    },
+    "swebench-verified/astropy__astropy-13977": {
+      "instruction.md": "30b2a7e3781997d912a4882b552c5748bb7982ccabf1c97ab3dc961e3864ab92",
+      "tests/test.sh": "716aca900f45c89fe034727ad96ba2823e771f0b723161b508e1964b096495a6",
+      "tests/config.json": "0e085c2fb73d5dd98b6c14b0ef6e344d103e8821aa715786f153af94e41623cc"
+    },
+    "swebench-verified/sympy__sympy-13974": {
+      "instruction.md": "26dc1cb7842ede97a6327729441278edd7c5fb6223d165e7589e37b441ab1c74",
+      "tests/test.sh": "89e7405a21eba93d96a85d3ce24f384f2516ca0e68ea903be5b0d24891af149d",
+      "tests/config.json": "10272a44392f1c592edc758e3edcceb844dc0c166f7196d7d93083642a847c9f"
+    },
+    "swebench-verified/django__django-16938": {
+      "instruction.md": "8c1655f792841d3d0433734d797712f2c77fe77dd310567ef8992611ae56ce3e",
+      "tests/test.sh": "25b20210fe9f7ac16757ed06fc057c00fd3f433093bf09530b6a4e9f86439a76",
+      "tests/config.json": "e650af0a7465131766a3080c8f9cabc3523d1410db210f8436fa42788cfd07d1"
+    },
+    "swebench-verified/sphinx-doc__sphinx-7910": {
+      "instruction.md": "95fa2fa152799a49fa1bd2451760fb6e41b9ded0ec24c2f04b2ce2680fc40c23",
+      "tests/test.sh": "682a4238923911f131ab9590e9bbbd843e2c41031fcdad0e9c5e6f0bcbcb62b3",
+      "tests/config.json": "778400d00957ba5e61e3852e9499f02fe4b1225e348b82e42bd084307dc57de9"
+    },
+    "swebench-verified/sympy__sympy-11618": {
+      "instruction.md": "4aaa1e568038ef949229ebbc18d623529757a31b9c69e5633a4b79eb79b729e5",
+      "tests/test.sh": "4af2213e3151e2e6d257a1d15cd4a2a276ecad87017d8437e8d16a83fd406107",
+      "tests/config.json": "89cb074d4725f544eed69a99a1a0419f1945c7b9e480cc378c21961e3c4c559e"
+    },
+    "swebench-verified/pytest-dev__pytest-7521": {
+      "instruction.md": "39f1953e5d5a7481355aa6109b16ecaebbb037957e473cc71e9ab1402d3aa9b9",
+      "tests/test.sh": "104474f76e571c916c11e055342737c0f85b3d7f9737338798143fbe96694cd0",
+      "tests/config.json": "a89c7ec63654fc51c36943e2ff14486e4f07ea4de1283e3547641d6aff312fc8"
+    },
+    "swebench-verified/django__django-12774": {
+      "instruction.md": "e73e028f94dfd976257442fa3452daf019834eda5ba930a505c62d68c0d6a74d",
+      "tests/test.sh": "48aa88c2985c2da93b0a612d33d48b49fc672b1a16ccfa1ea4af4d9f06229bf4",
+      "tests/config.json": "68123ac7c2f3708407def61c132c09bcc5bbd257ab8a902d0230f1a8438b4155"
+    },
+    "swebench-verified/sympy__sympy-12096": {
+      "instruction.md": "adde0cbf29a32e980fd872615006fca6bb54f8ffa9097840f4b86c5b84138bbe",
+      "tests/test.sh": "e59d1f94dbc24f3cfa11ccc275fad7a3633db97e875eb9449a42cdfa47c654d5",
+      "tests/config.json": "19ee0072078f79daf69009e089e393dab8cf9e95d393f7a450056109d068466b"
+    },
+    "swebench-verified/django__django-10973": {
+      "instruction.md": "bb249d2c39765390666ab5bb77d1bd38fc0ad204f02491443ef84139338b8ab2",
+      "tests/test.sh": "9c328e1c47561b7f3fc138a873ffc4ecd441e8828ac28611e21930146f3f0aaa",
+      "tests/config.json": "0d023ab7b3e7c1efa3e02adc3ffffe8c2df55aa4977e63870a306a0bfb82742b"
+    },
+    "swebench-verified/django__django-12273": {
+      "instruction.md": "dce1a3c2840f6d6131a468109f950128ca9d55ffa1dbaaface8bbc07bfc9d7ac",
+      "tests/test.sh": "bd1914bd96aa2ab31c254cf75428da667aee5c902333e00a3e6686efd830f81f",
+      "tests/config.json": "cea02463404096f0bf0c132ad73751e45e1f19279cd7affacf67fc266a349936"
+    },
+    "swebench-verified/django__django-15277": {
+      "instruction.md": "60a6823123eaffe2acc3c2926d5461716aa0ea743fe42f6d1521bb1464548fae",
+      "tests/test.sh": "4e7a2b439a4264bf36c7a4a9bd4ce1f0f1be05f6821a8f7f9226a5b4971bb291",
+      "tests/config.json": "287632d624c4d203dafbaa24b301683843c4b34a04508c23a207ae44a2246164"
+    },
+    "swebench-verified/matplotlib__matplotlib-22871": {
+      "instruction.md": "a32253ecd61549cba0b22de10788e2edc09166a2598bdc364eb9f6f993d3ac26",
+      "tests/test.sh": "220b2ea4e235222bed8f1ec49a11552b7a22062727780624d2bbd6e4d37dfa3a",
+      "tests/config.json": "fa61eb21af54faf8b5cfa7dfdba651921958dcded3f6ca2ea9fcd479a00ea345"
+    },
+    "swebench-verified/django__django-15851": {
+      "instruction.md": "db54fe45948945c7062a44ae214f062444e78cace0b0da7fb76b2cdb39fdb15c",
+      "tests/test.sh": "b570f22981690efe64f36a8ab146c77f9f917ffc6a41fc25b71e1a65a23a8b40",
+      "tests/config.json": "ed9016d3247b51e6f8fcbe33460ff0f8c3ef047797652eed1b7a506b0e0f5f4d"
+    },
+    "swebench-verified/django__django-15252": {
+      "instruction.md": "4cf8a5500d487a25b6fca4da5e5e884e1ddbfffc08ef406bbab8c0f08129c98d",
+      "tests/test.sh": "887a751a28be8e364d3a55d549bdfbbdd00d1163f980317cb1e1d5095fd85ec1",
+      "tests/config.json": "6dda0f1e8ab9369e156a12ed9faac23db25288073148e5475dc08f52838bc8d0"
+    },
+    "swebench-verified/django__django-13033": {
+      "instruction.md": "2a07076b984f44f34b5bc66593488c0228d27fbac91a0dd6334d3999d88cc8bb",
+      "tests/test.sh": "8b2b6f2d3c8849c0e4b6f8b18118736dca8a9ea0164cfa261092c479a945a480",
+      "tests/config.json": "da3edb2bf74542e877f20b306d3707df4695421b8a662e499aad7c6fac73212f"
+    },
+    "swebench-verified/django__django-13128": {
+      "instruction.md": "406b401281530646fd4bd44c8cf2812d919a8a27e34e57587ed1cb332411e970",
+      "tests/test.sh": "d34fd59e52e7fed154d3d2be0f25946f10a5aa7a9e90d6f82b3e87c9285b7b5a",
+      "tests/config.json": "f704f1094b4f064d70368e695d9868af84622cbf526e10470c640b6c5aff592e"
+    },
+    "swebench-verified/sphinx-doc__sphinx-9591": {
+      "instruction.md": "0545e9ebe4d53e8e146f733e7ade35057a622d70fb80c97d6e5380c967e64e40",
+      "tests/test.sh": "8340f7effdfbec72ec50e405b2901bc2ef3190348eb91a11e04238361d2d3b1e",
+      "tests/config.json": "6e0e3b1a0934c3e6eb738d1b2716f5e61ea1cc3ad102f5bdc529f50b87478d82"
+    },
+    "swebench-verified/sphinx-doc__sphinx-7757": {
+      "instruction.md": "3f43b5effb6183c93b07ad0706394845cec8f7306b6fad5d9b60b531bad2328d",
+      "tests/test.sh": "304c2ce3bb09e66b01ea34bebfd1ae49790f962dda92af72bcd65a497387052d",
+      "tests/config.json": "5cc9b5350716902b08fac591ed151c0795deaea339f536dd39e752549da5c1a1"
+    },
+    "swebench-verified/django__django-14434": {
+      "instruction.md": "79a9fc39579e76d0dbb286b166c19affe23b0b5e18720180c2d29b64d2799ac4",
+      "tests/test.sh": "c84f105890760116d1b5b2bffa4b9553bae0000bc122b8bf6549f4a78252d3d4",
+      "tests/config.json": "30f22ac2ffdafb96998e123d7b8767bf76d78842019d015b1835ae8e25e628d5"
+    },
+    "swebench-verified/django__django-16502": {
+      "instruction.md": "1ba1e514c7485abab64dd3b9001230cc22e89c80ccc26061a12927ef271fd126",
+      "tests/test.sh": "8f9b9ca0d70734c0cad653ec2a6fb4333139a10b45f247505a5fc34efcb680b9",
+      "tests/config.json": "a16836127e1998732f4ec5fc0d3567d460b79529d4eba53802bc5204b110ee2a"
+    },
+    "swebench-verified/scikit-learn__scikit-learn-13496": {
+      "instruction.md": "124ed482f5fb01d5e297ffd5c227c868363e2dfb4953baf410b691da501a0636",
+      "tests/test.sh": "f8ad06da25a41cd7bbc359705ce675d4dd630daac53b3b42f3dc0b0194e3eb13",
+      "tests/config.json": "098f2f91516251c9f81bf9a1fd7da546ea3827eca6b59f2684e636504a84b070"
+    },
+    "swebench-verified/django__django-16642": {
+      "instruction.md": "9c99bfed2cc439ff77c3917800beecb5b08865f06edb7ac838950d797b12c7cb",
+      "tests/test.sh": "0126d8135eab1f0e778f4d55c3036b265efcd2f2c5dcb4cbea08d23a1114e855",
+      "tests/config.json": "cf26cccab59ea19381d2fb231ad5dce93bce88f0279bf1d7f42a6e40b26d069e"
+    },
+    "swebench-verified/scikit-learn__scikit-learn-11578": {
+      "instruction.md": "1817a2056be7e2e1f35aff11f57cf2679d08930796388f27f7882361eb23c960",
+      "tests/test.sh": "43ce42a087dbd6b6e1045deb9212662e30bf9cccdeac0153ee401438f8308c8d",
+      "tests/config.json": "75ef07f7dd8a39d822e21fe5ca19c3b4d06c1706e32f877cf45d3a6ab2d69737"
+    },
+    "swebench-verified/django__django-12708": {
+      "instruction.md": "92f1ebee8b6a82487f32a1ae6682a22f42752a0aa153e13bdf2ad98215a8b10a",
+      "tests/test.sh": "a163aac5559ec663584f407b90fe4e14ab3571b8cb2ef42dfe89f44da985d6e9",
+      "tests/config.json": "ee00c1b74f786501cb7aa0e9e41364a8d0be4729b07ce9e483b81029be552427"
+    },
+    "swebench-verified/pylint-dev__pylint-4970": {
+      "instruction.md": "194295749557b085970e22cc0886d8d0d772e77521bf3b3af55f43f90a3d65ee",
+      "tests/test.sh": "6748f86b30b7f41e49e294a1d6774b6bb1e667f4f6c4970abe34a77c54982144",
+      "tests/config.json": "0019ea2675dca843b27149b9c8a848fd4a0a9347ec437a286db7b8386c1126ef"
+    },
+    "swebench-verified/django__django-14855": {
+      "instruction.md": "68b1fcdba3c47e9aa79dcbc87c66065d0541f231ac02c4938d725fc4eced6cdf",
+      "tests/test.sh": "e5fb2e0b953eb24c451a26fe5cfd862ef20d5b9274c77996cdded07f94fe9c62",
+      "tests/config.json": "5346ce06c692e046b0f3e9812e33e6cd44904e9880ac8ff5c32b86a5807d1756"
+    },
+    "swebench-verified/sphinx-doc__sphinx-7748": {
+      "instruction.md": "fcffd96b0276a1bbe6039ae7bbc758f0ca78aa55cf4c32a1f0c18a939995c24b",
+      "tests/test.sh": "6a58842115dc36c083d27132d54253673a5aa4de4d2a7fb1bfe179bcc31750d7",
+      "tests/config.json": "58acbb4045370ec8dfc27c4153e41d7885c16005747e61b553fbb3e1b3dcbecf"
+    },
+    "swebench-verified/django__django-14376": {
+      "instruction.md": "eeb7104fd150eceab524e43578ec8ece44692892e995d827b24ca27b03defc34",
+      "tests/test.sh": "dfc01c1bc593f2bd7557e55084202df799f26c97481f5b4b9a7d3a636eb38544",
+      "tests/config.json": "37c779b22205f21855643bd000d225e98b539edf2d76f482622ad75975046b6e"
+    },
+    "swebench-verified/pydata__xarray-6721": {
+      "instruction.md": "ed6994b8ad2c986a62b9895ee96e8a0b9f4bcfad3b4e0e4df295ae72d35e0635",
+      "tests/test.sh": "5f10db4ba272099477c0c6ca6b706c5b37634e133c2c89dd9ae1372874132884",
+      "tests/config.json": "445b1acb2fd07dbb3dfbff567e7f44346f6b546e8bfaf79559d1b1dce366a50b"
+    },
+    "swebench-verified/django__django-11179": {
+      "instruction.md": "8c089a532a0ed098acfe973b552c2ed73a9792d71d4c48933544279573ccf7b5",
+      "tests/test.sh": "46e0bc50a5941753286e4d6f74907bf71b3b812df35afdfdf42bbab3aaaa652e",
+      "tests/config.json": "c02105b34e4ca65d4cc2dc11714e66c87b6684362e4ce7bea50727cbc997b86b"
+    },
+    "swebench-verified/sphinx-doc__sphinx-7590": {
+      "instruction.md": "23b9b88e30541f1109b04492ccf35a93a15fdeecb2b736bf22be5a2a6173f84e",
+      "tests/test.sh": "8313c5ee0e4306ad71507f26c1f5bf619973f342e40e74a2109e5de7646757e5",
+      "tests/config.json": "3324f0a1494f96799d1506977f876149b6cde4bfeb02740cfaf108cf5b126c63"
+    },
+    "swebench-verified/django__django-12039": {
+      "instruction.md": "c27b6ea41bb7b6b735828e83d03cf6fb4130e9da59af11d7ad142323fa6c2cd3",
+      "tests/test.sh": "98db6805620a09985dd1083248129b881e914c4788a54325e27619881fd25d8d",
+      "tests/config.json": "88e52bcc247bbd3182981330fce824154accecd4665f5fe1784c1c6520b591be"
+    },
+    "swebench-verified/django__django-13315": {
+      "instruction.md": "4771d98a21bac05d9557a298f5fe1a09bdd8b57590c500e8539bc2dac6d42cc3",
+      "tests/test.sh": "02a07d3c65dcdd6db92af78fae298f11fea9e19a4bfdf32d6294b21738cdf301",
+      "tests/config.json": "9b36f612c77a41cea700aa36072dafe635a7d4afab613217d83e18c62f7d25bd"
+    },
+    "swebench-verified/pytest-dev__pytest-8399": {
+      "instruction.md": "ed5ccb96606056666baa1559612c33f0a58d8e6c9c19742684727ad6f10de105",
+      "tests/test.sh": "933ab387e1024f146e86574d709a3aeabf246f67df99ed17cd1f18a63e5bef89",
+      "tests/config.json": "592d9c41bef9f12dc0329dce7e004ea0e960db9ad380960bec53856731db6259"
+    },
+    "swebench-verified/sympy__sympy-23262": {
+      "instruction.md": "20bb3784e69494eb066d29e057382cff330e24e331d13f43e171af702359a1c2",
+      "tests/test.sh": "04ca1a3650644117cc631b7d95aebbd08bbfbca4028c5346ea6e19beec179f9d",
+      "tests/config.json": "baae69db67dd7d7e8f9bba0c82f231d4cbc12e4c7eb14da9e44d1fdc3cdc8865"
+    },
+    "swebench-verified/sympy__sympy-12481": {
+      "instruction.md": "5be18855c5c93b9af1ad839da500cb74d1bb38ff8e1f93340baedcd8df0249cc",
+      "tests/test.sh": "8894ebf203035687c54c3d1cb31d743d76e76c46016ca35b3ba7fcf378244eaf",
+      "tests/config.json": "df561120e9d0c4d3512056f2b7fe59fb63573f1b2589f69e557a5ae33e396cd8"
+    },
+    "swebench-verified/django__django-14534": {
+      "instruction.md": "2ed2bf1712a4f7a5864e12f9ab6793b0e04251977d3285a2fe8eed2ba8d7e8a4",
+      "tests/test.sh": "746ac0f9db2d81fc725098e0028e600013bc646f95373ebb16e843825645c07e",
+      "tests/config.json": "44314579ba59653abd576aca24e5bf82a7301b0de49b771e993d22e88b5a0ab9"
+    },
+    "swebench-verified/django__django-11099": {
+      "instruction.md": "39d95ac5bf57ad5f728e132b151646a7706ebfb5980c961dd7d28449d47a43a6",
+      "tests/test.sh": "45b20e458db23b4f5703e7fa1d991e2515f1819391540f5b16ed64553e56dd5e",
+      "tests/config.json": "378ba6104f7d984307c22e5dff6017029e83ee0c9be712217d9e1b34c37dc79b"
+    },
+    "swebench-verified/django__django-16899": {
+      "instruction.md": "073c15a76c10609863d0ea46441cbb08a73d76be6472d5192c325224a9476b13",
+      "tests/test.sh": "3ffd12ecb3efdb5e62e3350a6695f27e86245752444706dc76cac146ce7559e6",
+      "tests/config.json": "a7362934afbfaadee46dd6665eb92730d3e71e5ead9d5b72343f76129e35b417"
+    },
+    "swebench-verified/astropy__astropy-14182": {
+      "instruction.md": "03594629f4b8fd9f24b6dc669122bac719eee3f4fe109fe599a5ce498ddc5496",
+      "tests/test.sh": "97b03f18177fa6ab8d9572d06346a264d5ac07572e181f158bf59dd2dd000b71",
+      "tests/config.json": "ab5f8b5d2672a879d527ab93664e1d5d92bedc5e7950cddfe7bc9a010d921aeb"
+    },
+    "swebench-verified/matplotlib__matplotlib-24026": {
+      "instruction.md": "ef6adff067558a39562a06f67c75af17693445bba2c37765371aadcd8975fc4f",
+      "tests/test.sh": "71c362af8e95e3064809fec084f33896b6c67592d137f2cc41cea53f34812fe7",
+      "tests/config.json": "1f2735fffc58b5fdd6f49f9bcb6ffcb170867e33394634561794468a7c20f1f2"
+    },
+    "swebench-verified/sympy__sympy-22080": {
+      "instruction.md": "e4e025ba043919887cf1773f79e5bb6f7b7ad8eab54718e8ec0d0ff2f4c37b14",
+      "tests/test.sh": "0e7d9b077c2328664bdf824569cd633b92b3e963c0cfa8a99af12a08a7d11359",
+      "tests/config.json": "bf10e0b95288f7dcd61c30f9ac76c423dfd3eb64d0a95fa3d5e77de3fa17cb06"
+    },
+    "swebench-verified/django__django-16569": {
+      "instruction.md": "5d427f10455eb0bd7032fdf281256aaf8913a022d1779e5d7212f3a8aca816eb",
+      "tests/test.sh": "f251608ce2379892ff139a49eafd0eb2c290059cc4ce3481b059c79d1bec8626",
+      "tests/config.json": "cc1dcc2ed822f02f7b31c7c1974dfe18c1904ffb9ad98ff69419af159bfc2ac6"
+    },
+    "swebench-verified/matplotlib__matplotlib-22865": {
+      "instruction.md": "59bd59ccfcb72e1937305af38434e86d804f312430f62fe056769ed708670d49",
+      "tests/test.sh": "8c1a127c528834d5f7bf4d317df16b7c6a6161832f2d0fd82a88d0b5fbbe32eb",
+      "tests/config.json": "f80b934832961b6174306069469a83b071261dfc6ff9a9339549c6a1561498e4"
+    },
+    "swebench-verified/sphinx-doc__sphinx-8265": {
+      "instruction.md": "7b09bcc375791e3ae56bc7d3967881dc8e2749ebeab091642e3d171b78be3424",
+      "tests/test.sh": "cea3a11038ed1d066f46a89c96129f8c6ff5c3eda5b95294271bb9ff94a5eb14",
+      "tests/config.json": "26fc6e489366bcd0589c785e578fcc408e2009e976d49efe7a633cf71a7af4a0"
+    },
+    "swebench-verified/psf__requests-1724": {
+      "instruction.md": "cd9d88f84c5517da5a2ea35844b4986cfd87b4398909762ebc1853913905e9fa",
+      "tests/test.sh": "e4c05d119b5e3f42be4b9ba206857561a8381a4ae2b4b25373bd3a80ebaeb89c",
+      "tests/config.json": "513d0a057b611861dd40dc6b736ab0c9cea87f303912de0827c229ab24b64bec"
+    },
+    "swebench-verified/django__django-15563": {
+      "instruction.md": "36addcff075094ff1ea4caf8ad5db412c1b20031a897f8673bcd226ffbaa1f64",
+      "tests/test.sh": "49d83bd61dbfbc163253251d2d600d7401b04efe2189b758c8956aa6bca9af7c",
+      "tests/config.json": "336c281e373cb540775d7138ebd4bcba7e975119b7702f927b487fdacd7b48b7"
+    }
+  }
+}

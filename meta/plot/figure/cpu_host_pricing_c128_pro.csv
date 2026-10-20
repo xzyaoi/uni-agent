@@ -1,3 +1,0 @@
-runtime_count,cpu_host_usd_per_hour,cpu_fleet_usd_per_hour,eight_gpu_allocation_usd_per_hour,total_usd_per_hour,rollout_seconds,usable_trajectories,usable_trajectories_per_minute,modeled_rollout_usd,cpu_usd_per_1000_usable,gpu_usd_per_1000_usable,total_usd_per_1000_usable
-1,5.424,5.424,5.97,11.394,1912.4070584889269,1023,32.0956773964738,6.052768340117453,2.8165786589670736,3.1001059354781395,5.916684594445213
-2,5.424,10.848,5.97,16.818,1446.2901608978864,1024,42.48110210599566,6.756585534994626,4.256010108892218,2.342217952625971,6.598228061518189

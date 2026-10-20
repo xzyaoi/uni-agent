@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+: "${HARBOR_VENV:?Missing HARBOR_VENV}"
+: "${FLASH_SDK_PATH:?Missing staged Flash SDK}"
+export PYTHONPATH="${FLASH_SDK_PATH}:${REPO_DIR}${PYTHONPATH:+:${PYTHONPATH}}"
+exec "${HARBOR_VENV}/bin/harbor" "$@"

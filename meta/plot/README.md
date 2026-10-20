@@ -213,32 +213,49 @@ waits and are not vLLM running-queue measurements.
 python meta/plot/plot_cpu_host_throughput_requests.py
 ```
 
-Output-token-rate variant:
+Output-token grouped-bar variant:
 [PNG](figure/cpu_host_throughput_output_tokens_c128_pro.png) · [SVG](figure/cpu_host_throughput_output_tokens_c128_pro.svg) · [PDF](figure/cpu_host_throughput_output_tokens_c128_pro.pdf).
-It keeps usable-trajectory throughput on the left and overlays aggregate
-delivered output tokens/s on the right, with the same host colors. Counts sum
+The left panel groups mean-rate bars by metric — usable-trajectory
+throughput, mean active client requests, mean delivered output tokens/s —
+and dodges the one-host (blue) and two-host (violet) bars inside each
+group: **32.10 / 42.48** usable trajectories per min, **4.16 / 6.55** mean
+active requests, and **350.60 / 453.34** mean output tokens/s. Because the
+metrics span two orders of magnitude, the rate axis is log-scaled (ticks
+10 / 100 / 1000) and every bar carries its exact value. Violet arrows over
+each group mark the one-to-two-host gain for that metric
+(**+32.4% / +57.6% / +29.3%**,
+computed from the unrounded values). Ten-second-bin peaks (124 / 127 active
+requests; 3,557 / 3,685 tokens/s) are validated against the frozen data
+but not plotted.
+The right panel overlays the aggregate delivered output
+tokens/s over time with the host colors. Counts sum
 `usage.completion_tokens` across client model-call completions in each
 10-second bin, divided by its duration. Each call is counted once across all
 rollout replicas; these are completion-time delivery rates rather than
-instantaneous GPU token-generation rates. Run totals are 670,765 output tokens
+instantaneous GPU token-generation rates, so token peaks are completion bursts,
+not generation spikes. Run totals are 670,765 output tokens
 for one host and 655,987 for two hosts.
 Matching-color dashed lines show duration-weighted mean output rates over each
-full telemetry rollout window, including idle time after the last model call:
-**350.60 tokens/s** for one host and **453.34 tokens/s** for two hosts. Each mean
-line ends at its own run's completion and is labeled with its numeric value.
-Arrows annotate the observed gain from one to two CPU hosts: **+32.4% usable
-trajectories/min** and **+29.3% mean output tokens/s**, calculated from the
+full telemetry rollout window, including idle time after the last model call.
+Each mean line ends at its own run's completion and is labeled with its numeric value.
+Arrows annotate the observed gain from one to two CPU hosts: **+32.4%
+usable trajectories/min**, **+57.6% mean active requests**, and **+29.3%
+mean output tokens/s**, calculated from the
 unrounded values. These are descriptive differences between the two runs.
 
 ```bash
 python meta/plot/plot_cpu_host_throughput_requests.py --metric output-tokens
 ```
 
-The compact renderer uses the existing frozen scaling and timeline JSON files.
-It exports a 9 × 3.75-inch canvas with the original fonts, palette, and legend
-style. The output-token variant omits the bottom caption; metric definitions
+The renderer uses the existing frozen scaling and timeline JSON files;
+`characterization.ipynb`'s final cell is an equivalent notebook port.
+Both variants use the original fonts, palette families, and legend style on a
+9 × 3.75-inch canvas (the log-scaled metric-grouped panel, with a 1.35:1
+left-right width split, replaces the original linear throughput panel in the
+output-token variant).
+The output-token variant omits the bottom caption; metric definitions
 and run provenance remain documented here. It uses Seaborn `font_scale=2`,
-at least 12 pt for all visible text, and an exact 9 × 3.75-inch export canvas.
+at least 11 pt for all visible text, and an exact 9 × 3.75-inch export canvas.
 
 Mean resident sandbox VM counts are **84.66** with one host and **74.52 total**
 across two hosts, averaging full-node-coverage complete rollout minutes (31/23
@@ -396,8 +413,16 @@ Run all notebook cells from the repository root or `meta/plot`. Inputs are
 `data/verified_characterization_1host_20261019.csv`,
 `data/pro_characterization_1host_20261015.csv`, and their `.provenance.json`
 files (source hashes, windows, aggregation rules, coverage, and limitations).
-Rendering needs no cluster access. Exports:
-`figure/concurrency_characterization_1host.{png,pdf,svg}`.
+The final cell ports `plot_cpu_host_throughput_requests.py --metric
+output-tokens`, reading `data/cpu_host_scaling_c128_20261019.json` and
+`data/cpu_host_timeline_c128_20261019.json` to compare one versus two CPU
+hosts at C=128 across usable throughput, mean active client requests,
+and mean delivered output tokens/s (mean bars grouped by metric with the
+one- and two-host bars dodged inside each group, on a log-scaled rate
+axis), beside the output-token timeline.
+Rendering needs no cluster
+access. Exports: `figure/concurrency_characterization_1host.{png,pdf,svg}`
+and `figure/cpu_host_throughput_output_tokens_c128_pro.{png,pdf,svg}`.
 
 The earlier two-host Verified inputs and
 `figure/concurrency_characterization_verified.{png,pdf,svg}` remain available

@@ -1,0 +1,655 @@
+{
+  "groups": 128,
+  "responses": 8,
+  "seed": 42,
+  "selected_tasks": [
+    {
+      "dataset_index": 87,
+      "instance_id": "instance_ansible__ansible-a7d2a4e03209cff1e97e59fd54bb2b05fdbdbec6-v0f01c69f1e2528b935359cfe578530722bca2c59",
+      "task_toml_sha256": "79fdcdc97d6178863fe839ab139b1404c9dd5f3629c9e188323b8f88d5eb17e5"
+    },
+    {
+      "dataset_index": 23,
+      "instance_id": "instance_NodeBB__NodeBB-8ca65b0c78c67c1653487c02d1135e1b702185e1-vf2cf3cbd463b7ad942381f1c6d077626485a1e9e",
+      "task_toml_sha256": "8e9068b8f66a2a603ba5fcc2f9f11af73ef115774a858f65242789b5f4fb3249"
+    },
+    {
+      "dataset_index": 261,
+      "instance_id": "instance_future-architect__vuls-457a3a9627fb9a0800d0aecf1d4713fb634a9011",
+      "task_toml_sha256": "f77b4c8827ccdf59b6d3b7d05588a1a6ce90cd81189f95aa49cd12443b29caf7"
+    },
+    {
+      "dataset_index": 186,
+      "instance_id": "instance_flipt-io__flipt-3b2c25ee8a3ac247c3fad13ad8d64ace34ec8ee7",
+      "task_toml_sha256": "0b2875db75bd9446d2ffd71087c2c307e7c40f017881e67ea10e5f9338224bb6"
+    },
+    {
+      "dataset_index": 251,
+      "instance_id": "instance_future-architect__vuls-030b2e03525d68d74cb749959aac2d7f3fc0effa",
+      "task_toml_sha256": "28f44234e796c0b98f2c1570adbced25018795bd471db739c4d63327736844b6"
+    },
+    {
+      "dataset_index": 245,
+      "instance_id": "instance_flipt-io__flipt-ee02b164f6728d3227c42671028c67a4afd36918",
+      "task_toml_sha256": "144a38383f4183fd2f72d801b9de4c9c2c491a80eb060f8481e50d5492ac70af"
+    },
+    {
+      "dataset_index": 201,
+      "instance_id": "instance_flipt-io__flipt-72d06db14d58692bfb4d07b1aa745a37b35956f3",
+      "task_toml_sha256": "1d768ecaae6dd52d7732990c0641f0f86f61827be2d0772feeb8406171d9d8db"
+    },
+    {
+      "dataset_index": 339,
+      "instance_id": "instance_gravitational__teleport-6a14edcf1ff010172fdbac622d0a474ed6af46de",
+      "task_toml_sha256": "4d74fb115d655c777f43080b13029c0658f486e85ac0efaaadf11ee4575a33d2"
+    },
+    {
+      "dataset_index": 553,
+      "instance_id": "instance_protonmail__webclients-cfd7571485186049c10c822f214d474f1edde8d1",
+      "task_toml_sha256": "8667489c3f56ba9e9000eeea7951fa821148af80536372028b83242f662e3eed"
+    },
+    {
+      "dataset_index": 116,
+      "instance_id": "instance_ansible__ansible-f327e65d11bb905ed9f15996024f857a95592629-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "task_toml_sha256": "dae070856f03f4dd3e85f76a323329cf9279a9ea09bbc67479bbb12d4aacde56"
+    },
+    {
+      "dataset_index": 375,
+      "instance_id": "instance_gravitational__teleport-fd2959260ef56463ad8afa4c973f47a50306edd4",
+      "task_toml_sha256": "2a01bd28d6dd2e3d9330b1ce3838adbc5a4f84098b09db0d6b513d6fed401dfa"
+    },
+    {
+      "dataset_index": 403,
+      "instance_id": "instance_internetarchive__openlibrary-5069b09e5f64428dce59b33455c8bb17fe577070-v8717e18970bcdc4e0d2cea3b1527752b21e74866",
+      "task_toml_sha256": "87fbd485c1b715230ab1ad1c0b0ede2967a012b6be73d77a78352cd692127c90"
+    },
+    {
+      "dataset_index": 162,
+      "instance_id": "instance_element-hq__element-web-d405160080bbe804f7e9294067d004a7d4dad9d6-vnan",
+      "task_toml_sha256": "1b0748e41e0e40227ee7d7cae8c09e7b6fdcd3ee8acd2b8ac914110f736ebe1c"
+    },
+    {
+      "dataset_index": 72,
+      "instance_id": "instance_ansible__ansible-77658704217d5f166404fc67997203c25381cb6e-v390e508d27db7a51eece36bb6d9698b63a5b638a",
+      "task_toml_sha256": "826ac64028a3e6ca98f9ad8ae66c931df48b7ead33d4378d9c61be3978384122"
+    },
+    {
+      "dataset_index": 325,
+      "instance_id": "instance_gravitational__teleport-32bcd71591c234f0d8b091ec01f1f5cbfdc0f13c-vee9b09fb20c43af7e520f57e9239bbcf46b7113d",
+      "task_toml_sha256": "eb02106a01f497432af2319071a2eca20fb930921f5be9b024a8d45e0a693376"
+    },
+    {
+      "dataset_index": 14,
+      "instance_id": "instance_NodeBB__NodeBB-6ea3b51f128dd270281db576a1b59270d5e45db0-vnan",
+      "task_toml_sha256": "412219e5ace25ca83d09e8bcea08a18cd10ac5c326f1d866dd3ae4fc4ab1e975"
+    },
+    {
+      "dataset_index": 539,
+      "instance_id": "instance_protonmail__webclients-863d524b5717b9d33ce08a0f0535e3fd8e8d1ed8",
+      "task_toml_sha256": "546b76d02f602f6b9ebf98e30792876a87a2ee78daea7a7efa887ee8ac064099"
+    },
+    {
+      "dataset_index": 192,
+      "instance_id": "instance_flipt-io__flipt-524f277313606f8cd29b299617d6565c01642e15",
+      "task_toml_sha256": "9af0304bd4f7760f9f81e573da95ba1da188388708b4dd5545957d1484ee0ceb"
+    },
+    {
+      "dataset_index": 180,
+      "instance_id": "instance_flipt-io__flipt-292fdaca9be39e6a921aaa8874c011d0fdd3e874",
+      "task_toml_sha256": "01a1830e5423a6f105ec8874445d4268c00d673f521c37d86c904e464eefee57"
+    },
+    {
+      "dataset_index": 371,
+      "instance_id": "instance_gravitational__teleport-eda668c30d9d3b56d9c69197b120b01013611186",
+      "task_toml_sha256": "4a987bf8e6742a6cb388546d534f186bc40c76d1e209af04841e592ce1262310"
+    },
+    {
+      "dataset_index": 119,
+      "instance_id": "instance_ansible__ansible-fb144c44144f8bd3542e71f5db62b6d322c7bd85-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "task_toml_sha256": "546b2c2ce0d68782df0e79eb0941f3a9432d0921e0834ec48ef3f136e3533253"
+    },
+    {
+      "dataset_index": 624,
+      "instance_id": "instance_qutebrowser__qutebrowser-e5340c449f23608803c286da0563b62f58ba25b0-v059c6fdc75567943479b23ebca7c07b5e9a7f34c",
+      "task_toml_sha256": "2ff2a8f407dfcd8214463ec3b9bc8dfef9bc5002b28cdb8dc30279570670d2c7"
+    },
+    {
+      "dataset_index": 12,
+      "instance_id": "instance_NodeBB__NodeBB-445b70deda20201b7d9a68f7224da751b3db728c-v4fbcfae8b15e4ce5d132c408bca69ebb9cf146ed",
+      "task_toml_sha256": "96e7ef65bb95467f5a5726fefd5d2fa3eefdb543768f241e78c88a065b0295f3"
+    },
+    {
+      "dataset_index": 172,
+      "instance_id": "instance_flipt-io__flipt-02e21636c58e86c51119b63e0fb5ca7b813b07b1",
+      "task_toml_sha256": "c96847102110b4f58298a432f6bd9b9d79b46212eef5b5bdab1035822c375c7c"
+    },
+    {
+      "dataset_index": 627,
+      "instance_id": "instance_qutebrowser__qutebrowser-e70f5b03187bdd40e8bf70f5f3ead840f52d1f42-v02ad04386d5238fe2d1a1be450df257370de4b6a",
+      "task_toml_sha256": "9303a4e156116279710d47c969458d57a19f9886b069c0b13d66663f86abdc98"
+    },
+    {
+      "dataset_index": 195,
+      "instance_id": "instance_flipt-io__flipt-5af0757e96dec4962a076376d1bedc79de0d4249",
+      "task_toml_sha256": "81a7ba46e8cd1dd20a98ee0a1649498b54726abe199913ceee98b4945a9f697e"
+    },
+    {
+      "dataset_index": 253,
+      "instance_id": "instance_future-architect__vuls-17ae386d1e185ba742eea4668ca77642e22b54c4",
+      "task_toml_sha256": "0bf93b2968b1195a9c24159d8102825026ab036952347a0f1424896426077958"
+    },
+    {
+      "dataset_index": 265,
+      "instance_id": "instance_future-architect__vuls-54e73c2f5466ef5daec3fb30922b9ac654e4ed25",
+      "task_toml_sha256": "9ce31d175403ce202eb3ba6d5e84dbe4c4e6429e57f007c47c51e7b411745f6e"
+    },
+    {
+      "dataset_index": 569,
+      "instance_id": "instance_qutebrowser__qutebrowser-0d2afd58f3d0e34af21cee7d8a3fc9d855594e9f-vnan",
+      "task_toml_sha256": "caaa210b31ad02e5d8e8195b8ec9cc24dbdfd7e414d2d93ed0ab5cad32f5d978"
+    },
+    {
+      "dataset_index": 619,
+      "instance_id": "instance_qutebrowser__qutebrowser-cf06f4e3708f886032d4d2a30108c2fddb042d81-v2ef375ac784985212b1805e1d0431dc8f1b3c171",
+      "task_toml_sha256": "1d574b774b605c3b3ce347c51b326118681720caa3122e87d8da68b8769b2bf6"
+    },
+    {
+      "dataset_index": 327,
+      "instance_id": "instance_gravitational__teleport-3a5c1e26394df2cb4fb3f01147fb9979662972c5-vee9b09fb20c43af7e520f57e9239bbcf46b7113d",
+      "task_toml_sha256": "59e572d3eb102edc926f5208fdde5e3d161a99701635344afa4e14e958f55402"
+    },
+    {
+      "dataset_index": 326,
+      "instance_id": "instance_gravitational__teleport-3587cca7840f636489449113969a5066025dd5bf",
+      "task_toml_sha256": "49113df78f214c48433d0a565ebd08cd8edd3b1973453fba6899920939f17571"
+    },
+    {
+      "dataset_index": 219,
+      "instance_id": "instance_flipt-io__flipt-b433bd05ce405837804693bebd5f4b88d87133c8",
+      "task_toml_sha256": "21283bef00c5c6f5cb4c232e4bc49fcacee3b9ca68008427134bc20aa9586f7b"
+    },
+    {
+      "dataset_index": 441,
+      "instance_id": "instance_internetarchive__openlibrary-c4eebe6677acc4629cb541a98d5e91311444f5d4-v13642507b4fc1f8d234172bf8129942da2c2ca26",
+      "task_toml_sha256": "5927e034a5ebb7c157fa964c63da3969938f160ce962472db1878526386d8c55"
+    },
+    {
+      "dataset_index": 482,
+      "instance_id": "instance_navidrome__navidrome-677d9947f302c9f7bba8c08c788c3dc99f235f39",
+      "task_toml_sha256": "67c1c349bcef8e3998a9eacd668553e66d78e689b2299b5e6a627467f10c0914"
+    },
+    {
+      "dataset_index": 471,
+      "instance_id": "instance_navidrome__navidrome-3977ef6e0f287f598b6e4009876239d6f13b686d",
+      "task_toml_sha256": "5281dcb06f46a3079fa220490e905e0fcff8d8e588077598c1e36dad424ef601"
+    },
+    {
+      "dataset_index": 466,
+      "instance_id": "instance_navidrome__navidrome-28389fb05e1523564dfc61fa43ed8eb8a10f938c",
+      "task_toml_sha256": "72a6c9371ad03719bd8e351e6b231105be47f19f8df9c73de77f193d1e0a8487"
+    },
+    {
+      "dataset_index": 474,
+      "instance_id": "instance_navidrome__navidrome-3f2d24695e9382125dfe5e6d6c8bbeb4a313a4f9",
+      "task_toml_sha256": "cacee16d9c61ab283b646a0f9c113b7e618857e7bb77652a1864b3ae7f73d966"
+    },
+    {
+      "dataset_index": 358,
+      "instance_id": "instance_gravitational__teleport-ba6c4a135412c4296dd5551bd94042f0dc024504-v626ec2a48416b10a88641359a169d99e935ff037",
+      "task_toml_sha256": "d29f02324ad9bc8cda34e4dc1a1488ed41de40ec0cf54f3f96d5bdc8a6a0b60d"
+    },
+    {
+      "dataset_index": 567,
+      "instance_id": "instance_qutebrowser__qutebrowser-0aa57e4f7243024fa4bba8853306691b5dbd77b3-v5149fcda2a9a6fe1d35dfed1bade1444a11ef271",
+      "task_toml_sha256": "0e4c66390ffa42d1bb91eed70ac797b8ec0b2c3a25977e366cd2c5de3a5ad6b4"
+    },
+    {
+      "dataset_index": 328,
+      "instance_id": "instance_gravitational__teleport-3fa6904377c006497169945428e8197158667910-v626ec2a48416b10a88641359a169d99e935ff037",
+      "task_toml_sha256": "90d79d766c6bde083afb0c43142366ebe8921b8e9e744b9d0db1953bc16cde80"
+    },
+    {
+      "dataset_index": 140,
+      "instance_id": "instance_element-hq__element-web-66d0b318bc6fee0d17b54c1781d6ab5d5d323135-vnan",
+      "task_toml_sha256": "96d5e2628884e538345da679c9566cc6f74138b9e93f6febc83af263532156d8"
+    },
+    {
+      "dataset_index": 430,
+      "instance_id": "instance_internetarchive__openlibrary-9bdfd29fac883e77dcbc4208cab28c06fd963ab2-v76304ecdb3a5954fcf13feb710e8c40fcf24b73c",
+      "task_toml_sha256": "7d5b85eb942efd43763b8cd72667763a77efdde2adf3f5e0a0e270b5321136a4"
+    },
+    {
+      "dataset_index": 456,
+      "instance_id": "instance_internetarchive__openlibrary-fad4a40acf5ff5f06cd7441a5c7baf41a7d81fe4-vfa6ff903cb27f336e17654595dd900fa943dcd91",
+      "task_toml_sha256": "51864375dd3f83cb6412400f975a8d9a35bb2807b231ac0e8dd1f51f62eee9f5"
+    },
+    {
+      "dataset_index": 457,
+      "instance_id": "instance_internetarchive__openlibrary-fdbc0d8f418333c7e575c40b661b582c301ef7ac-v13642507b4fc1f8d234172bf8129942da2c2ca26",
+      "task_toml_sha256": "210d84cbe40e171d443dfddac294c50c7fd61e39eb110c4f6ca3ae9644e871e0"
+    },
+    {
+      "dataset_index": 368,
+      "instance_id": "instance_gravitational__teleport-e6681abe6a7113cfd2da507f05581b7bdf398540-v626ec2a48416b10a88641359a169d99e935ff037",
+      "task_toml_sha256": "47e87180798ff450dcf8306ba7170140257e269d9056948861146c6bdea23f9b"
+    },
+    {
+      "dataset_index": 52,
+      "instance_id": "instance_ansible__ansible-3889ddeb4b780ab4bac9ca2e75f8c1991bcabe83-v0f01c69f1e2528b935359cfe578530722bca2c59",
+      "task_toml_sha256": "6e7416c57cb8ce0e4804865f4b407cb5fe0ee39898739f6b4b4ac2ca529edd7b"
+    },
+    {
+      "dataset_index": 545,
+      "instance_id": "instance_protonmail__webclients-b9387af4cdf79c2cb2a221dea33d665ef789512e",
+      "task_toml_sha256": "3a824f618725f370b383a430a99a4e3c41bf86d7af04778e2d7cc9a8190cc024"
+    },
+    {
+      "dataset_index": 321,
+      "instance_id": "instance_gravitational__teleport-2b15263e49da5625922581569834eec4838a9257-vee9b09fb20c43af7e520f57e9239bbcf46b7113d",
+      "task_toml_sha256": "c68780d4921e4d74d56e3fdaa89964adce98940765677bf6644cb1534396ff6d"
+    },
+    {
+      "dataset_index": 268,
+      "instance_id": "instance_future-architect__vuls-6682232b5c8a9d08c0e9f15bd90d41bff3875adc",
+      "task_toml_sha256": "0f4de64c010b63a9e9cde0c29a23831a3a6fdd130a823b250e37cb448c026c2f"
+    },
+    {
+      "dataset_index": 588,
+      "instance_id": "instance_qutebrowser__qutebrowser-473a15f7908f2bb6d670b0e908ab34a28d8cf7e2-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d",
+      "task_toml_sha256": "757a6f0f233a8ff1eaddee2f6dc6902b03601af61b90fd6f150fa7b06c5fb928"
+    },
+    {
+      "dataset_index": 92,
+      "instance_id": "instance_ansible__ansible-bec27fb4c0a40c5f8bbcf26a475704227d65ee73-v30a923fb5c164d6cd18280c02422f75e611e8fb2",
+      "task_toml_sha256": "feab73d33d5170ed2387cbb4eb03d3ddd5a11fb84c557634863286fef452bac0"
+    },
+    {
+      "dataset_index": 69,
+      "instance_id": "instance_ansible__ansible-6cc97447aac5816745278f3735af128afb255c81-v0f01c69f1e2528b935359cfe578530722bca2c59",
+      "task_toml_sha256": "7e52b8929632b537a0b3641eaf954903fc57b2b5e283bb1a573099c39192f380"
+    },
+    {
+      "dataset_index": 285,
+      "instance_id": "instance_future-architect__vuls-b8db2e0b74f60cb7d45f710f255e061f054b6afc",
+      "task_toml_sha256": "24dab5963dda151f0d941b0dd93df8c4b20dd0cecf0ec9c785759fd05ba59653"
+    },
+    {
+      "dataset_index": 555,
+      "instance_id": "instance_protonmail__webclients-d494a66038112b239a381f49b3914caf8d2ef3b4",
+      "task_toml_sha256": "bdc86c2af404233a8b6a522f0c23c0728b68b44ef662169bf9f2791e42620295"
+    },
+    {
+      "dataset_index": 487,
+      "instance_id": "instance_navidrome__navidrome-812dc2090f20ac4f8ac271b6ed95be5889d1a3ca",
+      "task_toml_sha256": "9f2484a24095e5a7d4bdc6d9d2778bded19da6ff1c5dc146c3bc9a296c1b5e32"
+    },
+    {
+      "dataset_index": 418,
+      "instance_id": "instance_internetarchive__openlibrary-7bf3238533070f2d24bafbb26eedf675d51941f6-v08d8e8889ec945ab821fb156c04c7d2e2810debb",
+      "task_toml_sha256": "5e140c9c7be27a07c023fdda06a1e2d7cbf6e34aa9598fc4370e801803a0bca1"
+    },
+    {
+      "dataset_index": 33,
+      "instance_id": "instance_NodeBB__NodeBB-f083cd559d69c16481376868c8da65172729c0ca-vnan",
+      "task_toml_sha256": "0b793010d30e306cf44e8d6950bb24de3e10abc5b30181a535cb3b09ce84b469"
+    },
+    {
+      "dataset_index": 96,
+      "instance_id": "instance_ansible__ansible-cd473dfb2fdbc97acf3293c134b21cbbcfa89ec3-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "task_toml_sha256": "bd8d71dc90d373332b661c40782e1305dcce73f228949bc6c8bc9b277143d6c1"
+    },
+    {
+      "dataset_index": 62,
+      "instance_id": "instance_ansible__ansible-5640093f1ca63fd6af231cc8a7fb7d40e1907b8c-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "task_toml_sha256": "d152642af00bcb08df7aff4d2a1def10656ef11f60344d873db7af16ff216a41"
+    },
+    {
+      "dataset_index": 625,
+      "instance_id": "instance_qutebrowser__qutebrowser-e57b6e0eeeb656eb2c84d6547d5a0a7333ecee85-v2ef375ac784985212b1805e1d0431dc8f1b3c171",
+      "task_toml_sha256": "90b9b18ab3add4564883e186e0b97d3ad9e87c9eecdf7a9bd4f6e19a51eff0aa"
+    },
+    {
+      "dataset_index": 8,
+      "instance_id": "instance_NodeBB__NodeBB-2657804c1fb6b84dc76ad3b18ecf061aaab5f29f-vf2cf3cbd463b7ad942381f1c6d077626485a1e9e",
+      "task_toml_sha256": "a6bbc93196535c2dc5a4fb02f827d40a94a2b64809eb9c5af0b94fce5bf557b2"
+    },
+    {
+      "dataset_index": 490,
+      "instance_id": "instance_navidrome__navidrome-87d4db7638b37eeb754b217440ab7a372f669205",
+      "task_toml_sha256": "c39dc9d25121d3452e77b480600eb045ddff90713d775659d453df2ead6b8046"
+    },
+    {
+      "dataset_index": 15,
+      "instance_id": "instance_NodeBB__NodeBB-70b4a0e2aebebe8f2f559de6680093d96a697b2f-vnan",
+      "task_toml_sha256": "35b846ae04febd398e0f4f05678dca5779f5419387dc5c2a3eda11c2da6aade8"
+    },
+    {
+      "dataset_index": 118,
+      "instance_id": "instance_ansible__ansible-f8ef34672b961a95ec7282643679492862c688ec-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "task_toml_sha256": "c6be9926d027a12b23ec89b1bca450565226dea739939cdc8ef2cb163bf4d8f0"
+    },
+    {
+      "dataset_index": 187,
+      "instance_id": "instance_flipt-io__flipt-3d5a345f94c2adc8a0eaa102c189c08ad4c0f8e8",
+      "task_toml_sha256": "570c813ee8a4b7b6d724c901d59df24c23ebbf6afe87b892859ecee8ff304464"
+    },
+    {
+      "dataset_index": 523,
+      "instance_id": "instance_protonmail__webclients-3a6790f480309130b5d6332dce6c9d5ccca13ee3",
+      "task_toml_sha256": "b7b3a60024a17ed4d3cd410f58e900394ee856e3de324c225f1f8b76b61d6d36"
+    },
+    {
+      "dataset_index": 618,
+      "instance_id": "instance_qutebrowser__qutebrowser-cc360cd4a34a126274c7b51f3b63afbaf3e05a02-v5fc38aaf22415ab0b70567368332beee7955b367",
+      "task_toml_sha256": "950244f62f4353c698c514baa3703419677b22abfee6bd5561e68ec642f62eff"
+    },
+    {
+      "dataset_index": 262,
+      "instance_id": "instance_future-architect__vuls-4b680b996061044e93ef5977a081661665d3360a",
+      "task_toml_sha256": "badfd376d9f2b8d5566b63cb7341892b175e06e838617cd7e4e70c994c98dd2a"
+    },
+    {
+      "dataset_index": 595,
+      "instance_id": "instance_qutebrowser__qutebrowser-5fdc83e5da6222fe61163395baaad7ae57fa2cb4-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d",
+      "task_toml_sha256": "d8cd8d305f7396cc0dba4ad7de974f7bb0bde350c1789b317cb31bc8d96f5413"
+    },
+    {
+      "dataset_index": 346,
+      "instance_id": "instance_gravitational__teleport-8302d467d160f869b77184e262adbe2fbc95d9ba-vce94f93ad1030e3136852817f2423c1b3ac37bc4",
+      "task_toml_sha256": "2383ae65cac8b1f551c611b0f63cb2e22816259beac01c5e43d8b89ee26485e6"
+    },
+    {
+      "dataset_index": 13,
+      "instance_id": "instance_NodeBB__NodeBB-6489e9fd9ed16ea743cc5627f4d86c72fbdb3a8a-v2c59007b1005cd5cd14cbb523ca5229db1fd2dd8",
+      "task_toml_sha256": "e7a3c547f9e5e5eed69e476e9b6139dec593282a36c05c68d8257f4fdab14272"
+    },
+    {
+      "dataset_index": 415,
+      "instance_id": "instance_internetarchive__openlibrary-72321288ea790a3ace9e36f1c05b68c93f7eec43-v0f5aece3601a5b4419f7ccec1dbda2071be28ee4",
+      "task_toml_sha256": "bb085492f266b235522738d2416da992d8f2a1ae664816f7cb3ef4c785cb794b"
+    },
+    {
+      "dataset_index": 222,
+      "instance_id": "instance_flipt-io__flipt-b6cef5cdc0daff3ee99e5974ed60a1dc6b4b0d67",
+      "task_toml_sha256": "a7235854787e339c5bae5d09d860964123f148b9de3d47baaf0ee92489618143"
+    },
+    {
+      "dataset_index": 357,
+      "instance_id": "instance_gravitational__teleport-b8fbb2d1e90ffcde88ed5fe9920015c1be075788-vee9b09fb20c43af7e520f57e9239bbcf46b7113d",
+      "task_toml_sha256": "0719fde55d879e75598f4a19c1158dddf9d47dd6871c48cc8430f4cfa9e952e2"
+    },
+    {
+      "dataset_index": 193,
+      "instance_id": "instance_flipt-io__flipt-56a620b8fc9ef7a0819b47709aa541cdfdbba00b",
+      "task_toml_sha256": "f2b0f7e77526c0057b404d5a07a99e9f819b1d7c9e28a45ebca9670095b6d20c"
+    },
+    {
+      "dataset_index": 309,
+      "instance_id": "instance_gravitational__teleport-007235446f85b1cbaef92664c3b3867517250f21",
+      "task_toml_sha256": "73372354429db09696f0646148c45ac2dd14543b3111cc60df5ee85220093f53"
+    },
+    {
+      "dataset_index": 132,
+      "instance_id": "instance_element-hq__element-web-4fec436883b601a3cac2d4a58067e597f737b817-vnan",
+      "task_toml_sha256": "e1087e42dd6111c745de3cfc43328a6840f1c731663259d44868e7411b2470b0"
+    },
+    {
+      "dataset_index": 24,
+      "instance_id": "instance_NodeBB__NodeBB-97c8569a798075c50e93e585ac741ab55cb7c28b-vf2cf3cbd463b7ad942381f1c6d077626485a1e9e",
+      "task_toml_sha256": "eeb797998ac056390216d8882124f7db49b0afb9229ab88267989b319745d74d"
+    },
+    {
+      "dataset_index": 573,
+      "instance_id": "instance_qutebrowser__qutebrowser-1a9e74bfaf9a9db2a510dc14572d33ded6040a57-v2ef375ac784985212b1805e1d0431dc8f1b3c171",
+      "task_toml_sha256": "8cff88177a04b3b04de6829996395bdb20e08a87bd8176619cec46040f4fcd30"
+    },
+    {
+      "dataset_index": 383,
+      "instance_id": "instance_internetarchive__openlibrary-111347e9583372e8ef91c82e0612ea437ae3a9c9-v2d9a6c849c60ed19fd0858ce9e40b7cc8e097e59",
+      "task_toml_sha256": "26b1f95f0bdafaa0a90985eb5851aa5b267cbfae851a2afda18284b7fc93444f"
+    },
+    {
+      "dataset_index": 637,
+      "instance_id": "instance_qutebrowser__qutebrowser-ff1c025ad3210506fc76e1f604d8c8c27637d88e-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d",
+      "task_toml_sha256": "1e6d9fbba6e65d39ebca2250dea114751dd5da4c662ec631acfab83e21d458c2"
+    },
+    {
+      "dataset_index": 485,
+      "instance_id": "instance_navidrome__navidrome-6bd4c0f6bfa653e9b8b27cfdc2955762d371d6e9",
+      "task_toml_sha256": "4de549a152dc6efbd6a95342f07a041e28a19eee0f320abd624537086c72542d"
+    },
+    {
+      "dataset_index": 578,
+      "instance_id": "instance_qutebrowser__qutebrowser-322834d0e6bf17e5661145c9f085b41215c280e8-v488d33dd1b2540b234cbb0468af6b6614941ce8f",
+      "task_toml_sha256": "9301e96aee719f129a32c0d8f74ba3f549ec0a480121a0b54c7c7c3c02071945"
+    },
+    {
+      "dataset_index": 190,
+      "instance_id": "instance_flipt-io__flipt-507170da0f7f4da330f6732bffdf11c4df7fc192",
+      "task_toml_sha256": "713710855734a323f81f147737a25873e855710416b5b696cbed08aafd063c26"
+    },
+    {
+      "dataset_index": 463,
+      "instance_id": "instance_navidrome__navidrome-1e96b858a91c640fe64e84c5e5ad8cc0954ea38d",
+      "task_toml_sha256": "dc12ec42cce3132ec2da9b73dedd97c5e4de9b9aa1c52d37b072d9eee4af7569"
+    },
+    {
+      "dataset_index": 240,
+      "instance_id": "instance_flipt-io__flipt-e5fe37c379e1eec2dd3492c5737c0be761050b26",
+      "task_toml_sha256": "8c658b9a3e782c5e0a0344059f577d2f0101913d0ff0143d0d251dbd1783e200"
+    },
+    {
+      "dataset_index": 5,
+      "instance_id": "instance_NodeBB__NodeBB-0e07f3c9bace416cbab078a30eae972868c0a8a3-vf2cf3cbd463b7ad942381f1c6d077626485a1e9e",
+      "task_toml_sha256": "9bf3121ef90bc80ef1b7dd00fa999ad783f77021707f58589bd8ed9cad245610"
+    },
+    {
+      "dataset_index": 437,
+      "instance_id": "instance_internetarchive__openlibrary-ba3abfb6af6e722185d3715929ab0f3e5a134eed-v76304ecdb3a5954fcf13feb710e8c40fcf24b73c",
+      "task_toml_sha256": "2f8f100785b51dd790f98f020444a7519fcc90ec96225b83adac7acdd8b1ccf8"
+    },
+    {
+      "dataset_index": 18,
+      "instance_id": "instance_NodeBB__NodeBB-7b8bffd763e2155cf88f3ebc258fa68ebe18188d-vf2cf3cbd463b7ad942381f1c6d077626485a1e9e",
+      "task_toml_sha256": "cdb4f4b446282050399f062a24844f25e82bebf959af7c8af351effb9cd351be"
+    },
+    {
+      "dataset_index": 424,
+      "instance_id": "instance_internetarchive__openlibrary-89e4b4431fe7506c365a6f6eb6f6d048d04c044c-v08d8e8889ec945ab821fb156c04c7d2e2810debb",
+      "task_toml_sha256": "0bc6828fc9fee90b1f04fc24c3d66e537bd3af2095a43be8a12d06f12272a94f"
+    },
+    {
+      "dataset_index": 547,
+      "instance_id": "instance_protonmail__webclients-c5a2089ca2bfe9aa1d85a664b8ad87ef843a1c9c",
+      "task_toml_sha256": "89d60153468b2eeb1f43e627c3836712e257fbb1038f77d12163b3958db39ba7"
+    },
+    {
+      "dataset_index": 554,
+      "instance_id": "instance_protonmail__webclients-d3e513044d299d04e509bf8c0f4e73d812030246",
+      "task_toml_sha256": "869508ed53764dead3dd28b1a76d6fdb6ec8545741a7ee0a836ebbc92fdb64b9"
+    },
+    {
+      "dataset_index": 350,
+      "instance_id": "instance_gravitational__teleport-a95b3ae0667f9e4b2404bf61f51113e6d83f01cd",
+      "task_toml_sha256": "606ca1dda9642ab5cb57c4ab1dffd75aaa098b8790a90706446f235362738960"
+    },
+    {
+      "dataset_index": 364,
+      "instance_id": "instance_gravitational__teleport-cb712e3f0b06dadc679f895daef8072cae400c26-vee9b09fb20c43af7e520f57e9239bbcf46b7113d",
+      "task_toml_sha256": "c3c7a43d0e3fbcd239dfc870faefed3ccafff6c02a6d84048b41c0d0b1c81e64"
+    },
+    {
+      "dataset_index": 293,
+      "instance_id": "instance_future-architect__vuls-dc496468b9e9fb73371f9606cdcdb0f8e12e70ca",
+      "task_toml_sha256": "11949d3c0eea519a7ceb74bd795889c3b4789dc746afc807d2d5a929b6ca19e1"
+    },
+    {
+      "dataset_index": 42,
+      "instance_id": "instance_ansible__ansible-12734fa21c08a0ce8c84e533abdc560db2eb1955-v7eee2454f617569fd6889f2211f75bc02a35f9f8",
+      "task_toml_sha256": "b2fd36d69ec3a68206f4b28b9022e8c20e9ed6bd4f8ead8e06ed8cc04e75818c"
+    },
+    {
+      "dataset_index": 138,
+      "instance_id": "instance_element-hq__element-web-5e8488c2838ff4268f39db4a8cca7d74eecf5a7e-vnan",
+      "task_toml_sha256": "4ffce97501d89382b59ecc5efbded8141b6501b0fb0a0cff409bf7fb555eb00c"
+    },
+    {
+      "dataset_index": 585,
+      "instance_id": "instance_qutebrowser__qutebrowser-3fd8e12949b8feda401930574facf09dd4180bba",
+      "task_toml_sha256": "c4a066fd0eaae4ec35ac31e63712acb0d46ca4f6a49f3e5d683934191b8d4a95"
+    },
+    {
+      "dataset_index": 381,
+      "instance_id": "instance_internetarchive__openlibrary-0d13e6b4bf80bced6c0946b969b9a1b6963f6bce-v76304ecdb3a5954fcf13feb710e8c40fcf24b73c",
+      "task_toml_sha256": "507aadbf7a3b11acf139a20a88d1b2a895bf228403b53043cf9d18129504b909"
+    },
+    {
+      "dataset_index": 297,
+      "instance_id": "instance_future-architect__vuls-e3c27e1817d68248043bd09d63cc31f3344a6f2c",
+      "task_toml_sha256": "74d05f251c2247a678156cf0929def40c0442ed9483cb56b6094f7532e1e0ee0"
+    },
+    {
+      "dataset_index": 311,
+      "instance_id": "instance_gravitational__teleport-0415e422f12454db0c22316cf3eaa5088d6b6322",
+      "task_toml_sha256": "4d130b0c94d954356a09f507ae06ea5b6a127a18eab5404af26f17b38b6535c6"
+    },
+    {
+      "dataset_index": 587,
+      "instance_id": "instance_qutebrowser__qutebrowser-46e6839e21d9ff72abb6c5d49d5abaa5a8da8a81-v2ef375ac784985212b1805e1d0431dc8f1b3c171",
+      "task_toml_sha256": "71821ac2bdca9a707dec34fac599a82e0a89354f23d7146989b0eb4d219471a6"
+    },
+    {
+      "dataset_index": 221,
+      "instance_id": "instance_flipt-io__flipt-b68b8960b8a08540d5198d78c665a7eb0bea4008",
+      "task_toml_sha256": "0dacad3eab7322b8cc78e3abf3231bf5f7494bd3fe106bb009101b168cb3be64"
+    },
+    {
+      "dataset_index": 21,
+      "instance_id": "instance_NodeBB__NodeBB-84dfda59e6a0e8a77240f939a7cb8757e6eaf945-v2c59007b1005cd5cd14cbb523ca5229db1fd2dd8",
+      "task_toml_sha256": "191f6cf1f01b4f97cd0911496de2a6e373309d1af2c4a7dc23d7c79fefc5900e"
+    },
+    {
+      "dataset_index": 491,
+      "instance_id": "instance_navidrome__navidrome-89b12b34bea5687c70e4de2109fd1e7330bb2ba2",
+      "task_toml_sha256": "f5ff9295e932c4cd7dae39f03c2ff95a766e5dcdba503bd5dbebc42cf670dd44"
+    },
+    {
+      "dataset_index": 131,
+      "instance_id": "instance_element-hq__element-web-4c6b0d35add7ae8d58f71ea1711587e31081444b-vnan",
+      "task_toml_sha256": "378f25b4e9232fc202e82c89e17ce9badfbcb899e60eaae446d8adf889cc5b64"
+    },
+    {
+      "dataset_index": 101,
+      "instance_id": "instance_ansible__ansible-d58e69c82d7edd0583dd8e78d76b075c33c3151e-v173091e2e36d38c978002990795f66cfc0af30ad",
+      "task_toml_sha256": "7ed0fd267bda06381806c046917e40cdf3f3cd6cabb6c0a29f4cd70641039ac9"
+    },
+    {
+      "dataset_index": 450,
+      "instance_id": "instance_internetarchive__openlibrary-e390c1212055dd84a262a798e53487e771d3fb64-v8717e18970bcdc4e0d2cea3b1527752b21e74866",
+      "task_toml_sha256": "7f706d4775491c9eecd34851d175fc8bdce270db7b110345f5a8321d33f93aac"
+    },
+    {
+      "dataset_index": 282,
+      "instance_id": "instance_future-architect__vuls-aaea15e516ece43978cf98e09e52080478b1d39f",
+      "task_toml_sha256": "ae02c15db8f9ae5222fac6a096d72d3cf297db8b9935fc6cf7496890e8513fc3"
+    },
+    {
+      "dataset_index": 499,
+      "instance_id": "instance_navidrome__navidrome-c90468b895f6171e33e937ff20dc915c995274f0",
+      "task_toml_sha256": "a5a9e828bbf6fb776c290a8a3c9847792527b4c8d4618dc2ab0ce00bb81aba20"
+    },
+    {
+      "dataset_index": 86,
+      "instance_id": "instance_ansible__ansible-a6e671db25381ed111bbad0ab3e7d97366395d05-v0f01c69f1e2528b935359cfe578530722bca2c59",
+      "task_toml_sha256": "1d4f83bdc7fc62a82a64d06a00f9fa244bb1f58052e95b35a89e878c86534c81"
+    },
+    {
+      "dataset_index": 113,
+      "instance_id": "instance_ansible__ansible-ecea15c508f0e081525be036cf76bbb56dbcdd9d-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "task_toml_sha256": "5368642d8ca83c7371ff36f0f1d5e73463e8876118eb4ab9aab5d1e93c048243"
+    },
+    {
+      "dataset_index": 435,
+      "instance_id": "instance_internetarchive__openlibrary-b4f7c185ae5f1824ac7f3a18e8adf6a4b468459c-v08d8e8889ec945ab821fb156c04c7d2e2810debb",
+      "task_toml_sha256": "0f9757d928f269b3ee5af3af3154c7fb9e73fbdc73c22df7e6d5ab3ef199e1f9"
+    },
+    {
+      "dataset_index": 286,
+      "instance_id": "instance_future-architect__vuls-be7b9114cc9545e68fb0ee7bc63d7ec53d1a00ad",
+      "task_toml_sha256": "0fad5c2b811f1611a648483b2e98178430020e5057c3cf2a7f015b10b379df49"
+    },
+    {
+      "dataset_index": 215,
+      "instance_id": "instance_flipt-io__flipt-b22f5f02e40b225b6b93fff472914973422e97c6",
+      "task_toml_sha256": "da1c33471e28115c0b0664d8bbdf3841c258a2e8fadfff3f8d818c44324ca241"
+    },
+    {
+      "dataset_index": 136,
+      "instance_id": "instance_element-hq__element-web-582a1b093fc0b77538052f45cbb9c7295f991b51-vnan",
+      "task_toml_sha256": "6701f5d414eb6a94439a8a5d4c2e9c7fc9c86fa6dc2fdf357ea970eb1d8f79db"
+    },
+    {
+      "dataset_index": 316,
+      "instance_id": "instance_gravitational__teleport-1316e6728a3ee2fc124e2ea0cc6a02044c87a144-v626ec2a48416b10a88641359a169d99e935ff037",
+      "task_toml_sha256": "519caee61dc9e048d592abe49c00df2f69d9485098c7e6077d39c45ff748671b"
+    },
+    {
+      "dataset_index": 74,
+      "instance_id": "instance_ansible__ansible-8127abbc298cabf04aaa89a478fc5e5e3432a6fc-v30a923fb5c164d6cd18280c02422f75e611e8fb2",
+      "task_toml_sha256": "b36871c41f79c78b14fb8403a28d5824b080dbacdd6c23678b36cbab09088e9b"
+    },
+    {
+      "dataset_index": 100,
+      "instance_id": "instance_ansible__ansible-d33bedc48fdd933b5abd65a77c081876298e2f07-v0f01c69f1e2528b935359cfe578530722bca2c59",
+      "task_toml_sha256": "b91a48a551a6f3fa459322f12287923e1388732641e7ac7675cddea56108094d"
+    },
+    {
+      "dataset_index": 495,
+      "instance_id": "instance_navidrome__navidrome-9c3b4561652a15846993d477003e111f0df0c585",
+      "task_toml_sha256": "282ce7f97c6842eaa32ba902dd20abe4480bd7896b66eb832c278aff74707b1f"
+    },
+    {
+      "dataset_index": 287,
+      "instance_id": "instance_future-architect__vuls-bff6b7552370b55ff76d474860eead4ab5de785a-v1151a6325649aaf997cd541ebe533b53fddf1b07",
+      "task_toml_sha256": "4014385ed28ca0daa014d2a65cc99a586046d49463f4fee3901187011ca3fd59"
+    },
+    {
+      "dataset_index": 428,
+      "instance_id": "instance_internetarchive__openlibrary-91efee627df01e32007abf2d6ebf73f9d9053076-vbee42ad1b72fb23c6a1c874868a720b370983ed2",
+      "task_toml_sha256": "82165105cb32364b28109f652b7eaa53309cdcad50f53bc69c0a596905124ffe"
+    },
+    {
+      "dataset_index": 602,
+      "instance_id": "instance_qutebrowser__qutebrowser-7f9713b20f623fc40473b7167a082d6db0f0fd40-va0fd88aac89cde702ec1ba84877234da33adce8a",
+      "task_toml_sha256": "8367d20d83969929f19fed871c3821fb7d67040f2ec39108feeda1699daafaba"
+    },
+    {
+      "dataset_index": 150,
+      "instance_id": "instance_element-hq__element-web-9a31cd0fa849da810b4fac6c6c015145e850b282-vnan",
+      "task_toml_sha256": "7d1ab798c93a4d63cf55c52c55af0fc8790eecbc256d8fb658e40ded62cfcb79"
+    },
+    {
+      "dataset_index": 106,
+      "instance_id": "instance_ansible__ansible-de01db08d00c8d2438e1ba5989c313ba16a145b0-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "task_toml_sha256": "05b90cee2cc9f02ae24b1c386777f19d8d8e64a6179d1d23fd9997609667b58b"
+    },
+    {
+      "dataset_index": 70,
+      "instance_id": "instance_ansible__ansible-709484969c8a4ffd74b839a673431a8c5caa6457-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "task_toml_sha256": "ebb2fd88839e823bfbd5249ee82b7a91cd87ca96329981d543f69b29d5f95fbe"
+    },
+    {
+      "dataset_index": 355,
+      "instance_id": "instance_gravitational__teleport-b4e7cd3a5e246736d3fe8d6886af55030b232277",
+      "task_toml_sha256": "ef40f66fc94526608f47a1cbf185039689cb01db8393990d1d094e95dc57f80e"
+    }
+  ],
+  "selection_sha256": "1d82ee3b64bd91f1548ccdb7f265c1509e108b5218e23a438caaeeb2d7c0781c",
+  "model_config_sha256": "d0883072e01861ed0b2d47be3c16c36a8e81c224c7ffaa310c6558fb3f932b05",
+  "benchmark": "swebench-pro-v2",
+  "dataset": "/iopsstor/scratch/cscs/xyao/data/uni_agent/pro_multinode_2x_20261018/swe_bench_pro_v2_agentenv_train.parquet",
+  "dataset_sha256": "8527eb0484c6ae57e28e5dead561bffb7249c0600a9e07cec61c03d7ac5872a9",
+  "rows": 642,
+  "baseline_manifest": "outputs/pro_singlehost_c64_20261019/results/groups-8/manifest.json",
+  "baseline_manifest_sha256": "9f6faff5fa00823003d318f5e3b2403b5d78fbb0d04509620e29fdbd3a42e2ae"
+}
