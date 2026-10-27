@@ -17,6 +17,7 @@ from uni_agent.gateway.utils import normalize_tool_arguments
 from verl.utils.tokenizer import normalize_token_ids
 from verl.utils.tokenizer.chat_template import apply_chat_template as _apply_chat_template
 from verl.utils.tokenizer.chat_template import initialize_turn_separator
+from verl.utils.tokenizer.continuous_token import MergeResult
 from verl.utils.tokenizer.continuous_token_wiring import create_continuous_token_builder
 
 # Map backend stop_reason values into the gateway's internal finish_reason vocabulary.
@@ -102,10 +103,9 @@ class MessageCodec:
         self._mm_processor_kwargs = dict(mm_processor_kwargs or {})
         self._continuous_token_builder = create_continuous_token_builder(
             tokenizer,
-            hf_model_type=hf_model_type,
+            model_family="auto",
+            model_path=hf_model_type,
             chat_template_kwargs=self._apply_chat_template_kwargs,
-            mm_processor_kwargs=self._mm_processor_kwargs,
-            processor=processor,
         )
         processing_class = self._processor if self._processor is not None else tokenizer
         if hasattr(processing_class, "chat_template") and processing_class.chat_template is None:
@@ -204,11 +204,37 @@ class MessageCodec:
         video_data: list[Any] | None = None,
     ) -> list[int]:
         """Build the initial runtime token stream."""
-        return self._continuous_token_builder.build_initial_tokens(
+        if self._processor is None:
+            has_media = any(
+                isinstance(part, dict) and part.get("type") in {"image", "image_url", "video", "video_url"}
+                for message in messages
+                if isinstance(message.get("content"), list)
+                for part in message["content"]
+            )
+            if image_data or video_data or has_media:
+                raise ValueError("A processor is required to encode image or video data")
+            return self._continuous_token_builder.build_initial_tokens(messages, tools=tools)
+
+        # VERL's CT builders now render text-only tokens. Keep initial media
+        # expansion in the codec, using the same processor options as inference.
+        prompt = _apply_chat_template(
+            self._processor,
             messages,
+            tokenize=False,
+            add_generation_prompt=True,
             tools=tools,
-            images=image_data,
-            videos=video_data,
+            **self._apply_chat_template_kwargs,
+        )
+        processor_kwargs = dict(self._mm_processor_kwargs)
+        processor_kwargs.setdefault("return_tensors", "pt")
+        processor_kwargs.setdefault("do_sample_frames", False)
+        videos = video_data
+        if videos and isinstance(videos[0], tuple) and len(videos[0]) == 2:
+            videos, metadata = zip(*videos, strict=True)
+            videos = list(videos)
+            processor_kwargs.setdefault("video_metadata", list(metadata))
+        return normalize_token_ids(
+            self._processor(text=[prompt], images=image_data, videos=videos, **processor_kwargs)["input_ids"]
         )
 
     def merge_assistant_tokens(
@@ -250,12 +276,32 @@ class MessageCodec:
             raise ValueError(
                 "Continuous Token context merging does not currently support incremental image or video data"
             )
-        merge_result = self._continuous_token_builder.merge_context_tokens(
-            previous_messages,
-            updated_messages,
-            runtime_token_ids,
-            tools=tools,
-        )
+        appended_messages = updated_messages[len(previous_messages) :]
+        if appended_messages and appended_messages[0].get("role") == "assistant":
+            # Rollback removes the old assistant scaffold and can replace it
+            # with externally supplied assistant/tool context. These tokens are
+            # context (mask 0), not generated assistant tokens. VERL's normal
+            # incremental API deliberately accepts only tool/user/system roles.
+            if updated_messages[: len(previous_messages)] != previous_messages:
+                raise ValueError("Continuous Token messages must be append-only; prefix messages changed")
+            if any(message.get("role") not in {"assistant", "tool", "user", "system"} for message in appended_messages):
+                raise ValueError("Unsupported role in replacement assistant context")
+            delta_ids = self._continuous_token_builder.render_delta_token_id(
+                previous_messages, appended_messages, add_generation_prompt=True, tools=tools
+            )
+            appended_ids = self._turn_separator + delta_ids
+            merge_result = MergeResult(
+                token_ids=list(runtime_token_ids) + appended_ids,
+                appended_token_count=len(appended_ids),
+                kind="non_assistant",
+            )
+        else:
+            merge_result = self._continuous_token_builder.merge_non_assistant_tokens(
+                previous_messages,
+                updated_messages,
+                runtime_token_ids,
+                tools=tools,
+            )
         response_mask, response_logprobs = self._continuous_token_builder.align_response_metadata(
             merge_result,
             response_mask,

@@ -20,7 +20,12 @@ Run-wide config (``SandboxConfig.sandbox_kwargs`` or the env vars below):
 * ``kernel_image`` / ``initrd_path`` -- optional microVM knobs for the
   ``firecracker``/``libkrun`` backends (forwarded only when set).
 * ``cpu_cores`` / ``memory_mb`` -- resource request/limit per sandbox.
-* ``start_timeout`` / ``exec_timeout`` -- per-call HTTP budgets (seconds).
+* ``start_timeout`` / ``exec_timeout`` -- startup/command budgets (seconds).
+* ``fenced_creates`` -- opt into one stable create ID, operation and absolute
+  infrastructure deadline across startup retries; requires a modern SDK. The
+  benchmark ownership wrapper requires this mode automatically.
+* ``env_vars`` -- startup variables, also used as defaults for commands and
+  persistent shells; per-command/shell variables take precedence.
 * ``keep_alive`` / ``keep_alive_interval_sec`` -- a background task pings
   ``keepalive`` so a long episode never trips the wall-clock ``ttl_seconds``
   cap. ``keep_alive=False`` opts out (the TTL alone governs lifetime).
@@ -38,13 +43,16 @@ import asyncio
 import copy
 import inspect
 import logging
+import math
 import os
 import random
 import shlex
+import time
 from typing import TYPE_CHECKING, Any, ClassVar
+from uuid import uuid4
 
 from .base import ExecResult, Sandbox
-from .exec_context import current_exec_metadata
+from .exec_context import current_exec_metadata, reset_exec_metadata, set_exec_metadata
 from .registry import register_sandbox
 
 if TYPE_CHECKING:
@@ -223,26 +231,28 @@ def _forward_metadata(kwargs: dict[str, Any], fn: Any, *, name: str = "metadata"
 
 
 def _is_transient_http_error(exc: BaseException, *, idempotent: bool) -> bool:
-    """Whether a flash-sandbox data-plane error warrants a retry.
+    """Retry commands only after an authoritative admission refusal.
 
-    * HTTP 400 (``invalid character ... after top-level value``): the server
-      rejected the request body, so the command/file-op NEVER ran. Safe to
-      retry for any operation.
-    * HTTP 502/503/504: server-side transient. Safe to retry (the SDK has
-      already exhausted its own small retry budget for these).
-    * HTTP 500: server error -- ambiguous (the op may have started). Only
-      retried for idempotent ops (``read_file`` overwrites nothing;
-      ``write_file`` overwrites, so a re-run converges).
-    * Connection / transport errors and SDK timeouts: retried for idempotent
-      ops only, matching the SDK's own idempotency policy.
+    A gateway error or lost response can leave the original command running.
+    Non-idempotent calls require structured worker/coordinator evidence that
+    admission was cancelled before dispatch. Idempotent file operations retain
+    their transient HTTP and transport retries; error prose is never evidence.
     """
     if isinstance(exc, asyncio.CancelledError):
         return False
+    name = type(exc).__name__
+    if not idempotent:
+        return (
+            name == "SandboxHTTPError"
+            and getattr(exc, "status_code", None) in {408, 503}
+            and getattr(exc, "code", None) == "admission_cancelled"
+            and getattr(exc, "origin", None) in {"coordinator", "worker"}
+            and getattr(exc, "outcome", None) == "not_dispatched"
+        )
     if isinstance(exc, (asyncio.TimeoutError, TimeoutError)):
         return idempotent
     if isinstance(exc, OSError):  # ConnectionError, ConnectionResetError, ...
         return True
-    name = type(exc).__name__
     if name == "SandboxTimeoutError":
         return idempotent
     if name == "SandboxHTTPError":
@@ -269,21 +279,16 @@ def _env_number(name: str, default: float) -> float:
 def _wrap_command(argv: list[str], workdir: str | None, env: dict[str, str] | None) -> list[str]:
     """Build the argv passed to ``exec_command``.
 
-    A single ``bash -lc`` runs the user command with an ``env`` prefix (so
-    every value is quoted once, never re-expanded by the sandbox shell) and
-    a ``cd workdir &&`` prefix when a working directory is requested.
-    ``TAR_OPTIONS=--no-same-owner`` is folded into the prefix so any tar the
-    command runs extracts without trying to chown (required under the
-    sandbox's rootless namespace).
+    Apply explicit variables after the login profile, which may reset PATH.
+    Quote complete assignments so their values are never re-expanded, and
+    retain the rootless tar default unless the caller overrides it.
     """
     inner = _inner_shell_string(argv)
     if workdir:
         inner = f"cd {shlex.quote(workdir)} && {inner}"
-    prefix = "env TAR_OPTIONS=--no-same-owner"
-    if env:
-        prefix += " " + " ".join(f"{k}={shlex.quote(str(v))}" for k, v in env.items())
-    wrapped = f"{prefix} /bin/bash -lc {shlex.quote(inner)}"
-    return ["/bin/sh", "-c", wrapped]
+    variables = {"TAR_OPTIONS": "--no-same-owner", **(env or {})}
+    exports = shlex.join([f"{key}={value}" for key, value in variables.items()])
+    return ["/bin/bash", "-lc", f"export -- {exports} && {inner}"]
 
 
 def _inner_shell_string(argv: list[str]) -> str:
@@ -328,6 +333,16 @@ class _FlashShellHandle:
         return None  # the sandbox lifecycle (stop()) owns teardown.
 
 
+class FlashCreateRecoveryError(RuntimeError):
+    """A create cannot be restarted; its original ownership remains available."""
+
+    def __init__(self, message: str, recovery: dict[str, Any]) -> None:
+        super().__init__(message)
+        self.sandbox_id = recovery["sandbox_id"]
+        self.operation_id = recovery["operation_id"]
+        self.infrastructure_deadline_unix_ms = recovery["infrastructure_deadline_unix_ms"]
+
+
 @register_sandbox("flash_sandbox")
 class FlashSandboxSandbox(Sandbox):
     """One remote sandbox on the OpenTela Flash Sandbox orchestrator.
@@ -353,6 +368,8 @@ class FlashSandboxSandbox(Sandbox):
         memory_mb: int | None = None,
         start_timeout: float | None = None,
         exec_timeout: float | None = None,
+        fenced_creates: bool = False,
+        env_vars: dict[str, str] | None = None,
         keep_alive: bool = True,
         keep_alive_interval_sec: float = 45.0,
         **kwargs: Any,
@@ -366,6 +383,7 @@ class FlashSandboxSandbox(Sandbox):
         self._initrd_path = initrd_path or os.getenv("FLASH_SANDBOX_INITRD_PATH") or None
         self._cpu_cores = cpu_cores
         self._memory_mb = memory_mb
+        self.env_vars = dict(env_vars or {})
         self._start_timeout = float(start_timeout) if start_timeout is not None else _env_number(
             "FLASH_SANDBOX_START_TIMEOUT_S", 300.0
         )
@@ -374,14 +392,17 @@ class FlashSandboxSandbox(Sandbox):
         )
         self._keep_alive = keep_alive
         self._keep_alive_interval_sec = float(keep_alive_interval_sec)
-        # Retry budget for transient flash-sandbox HTTP errors (400/500/502/
-        # 503/504 + connection errors). Under load the orchestrator returns
-        # a truncated/malformed error for ~half of exec/write_file/read_file
-        # calls; without a retry these propagate and kill the PPO episode.
+        # Retry budget for transient file-operation failures and commands
+        # refused before dispatch with authoritative admission evidence.
         self._http_retries = int(_env_number("FLASH_SANDBOX_HTTP_RETRIES", 3.0))
         if kwargs:
             logger.debug("Ignoring unsupported flash-sandbox options: %s", sorted(kwargs))
 
+        self._fenced_creates = bool(fenced_creates)
+        self._create_payload: dict[str, Any] | None = None
+        self._create_state = "new"
+        self._start_lock = asyncio.Lock()
+        self._client_factory: Any | None = None
         self._client: Any | None = None
         self._sandbox: Any | None = None
         self._sandbox_id: str | None = None
@@ -438,7 +459,29 @@ class FlashSandboxSandbox(Sandbox):
         return cls(image=config.image, runtime_timeout=config.runtime_timeout, **config.sandbox_kwargs)
 
     # ----- control plane -----
+    @property
+    def create_recovery(self) -> dict[str, Any] | None:
+        """Retained ownership for bounded cleanup/reconciliation, including lost ACKs.
+
+        A pending create is not canceled by closing its client or by an absent-ID
+        DELETE. Its absolute infrastructure deadline bounds further creation.
+        """
+        if self._create_payload is None:
+            return None
+        return {"state": self._create_state, **{
+            name: self._create_payload[name] for name in
+            ("sandbox_id", "operation_id", "infrastructure_deadline_unix_ms")
+        }}
+
     async def start(self) -> None:
+        async with self._start_lock:
+            await self._start_once()
+
+    async def _start_once(self) -> None:
+        if self._create_payload is not None and self._create_state in {"closed", "cleanup_pending"}:
+            raise FlashCreateRecoveryError(
+                "This fenced create has entered cleanup; use a new provider for a new episode", self.create_recovery
+            )
         if self._sandbox is not None:
             return  # already started
 
@@ -457,13 +500,32 @@ class FlashSandboxSandbox(Sandbox):
                 "Install it with: pip install flash-sandbox"
             ) from exc
 
+        self._fenced_creates = self._fenced_creates or bool(
+            getattr(AsyncHTTPClient, "requires_fenced_create", False)
+        )
+        if self._fenced_creates:
+            if not math.isfinite(self._start_timeout) or self._start_timeout <= 0:
+                raise ValueError("Fenced creation requires a positive finite start_timeout")
+            if self._create_payload is not None and time.time() * 1000 >= self._create_payload[
+                "infrastructure_deadline_unix_ms"
+            ]:
+                raise FlashCreateRecoveryError(
+                    "Fenced create deadline expired; ownership retained for reconciliation", self.create_recovery
+                )
+
         # The HTTP client timeout is a fixed per-request budget. It must
         # OUTWAIT the longest server-side enforcement (exec commands up to
         # ``exec_timeout``), so a command that completes just under the cap
         # still returns rather than tripping the client's own clock. A 60s
         # margin covers network latency and clock skew.
         client_timeout = max(self._exec_timeout + 60.0, self._start_timeout + 30.0, 360.0)
-        self._client = AsyncHTTPClient(self.endpoint, api_key=api_key, timeout=client_timeout)
+        if self._client is None:
+            self._client_factory = AsyncHTTPClient
+            self._client = AsyncHTTPClient(self.endpoint, api_key=api_key, timeout=client_timeout)
+        if self._fenced_creates:
+            required = ("sandbox_id", "operation_id", "infrastructure_deadline_unix_ms")
+            if not all(_accepts_kwarg(self._client.start_sandbox, name) for name in required):
+                raise RuntimeError("Fenced creation requires an SDK with explicit operation/deadline support")
 
         start_kwargs: dict[str, Any] = {
             "image": self.image,
@@ -480,6 +542,8 @@ class FlashSandboxSandbox(Sandbox):
             start_kwargs["cpu_cores"] = float(self._cpu_cores)
         if self._memory_mb is not None:
             start_kwargs["memory_mb"] = int(self._memory_mb)
+        if self.env_vars:
+            start_kwargs["env"] = dict(self.env_vars)
 
         # Tag the sandbox with the rollout-group / trajectory metadata the
         # coordinator consumes for RLVR-aware placement and create-queue
@@ -487,7 +551,21 @@ class FlashSandboxSandbox(Sandbox):
         # scheduler.md). The bag is threaded from the framework's
         # ``_run_session`` via :mod:`uni_agent.sandbox.exec_context`; empty
         # (e.g. a standalone run) -> nothing is sent, matching prior behaviour.
-        _forward_metadata(start_kwargs, self._client.start_sandbox)
+        if self._create_payload is None:
+            _forward_metadata(start_kwargs, self._client.start_sandbox)
+            if self._fenced_creates:
+                start_kwargs.update(
+                    sandbox_id=str(uuid4()),
+                    operation_id=str(uuid4()),
+                    infrastructure_deadline_unix_ms=int((time.time() + self._start_timeout) * 1000),
+                    # HTTP must outlive the fixed infrastructure deadline plus
+                    # the SDK's five-second response grace, on every attempt.
+                    request_timeout=self._start_timeout + 6.0,
+                )
+                self._create_payload = copy.deepcopy(start_kwargs)
+                self._create_state = "pending"
+        if self._create_payload is not None:
+            start_kwargs = copy.deepcopy(self._create_payload)
 
         # Self-diagnostic: log the EXACT (endpoint, type, image) the SDK gets,
         # so backend-selection fixes (e.g. FLASH_SANDBOX_TYPE=libkrun when
@@ -506,7 +584,12 @@ class FlashSandboxSandbox(Sandbox):
             flush=True, file=_sys.stderr,
         )
 
-        self._sandbox = await self._client.start_sandbox(**start_kwargs)
+        created = await self._client.start_sandbox(**start_kwargs)
+        if self._fenced_creates and str(getattr(created, "id", created)) != start_kwargs["sandbox_id"]:
+            raise RuntimeError("Fenced create returned a different sandbox ID; original ownership retained")
+        self._sandbox = created
+        if self._fenced_creates:
+            self._create_state = "acknowledged"
         # start_sandbox returns an AsyncSandbox (with .id); accept a bare id for
         # custom client implementations the same way the SDK's create() does.
         self._sandbox_id = str(getattr(self._sandbox, "id", self._sandbox))
@@ -529,13 +612,13 @@ class FlashSandboxSandbox(Sandbox):
         """
         try:
             await self._client.write_file(self._sandbox_id, _ROOTLESS_APT_GET_PATH, _ROOTLESS_APT_GET)
-            await self._exec([f"chmod 755 {_ROOTLESS_APT_GET_PATH}"])
+            await self._exec(["chmod", "755", _ROOTLESS_APT_GET_PATH])
         except Exception:
             logger.debug("flash-sandbox: rootless apt-get shim not installed", exc_info=True)
 
         try:
             await self._exec(
-                ["if command -v git >/dev/null 2>&1; then "
+                ["/bin/bash", "-c", "if command -v git >/dev/null 2>&1; then "
                  "git config --system --get-all safe.directory | grep -Fxq '*' || "
                  "git config --system --add safe.directory '*'; fi"]
             )
@@ -578,17 +661,36 @@ class FlashSandboxSandbox(Sandbox):
                 pass
             self._keepalive_task = None
 
+        if self._create_state == "cleanup_pending" and self._sandbox_id is not None and self._client is None:
+            api_key = os.environ.get(self._api_key_env)
+            if not api_key or self._client_factory is None:
+                raise FlashCreateRecoveryError("Owned cleanup requires its authenticated client", self.create_recovery)
+            # Retain the exact client factory, including the benchmark's
+            # synchronous deletion contract, after startup substitution ends.
+            self._client = self._client_factory(self.endpoint, api_key=api_key, timeout=150.0)
+        if self._create_state == "pending":
+            logger.warning("Fenced create outcome is unresolved; retaining ownership: %s", self.create_recovery)
+            # No DELETE: a queued create can outlive a 404, and deleting a
+            # lost-ACK success would turn the next same-fence retry into a
+            # cached success for an already-deleted sandbox.
         if self._sandbox_id is not None and self._client is not None:
+            if self._create_payload is not None:
+                self._create_state = "cleanup_pending"
             try:
                 await self._client.stop_sandbox(self._sandbox_id, cleanup=True, timeout=120.0)
             except Exception:
                 logger.warning(
-                    "Failed to stop Flash sandbox %s; it will expire at its TTL",
+                    "Failed to stop Flash sandbox %s; owned cleanup remains necessary",
                     self._sandbox_id,
                     exc_info=True,
                 )
+            else:
+                if self._create_payload is not None:
+                    self._create_state = "closed"
+                self._sandbox_id = None
         self._sandbox = None
-        self._sandbox_id = None
+        if self._create_payload is None:
+            self._sandbox_id = None
 
         if self._client is not None:
             try:
@@ -648,20 +750,27 @@ class FlashSandboxSandbox(Sandbox):
         ``cd`` / ``export`` / ``&&`` / ``;`` persist in-place across calls
         (no tmux fallback -- the sweb.eval images ship without tmux, and the
         persistent ``shell_exec`` makes it unnecessary). ``env`` / ``cwd`` are
-        applied once as the initial exec base via ``set_exec_config``
-        (best-effort: honored on the microVM backends that route through
-        flash-envd; buffered ``exec_command`` on Docker bypasses it). The
+        applied once in the actual persistent shell, after its startup scripts.
+        Later commands can change its environment and working directory. The
         handle enforces the per-command timeout server-side via ``timeout_ms``.
         """
         self._require()
-        if env or cwd:
+        shell = _FlashShellHandle(self)
+        setup = [f"cd -- {shlex.quote(cwd)}"] if cwd else []
+        variables = {**self.env_vars, **(env or {})}
+        if variables:
+            setup.append("export -- " + shlex.join([f"{key}={value}" for key, value in variables.items()]))
+        if setup:
+            # Initialization is not the agent action (or terminal evaluation)
+            # whose metadata the caller may already have bound.
+            token = set_exec_metadata(None)
             try:
-                await self._client.set_exec_config(
-                    self._sandbox_id, env=env, cwd=cwd
-                )
-            except Exception:
-                logger.debug("flash-sandbox: set_exec_config initial base skipped", exc_info=True)
-        return _FlashShellHandle(self)
+                result = await shell.run(" && ".join(setup), timeout=self._start_timeout)
+            finally:
+                reset_exec_metadata(token)
+            if result.exit_code != 0:
+                raise RuntimeError("Unable to initialize Flash Sandbox persistent shell environment")
+        return shell
 
     # ----- data plane -----
     async def _exec(
@@ -683,7 +792,7 @@ class FlashSandboxSandbox(Sandbox):
         wrapper, so a slow command is reported, never raised into the loop.
         """
         client = self._require()
-        wrapped = _wrap_command(argv, workdir, env)
+        wrapped = _wrap_command(argv, workdir, {**self.env_vars, **(env or {})})
         # The one-shot /exec path is the coordinator's RLVR-observed channel
         # (``ObserveExecOutcome`` advances ``k_g`` when ``rlvr["terminal"]`` is
         # set), and carries the LLM input/output for the turn. ``exec_command``
@@ -692,6 +801,10 @@ class FlashSandboxSandbox(Sandbox):
         exec_kwargs: dict[str, Any] = {
             "timeout_ms": int((timeout or self._exec_timeout) * 1000),
         }
+        # Recent SDKs default to /shell. Verifier and transfer commands need
+        # an isolated process, without changing the agent's persistent shell.
+        if _accepts_kwarg(client.exec_command, "persistent"):
+            exec_kwargs["persistent"] = False
         _forward_metadata(exec_kwargs, client.exec_command)
 
         async def _call() -> Any:
@@ -739,7 +852,10 @@ class FlashSandboxSandbox(Sandbox):
         _forward_metadata(shell_kwargs, client.shell_exec)
 
         async def _call() -> Any:
-            return await client.shell_exec(self._sandbox_id, command, **shell_kwargs)
+            # The SDK wraps string commands in `sh -c`, losing cd/exports in
+            # a child process. An argv for eval runs the script as a builtin
+            # in the actual persistent shell; the server quotes each argument.
+            return await client.shell_exec(self._sandbox_id, ["eval", command], **shell_kwargs)
 
         result = await self._with_retry("shell_exec", _call, idempotent=False)
         stdout = getattr(result, "stdout", None)

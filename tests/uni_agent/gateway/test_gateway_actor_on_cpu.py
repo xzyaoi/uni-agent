@@ -1753,3 +1753,48 @@ async def test_unhandled_exception_uses_provider_error_envelope(monkeypatch):
                 assert body["error"]["message"] == "Internal server error"
             finally:
                 await actor.shutdown()
+
+
+@pytest.mark.cpu
+@pytest.mark.level0
+@pytest.mark.asyncio
+@pytest.mark.parametrize("server_running", [False, True])
+async def test_gateway_actor_shutdown_aborts_owned_sessions_and_rejects_late_creates(server_running):
+    from uni_agent.gateway.config import GatewayActorConfig
+    from uni_agent.gateway.gateway import _GatewayActor
+    from uni_agent.gateway.session.session import SessionPhase
+
+    actor = _GatewayActor(GatewayActorConfig(tokenizer=FakeTokenizer()), SequencedBackend(["A"]))
+    actor._server_base_url = "http://test"
+    await actor.create_session("owned")
+    session = actor._sessions["owned"]
+    stopping = asyncio.Event()
+    release_server = asyncio.Event()
+
+    async def server():
+        try:
+            await asyncio.Event().wait()
+        except asyncio.CancelledError:
+            stopping.set()
+            await release_server.wait()
+            raise
+
+    if server_running:
+        actor._server_task = asyncio.create_task(server())
+        await asyncio.sleep(0)
+    shutdown = asyncio.create_task(actor.shutdown())
+    try:
+        if server_running:
+            await asyncio.wait_for(stopping.wait(), 1)
+        else:
+            await asyncio.sleep(0)
+        with pytest.raises(RuntimeError, match="before session creation"):
+            await actor.create_session("late")
+    finally:
+        release_server.set()
+        await asyncio.wait_for(shutdown, 1)
+    assert session.phase == SessionPhase.ABORTED
+    assert not actor._sessions
+    assert actor._server_base_url is None
+    assert actor._server_task is None
+    await actor.shutdown()

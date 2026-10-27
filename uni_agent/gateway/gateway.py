@@ -237,17 +237,29 @@ class _GatewayActor:
         self._server_base_url = f"http://{host}:{self._server_port}"
 
     async def shutdown(self) -> None:
-        """Stop the FastAPI server backing this gateway actor."""
-        if self._server_task is None:
-            return
-        self._server_task.cancel()
-        try:
-            await self._server_task
-        except asyncio.CancelledError:
-            pass
-        self._server_task = None
-        self._server_port = None
+        """Abort owned sessions and stop the FastAPI server."""
+        # create_session has no await between _require_started and publishing its
+        # session. Closing admission and detaching state before our first await
+        # therefore prevents a queued actor create from appearing after shutdown.
         self._server_base_url = None
+        sessions = list(self._sessions.values())
+        self._sessions.clear()
+        try:
+            outcomes = await asyncio.gather(*(session.abort() for session in sessions), return_exceptions=True)
+            for outcome in outcomes:
+                if isinstance(outcome, Exception):
+                    logger.warning("Gateway session abort during shutdown failed: %s", outcome)
+        finally:
+            try:
+                if self._server_task is not None:
+                    self._server_task.cancel()
+                    try:
+                        await self._server_task
+                    except asyncio.CancelledError:
+                        pass
+            finally:
+                self._server_task = None
+                self._server_port = None
 
     async def create_session(
         self,

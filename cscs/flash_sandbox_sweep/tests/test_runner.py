@@ -13,6 +13,11 @@ from cscs.flash_sandbox_sweep import backend_preflight, cohort, prepare
 from cscs.flash_sandbox_sweep.cleanup_sandboxes import owned_ids
 
 
+def create_fence():
+    return dict(sandbox_id='00000000-0000-4000-8000-000000000001',
+                operation_id='fixture-operation', infrastructure_deadline_unix_ms=2000000000000)
+
+
 def fixture_rows(tmp_path):
     task = tmp_path / 'task.toml'
     task.write_text('[environment]\ndocker_image="example/image@sha256:' + 'a' * 64 + '"\n')
@@ -161,7 +166,9 @@ def test_owned_environment_records_before_bootstrap_and_reuses_uv_helper(tmp_pat
         self._sandbox = sandbox
         self._started = False
 
-    async def create(self, **kwargs):
+    async def create(self, *, sandbox_id, operation_id, infrastructure_deadline_unix_ms, **kwargs):
+        kwargs.update(sandbox_id=sandbox_id, operation_id=operation_id,
+                      infrastructure_deadline_unix_ms=infrastructure_deadline_unix_ms)
         assert kwargs['vcpu_count'] == 1
         assert kwargs['cpu_cores'] == 1 and kwargs['memory_mb'] == 4096
         assert owned_ids(tmp_path, endpoint) == {kwargs['sandbox_id']}
@@ -170,7 +177,7 @@ def test_owned_environment_records_before_bootstrap_and_reuses_uv_helper(tmp_pat
     async def start(self, force_build=False):
         client = environment.flash_sandbox.AsyncHTTPClient(endpoint)
         try:
-            result = await client.start_sandbox(type='firecracker', cpu_cores=1, memory_mb=4096)
+            result = await client.start_sandbox(type='firecracker', cpu_cores=1, memory_mb=4096, **create_fence())
             assert owned_ids(tmp_path, endpoint) == {result.id}
             calls.append('bootstrap')
         finally:
@@ -229,7 +236,9 @@ def test_create_claim_survives_response_loss_and_failed_bootstrap(tmp_path, monk
     monkeypatch.setenv('FLASH_SWEEP_TRACE_DIR', str(tmp_path / 'flash-traces'))
     observed = []
 
-    async def create(self, **kwargs):
+    async def create(self, *, sandbox_id, operation_id, infrastructure_deadline_unix_ms, **kwargs):
+        kwargs.update(sandbox_id=sandbox_id, operation_id=operation_id,
+                      infrastructure_deadline_unix_ms=infrastructure_deadline_unix_ms)
         claimed = kwargs['sandbox_id']
         UUID(claimed)
         assert owned_ids(tmp_path, endpoint) == {claimed}
@@ -243,7 +252,7 @@ def test_create_claim_survives_response_loss_and_failed_bootstrap(tmp_path, monk
     async def scenario():
         client = environment.OwnedShapeClient(endpoint)
         try:
-            await client.start_sandbox(type='firecracker', cpu_cores=1, memory_mb=4096)
+            await client.start_sandbox(type='firecracker', cpu_cores=1, memory_mb=4096, **create_fence())
             raise RuntimeError('fixture failed bootstrap after create')
         finally:
             await client.close()
@@ -280,7 +289,7 @@ def test_preflight_rejects_extra_nodes_and_dirty_inventory(monkeypatch, extra_no
         asyncio.run(backend_preflight.check())
 
 
-def test_create_rejects_unexpected_returned_id_and_retains_both_claims(tmp_path, monkeypatch):
+def test_create_rejects_unexpected_returned_id_and_retains_original_claim(tmp_path, monkeypatch):
     from cscs.flash_sandbox_sweep import environment
     endpoint = 'http://fixture'
     monkeypatch.setenv('FLASH_SWEEP_RUN_ID', str(tmp_path))
@@ -288,7 +297,9 @@ def test_create_rejects_unexpected_returned_id_and_retains_both_claims(tmp_path,
     claimed = []
     stopped = []
 
-    async def create(self, **kwargs):
+    async def create(self, *, sandbox_id, operation_id, infrastructure_deadline_unix_ms, **kwargs):
+        kwargs.update(sandbox_id=sandbox_id, operation_id=operation_id,
+                      infrastructure_deadline_unix_ms=infrastructure_deadline_unix_ms)
         claimed.append(kwargs['sandbox_id'])
         return SimpleNamespace(id='unexpected-owned-create-result')
 
@@ -302,14 +313,14 @@ def test_create_rejects_unexpected_returned_id_and_retains_both_claims(tmp_path,
     async def scenario():
         client = environment.OwnedShapeClient(endpoint)
         try:
-            await client.start_sandbox(type='firecracker', cpu_cores=1, memory_mb=4096)
+            await client.start_sandbox(type='firecracker', cpu_cores=1, memory_mb=4096, **create_fence())
         finally:
             await client.close()
 
     with pytest.raises(RuntimeError, match='different from the claimed ID'):
         asyncio.run(scenario())
-    assert stopped == ['unexpected-owned-create-result']
-    assert owned_ids(tmp_path, endpoint) == {*claimed, 'unexpected-owned-create-result'}
+    assert stopped == []
+    assert owned_ids(tmp_path, endpoint) == set(claimed)
 
 
 @pytest.mark.parametrize('cleanup', [True, False])

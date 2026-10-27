@@ -11,10 +11,17 @@ from examples.inference.parallel_infer_verl import init_config
 @pytest.mark.cpu
 @pytest.mark.level0
 @pytest.mark.parametrize(
-    "entrypoint,simulated_runner",
-    [(init_config, None), (init_router_config, None), (init_router_config, "example.simulated_runner")],
+    "entrypoint,simulated_runner,session_timeout_seconds",
+    [
+        (init_config, None, None),
+        (init_config, None, 123.0),
+        (init_router_config, None, None),
+        (init_router_config, "example.simulated_runner", None),
+    ],
 )
-def test_inference_sampling_uses_run_options_and_preserves_length_configuration(entrypoint, simulated_runner):
+def test_inference_sampling_uses_run_options_and_preserves_length_configuration(
+    entrypoint, simulated_runner, session_timeout_seconds
+):
     args = Namespace(
         temperature=0.4,
         top_p=0.85,
@@ -43,6 +50,7 @@ def test_inference_sampling_uses_run_options_and_preserves_length_configuration(
         load_threshold=0.5,
         prompt_length=2048,
         response_length=8192,
+        session_timeout_seconds=session_timeout_seconds,
     )
 
     config = entrypoint(
@@ -64,6 +72,8 @@ def test_inference_sampling_uses_run_options_and_preserves_length_configuration(
         assert rollout.max_model_len == expected_prompt_length + expected_response_length
     assert rollout.custom.agent_framework.allowed_request_sampling_param_keys == ["temperature", "top_p", "top_k"]
     task_runner = rollout.custom.agent_framework.agent_runners.task
+    if entrypoint is init_config:
+        assert task_runner.session_timeout_seconds == session_timeout_seconds
     if simulated_runner:
         assert task_runner.runner_fqn == simulated_runner
         assert not task_runner.runner_kwargs

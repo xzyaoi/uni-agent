@@ -325,3 +325,74 @@ async def test_gateway_manager_allows_independent_http_requests_when_coalescing_
         ]
     finally:
         await manager.shutdown()
+
+
+@pytest.mark.cpu
+@pytest.mark.level0
+@pytest.mark.asyncio
+@pytest.mark.parametrize("create_fails", [False, True])
+async def test_cancelled_gateway_create_retains_owner_until_ordered_rollback(create_fails):
+    """A timed-out caller cannot cancel an actor RPC that may create later."""
+    from uni_agent.gateway.manager import GatewayManager
+
+    started = asyncio.Event()
+    release_create = asyncio.Event()
+    remote_finished = asyncio.Event()
+    rolled_back = asyncio.Event()
+    sessions = set()
+    operations = []
+
+    async def create(session_id, **kwargs):
+        started.set()
+        await release_create.wait()
+        sessions.add(session_id)
+        operations.append("create")
+        remote_finished.set()
+        if create_fails:
+            raise RuntimeError("remote create failed after reserving session")
+        return session_id
+
+    async def abort(session_id):
+        assert remote_finished.is_set(), "abort must follow completion of the pending actor create"
+        operations.append("abort")
+        sessions.discard(session_id)
+        rolled_back.set()
+
+    class _ActorCreate:
+        def remote(self, **kwargs):
+            # This task models actor work independent of the driver's await.
+            return asyncio.create_task(create(**kwargs))
+
+    class _Gateway:
+        create_session = _ActorCreate()
+        abort_session = _FakeRemoteMethod(abort)
+
+    manager = GatewayManager.__new__(GatewayManager)
+    manager.gateways = [_Gateway()]
+    manager.gateway_count = 1
+    manager.active_sessions_per_gateway = [0]
+    manager._session_to_gateway_index = {}
+    manager._cancelled_creates = {}
+    task = asyncio.create_task(manager.create_session("cancelled"))
+    await asyncio.wait_for(started.wait(), 1)
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    try:
+        assert manager._session_to_gateway_index == {"cancelled": 0}
+        assert manager.active_sessions_per_gateway == [1]
+        with pytest.raises(asyncio.TimeoutError):
+            await asyncio.wait_for(manager.abort_session("cancelled"), 0.01)
+        release_create.set()
+        await asyncio.wait_for(rolled_back.wait(), 1)
+        # Let the owned rollback release its routing metadata as well.
+        await asyncio.sleep(0)
+        assert operations == ["create", "abort"]
+        assert not sessions
+        assert manager._session_to_gateway_index == {}
+        assert manager.active_sessions_per_gateway == [0]
+        assert not manager._cancelled_creates
+    finally:
+        release_create.set()
+        if not task.done():
+            task.cancel()

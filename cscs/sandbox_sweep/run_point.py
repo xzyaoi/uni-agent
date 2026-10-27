@@ -11,6 +11,7 @@ import hashlib
 from importlib import metadata as package_metadata
 import inspect
 import json
+import math
 import os
 import random
 import signal
@@ -142,6 +143,13 @@ class Progress:
             self.stop.wait(5)
 
 
+def positive_timeout(value: str) -> float:
+    seconds = float(value)
+    if not math.isfinite(seconds) or seconds <= 0:
+        raise argparse.ArgumentTypeError("Episode timeout must be finite and positive")
+    return seconds
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description=__doc__)
     for name in ("data-path", "model-path", "task-config", "run-dir"):
@@ -164,6 +172,10 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--top-k", type=int, default=-1)
     result.add_argument("--tool-parser", default="qwen3_coder")
     result.add_argument("--kv-cache-dtype", default="auto")
+    result.add_argument(
+        "--session-timeout-seconds", type=positive_timeout, default=1800.0,
+        help="Whole episode budget, including setup, verification and result collection (default: 1800)",
+    )
     return result
 
 
@@ -238,6 +250,7 @@ def main() -> None:
         args.allowed_request_sampling_param_keys = ["temperature", "top_p", "top_k"]
         resolver = TaskConfigResolver.from_file(args.task_config)
         manifest = {"seed": args.seed, "groups": args.groups, "responses": args.responses,
+                    "session_timeout_seconds": args.session_timeout_seconds,
                     "selected_tasks": identities, "source_task_config_sha256": source_config_sha256,
                     "run_task_config_sha256": digest(point_config),
                     "model_config_sha256": digest(Path(args.model_path).expanduser() / "config.json")}
@@ -270,6 +283,9 @@ def main() -> None:
             "data.max_response_length": args.response_length,
             "actor_rollout_ref.rollout.custom.agent_framework.allowed_request_sampling_param_keys": args.allowed_request_sampling_param_keys,
             "actor_rollout_ref.rollout.custom.agent_framework.agent_runners.task.dispatch_mode": "inline_async",
+            "actor_rollout_ref.rollout.custom.agent_framework.agent_runners.task.session_timeout_seconds": (
+                args.session_timeout_seconds
+            ),
             "actor_rollout_ref.rollout.custom.agent_framework.agent_runners.task.trajectory_selection": "longest",
             "actor_rollout_ref.rollout.custom.agent_framework.agent_runners.task.runner_kwargs.report_reward": True,
             "actor_rollout_ref.rollout.custom.agent_framework.use_reward_loop_worker": False,

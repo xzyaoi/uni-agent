@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import shutil
+import signal
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -24,6 +25,8 @@ from .reward import task_result_from_harbor_trial
 
 logger = logging.getLogger(__name__)
 _TEMP_TRIALS_DIR = Path("/tmp/harbor-trials")
+_PROCESS_TERMINATE_TIMEOUT_SECONDS = 5.0
+_PROCESS_KILL_TIMEOUT_SECONDS = 5.0
 _MODEL_BASE_URL_ENV_VARS = (
     "LLM_BASE_URL",
     "OPENAI_BASE_URL",
@@ -163,20 +166,73 @@ class HarborCLIResult:
     stderr: str
 
 
+async def _terminate_harbor_process(process: asyncio.subprocess.Process, communication: asyncio.Task) -> None:
+    """Stop the owned process group and bound draining inherited output pipes."""
+
+    def signal_process(*, force: bool) -> None:
+        try:
+            if os.name == "posix":
+                # Signal descendants even if the CLI itself has already exited.
+                os.killpg(process.pid, signal.SIGKILL if force else signal.SIGTERM)
+            elif process.returncode is None:
+                if force:
+                    process.kill()
+                else:
+                    process.terminate()
+        except ProcessLookupError:
+            pass
+
+    signal_process(force=False)
+    await asyncio.wait({communication}, timeout=_PROCESS_TERMINATE_TIMEOUT_SECONDS)
+    # A descendant can outlive the CLI and close its output pipes, so always
+    # clean up the remaining group even when communicate has already finished.
+    signal_process(force=True)
+    done, _ = await asyncio.wait({communication}, timeout=_PROCESS_KILL_TIMEOUT_SECONDS)
+    if not done:
+        # A descendant may have escaped the group while retaining a pipe. There
+        # is no public asyncio Process API to close its owned read transports.
+        process._transport.close()
+        communication.cancel()
+    await asyncio.gather(communication, return_exceptions=True)
+
+
 async def run_harbor_cli(command: list[str], *, env: dict[str, str] | None = None) -> HarborCLIResult:
     """Run Harbor directly on the host and capture its terminal output."""
-    process = await asyncio.create_subprocess_exec(
-        *command,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
-        env={**os.environ, **env} if env else None,
+    spawning = asyncio.create_task(
+        asyncio.create_subprocess_exec(
+            *command,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            env={**os.environ, **env} if env else None,
+            start_new_session=os.name == "posix",
+        )
     )
+    communication = None
     try:
-        stdout, stderr = await process.communicate()
+        # Keep process ownership and pipe draining intact when an outer episode
+        # deadline cancels this coroutine, including while spawn is in flight.
+        process = await asyncio.shield(spawning)
+        communication = asyncio.create_task(process.communicate())
+        stdout, stderr = await asyncio.shield(communication)
     except BaseException:
-        if process.returncode is None:
-            process.kill()
-            await process.wait()
+
+        async def cleanup() -> None:
+            try:
+                process = await spawning
+            except Exception:
+                return  # Spawn failed without yielding a process to own.
+            await _terminate_harbor_process(
+                process, communication if communication is not None else asyncio.create_task(process.communicate())
+            )
+
+        cleanup_task = asyncio.create_task(cleanup())
+        while not cleanup_task.done():
+            try:
+                await asyncio.shield(cleanup_task)
+            except asyncio.CancelledError:
+                # A second cancellation must not abandon the owned processes.
+                continue
+        cleanup_task.result()
         raise
     return HarborCLIResult(
         exit_code=process.returncode or 0,
@@ -206,6 +262,7 @@ class HarborTask(Task):
         if config.artifacts_dir:
             output_dir = Path(config.artifacts_dir).expanduser().resolve() / trial_name
         trial_dir = _TEMP_TRIALS_DIR / trial_name
+        cancelled = False
         try:
             return await self._run_trial(
                 config,
@@ -213,8 +270,15 @@ class HarborTask(Task):
                 trial_name=trial_name,
                 output_dir=output_dir,
             )
+        except asyncio.CancelledError:
+            cancelled = True
+            # Cancellation must not enter another potentially blocked shared
+            # filesystem operation. Keep the partial trial for diagnosis.
+            logger.warning("Harbor trial cancelled; retaining temporary artifacts at %s", trial_dir)
+            raise
         finally:
-            await asyncio.to_thread(shutil.rmtree, trial_dir, ignore_errors=True)
+            if not cancelled:
+                await asyncio.to_thread(shutil.rmtree, trial_dir, ignore_errors=True)
 
     async def _run_trial(
         self,

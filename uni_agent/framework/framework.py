@@ -6,6 +6,7 @@ import inspect
 import io
 import json
 import logging
+import math
 import os
 import random
 import time
@@ -66,8 +67,10 @@ class _RunnerConfig:
             raise ValueError(f"max_concurrent_sessions must be non-negative, got {self.max_concurrent_sessions}")
         if self.trajectory_selection not in {"all", "longest"}:
             raise ValueError(f"Unknown trajectory selection: {self.trajectory_selection}. Expected 'all' or 'longest'")
-        if self.session_timeout_seconds is not None and self.session_timeout_seconds <= 0:
-            raise ValueError(f"session_timeout_seconds must be positive, got {self.session_timeout_seconds}")
+        if self.session_timeout_seconds is not None and (
+            not math.isfinite(self.session_timeout_seconds) or self.session_timeout_seconds <= 0
+        ):
+            raise ValueError(f"session_timeout_seconds must be finite and positive, got {self.session_timeout_seconds}")
 
     @classmethod
     def from_config(cls, runner_name: object, runner_cfg) -> _RunnerConfig:
@@ -921,19 +924,51 @@ class GatewayAgentFramework(AgentFramework):
         }
         started = time.monotonic()
         pipeline_event("episode_begin", **identity)
+        session_trace = agent_loop_session(
+            sample=sample_index,
+            session=session_index,
+            uid=str(sample_fields.get("uid", "")),
+            global_steps=global_steps,
+            session_id=session_id,
+        )
         try:
-            result = await self._execute_agent_episode(
-                session_id=session_id,
-                sample_fields=sample_fields,
-                sample_index=sample_index,
-                session_index=session_index,
-                global_steps=global_steps,
-                runner_name=runner_name,
-                runner_config=runner_config,
-                sampling_params=sampling_params,
-                num_sessions=num_sessions,
+            # Bound the entire admitted episode in both dispatch modes, including
+            # Gateway creation/finalization, scoring and artifact-write awaits.
+            # Cancellation is cooperative: runner teardown may add its own bounded
+            # grace, and a synchronous blocked filesystem call cannot be preempted.
+            result = await asyncio.wait_for(
+                self._execute_agent_episode(
+                    session_id=session_id,
+                    sample_fields=sample_fields,
+                    sample_index=sample_index,
+                    session_index=session_index,
+                    global_steps=global_steps,
+                    runner_name=runner_name,
+                    runner_config=runner_config,
+                    sampling_params=sampling_params,
+                    num_sessions=num_sessions,
+                    session_trace=session_trace,
+                ),
+                timeout=runner_config.session_timeout_seconds,
             )
-        except BaseException as exc:
+        except (Exception, asyncio.CancelledError) as exc:
+            if not isinstance(exc, asyncio.CancelledError):
+                logger.exception("session %s failed (runner=%s); aborting session", session_id, runner_name)
+            # Cleanup must not turn an episode timeout into an unbounded wait or
+            # replace the original failure with a Gateway abort error.
+            try:
+                await asyncio.shield(
+                    asyncio.wait_for(
+                        self.gateway_manager.abort_session(session_id),
+                        timeout=self._RUNNER_CANCEL_GRACE_SECONDS,
+                    )
+                )
+            except Exception:
+                logger.exception("session %s: Gateway abort failed during episode cleanup", session_id)
+            try:
+                session_trace.finish(runner_name=runner_name, status="failure", trajectories=[])
+            except Exception:
+                logger.exception("session %s: failure trace could not be recorded", session_id)
             pipeline_event(
                 "episode_error",
                 **identity,
@@ -961,16 +996,9 @@ class GatewayAgentFramework(AgentFramework):
         runner_config: _RunnerConfig,
         sampling_params: dict[str, object],
         num_sessions: int,
+        session_trace,
     ) -> tuple[list[Trajectory], dict[str, object]]:
         """Execute an admitted episode; caller records its full lifecycle timing."""
-        uid = str(sample_fields.get("uid", ""))
-        session_trace = agent_loop_session(
-            sample=sample_index,
-            session=session_index,
-            uid=uid,
-            global_steps=global_steps,
-            session_id=session_id,
-        )
         trace_identity = session_trace.identity
         # Session-level RLVR base (group=uid, rollout=session_id, q=num_sessions,
         # deadline_ms from the task's per-episode sandbox budget). Threaded to the
@@ -1007,79 +1035,51 @@ class GatewayAgentFramework(AgentFramework):
                 session_index,
                 global_steps,
             )
-            try:
-                if runner_config.dispatch_mode == "ray_task":
-                    # Ray workers run only the runner. Gateway token truth,
-                    # finalization, reward scoring, and TQ writes stay in parent.
-                    object_ref = _run_agent_runner_ray_task.remote(
-                        runner_fqn=runner_config.runner_fqn,
-                        runner_kwargs=runner_config.runner_kwargs,
+            if runner_config.dispatch_mode == "ray_task":
+                # Ray workers run only the runner. Gateway token truth,
+                # finalization, reward scoring, and TQ writes stay in parent.
+                object_ref = _run_agent_runner_ray_task.remote(
+                    runner_fqn=runner_config.runner_fqn,
+                    runner_kwargs=runner_config.runner_kwargs,
+                    raw_prompt=raw_prompt,
+                    session=session,
+                    sample_index=sample_index,
+                    tools_kwargs=tools_kwargs,
+                    log_context=task_log,
+                    exec_metadata=base,
+                )
+                # The whole-episode deadline cancels this await. Ray tasks
+                # need explicit cancellation so their sandboxes also unwind.
+                try:
+                    task_result = await object_ref
+                except asyncio.CancelledError:
+                    await self._cancel_runner_task(object_ref, session_id)
+                    raise
+            else:
+                runner = self._inline_runners[runner_name]
+                # Bind the session-level RLVR base in this task so the
+                # flash-sandbox provider the runner drives observes it on
+                # create/exec (the runner, task, agent and sandbox all run
+                # within this same async context).
+                async with bind_exec_metadata(**base):
+                    task_result = await runner(
                         raw_prompt=raw_prompt,
                         session=session,
                         sample_index=sample_index,
-                        tools_kwargs=tools_kwargs,
-                        log_context=task_log,
-                        exec_metadata=base,
+                        **({"tools_kwargs": tools_kwargs} if tools_kwargs is not None else {}),
                     )
-                    # Guard against runners that hang without raising (e.g. a
-                    # remote sandbox that OOM-killed the kernel and never returns).
-                    # Without this cap a single stuck session would hold its
-                    # concurrency slot forever and stall the whole training batch.
-                    # wait_for only bounds the parent's await; the Ray task must
-                    # be cancelled explicitly or it (and its sandbox) would keep
-                    # running. Graceful cancel first so the runner's asyncio.run
-                    # unwinds and its sandbox context manager tears down cleanly;
-                    # force-kill only if it ignores the cancel.
-                    try:
-                        task_result = await asyncio.wait_for(
-                            object_ref,
-                            timeout=runner_config.session_timeout_seconds,
-                        )
-                    except (asyncio.TimeoutError, asyncio.CancelledError):
-                        await self._cancel_runner_task(object_ref, session_id)
-                        raise
-                else:
-                    runner = self._inline_runners[runner_name]
-                    # Bind the session-level RLVR base in this task so the
-                    # flash-sandbox provider the runner drives observes it on
-                    # create/exec (the runner, task, agent and sandbox all run
-                    # within this same async context).
-                    async with bind_exec_metadata(**base):
-                        task_result = await runner(
-                            raw_prompt=raw_prompt,
-                            session=session,
-                            sample_index=sample_index,
-                            **({"tools_kwargs": tools_kwargs} if tools_kwargs is not None else {}),
-                        )
-                if task_result is None:
-                    task_result = TaskResult()
-                elif not isinstance(task_result, TaskResult):
-                    raise TypeError(
-                        f"Agent runner {runner_name!r} must return TaskResult or None, got {type(task_result).__name__}"
-                    )
-                session_trajectories = await self.gateway_manager.finalize_session(session_id)
-                session_trajectories = _select_session_trajectories(
-                    session_id,
-                    session_trajectories,
-                    runner_config.trajectory_selection,
+            if task_result is None:
+                task_result = TaskResult()
+            elif not isinstance(task_result, TaskResult):
+                raise TypeError(
+                    f"Agent runner {runner_name!r} must return TaskResult or None, got {type(task_result).__name__}"
                 )
-            except asyncio.CancelledError:
-                # Parent shutdown/cancellation must not leave the Gateway route
-                # and actor-owned session live after the runner task is gone.
-                try:
-                    await asyncio.shield(self.gateway_manager.abort_session(session_id))
-                except Exception:
-                    logger.exception("session %s: Gateway abort failed during parent cancellation", session_id)
-                raise
-            except Exception:
-                logger.exception("session %s failed (runner=%s); aborting session", session_id, runner_name)
-                await self.gateway_manager.abort_session(session_id)
-                session_trace.finish(
-                    runner_name=runner_name,
-                    status="failure",
-                    trajectories=[],
-                )
-                raise
+            session_trajectories = await self.gateway_manager.finalize_session(session_id)
+            session_trajectories = _select_session_trajectories(
+                session_id,
+                session_trajectories,
+                runner_config.trajectory_selection,
+            )
 
             # Make the Runner's canonical result visible to postprocessors before
             # they filter or reorder trajectories.  These fields are the

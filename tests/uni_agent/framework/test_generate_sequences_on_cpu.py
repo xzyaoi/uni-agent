@@ -618,6 +618,7 @@ async def test_ray_agent_runner_returns_task_result():
         runner_name="runner",
         runner_config=framework.runner_registry["runner"],
         sampling_params={},
+        num_sessions=1,
     )
 
     assert trajectories[0].reward_score == 0.75
@@ -647,6 +648,7 @@ async def test_framework_rejects_invalid_agent_runner_result():
             runner_name="runner",
             runner_config=framework.runner_registry["runner"],
             sampling_params={},
+            num_sessions=1,
         )
 
 
@@ -685,6 +687,7 @@ async def test_none_agent_runner_result_uses_empty_task_result_for_trajectory_sc
         runner_name="runner",
         runner_config=framework.runner_registry["runner"],
         sampling_params={},
+        num_sessions=1,
     )
 
     runner_reward_info = worker.compute_score.calls[0].non_tensor_batch["extra_info"][0]["runner_reward_info"]
@@ -727,6 +730,7 @@ async def test_runner_reward_is_used_without_custom_scorer_even_when_worker_exis
         runner_name="runner",
         runner_config=framework.runner_registry["runner"],
         sampling_params={},
+        num_sessions=1,
     )
 
     assert worker.compute_score.calls == []
@@ -815,6 +819,7 @@ async def test_reward_worker_processes_runner_reward_info_and_owns_final_metrics
         runner_name="runner",
         runner_config=framework.runner_registry["runner"],
         sampling_params={},
+        num_sessions=1,
     )
 
     assert worker.compute_score.calls[0].non_tensor_batch["extra_info"].tolist() == [
@@ -879,6 +884,7 @@ async def test_streaming_worker_is_used_when_runner_reward_missing_or_custom_sco
             runner_name="runner",
             runner_config=framework.runner_registry["runner"],
             sampling_params={},
+            num_sessions=1,
         )
         if runner_reward is not None and custom_reward_path is None:
             assert trajectories[0].reward_score == runner_reward
@@ -926,6 +932,7 @@ async def test_reward_worker_rejects_invalid_reward_extra_info(reward_extra_info
             runner_name="runner",
             runner_config=framework.runner_registry["runner"],
             sampling_params={},
+            num_sessions=1,
         )
 
 
@@ -961,6 +968,7 @@ async def test_reward_worker_accepts_structured_reward_extra_info():
         runner_name="runner",
         runner_config=framework.runner_registry["runner"],
         sampling_params={},
+        num_sessions=1,
     )
 
     assert trajectories[0].reward_metrics == {
@@ -997,6 +1005,7 @@ async def test_reward_worker_rejects_non_finite_score():
             runner_name="runner",
             runner_config=framework.runner_registry["runner"],
             sampling_params={},
+            num_sessions=1,
         )
 
 
@@ -1021,6 +1030,7 @@ async def test_metrics_survive_without_any_reward_source():
         runner_name="runner",
         runner_config=framework.runner_registry["runner"],
         sampling_params={},
+        num_sessions=1,
     )
 
     assert trajectories[0].reward_score is None
@@ -2126,3 +2136,215 @@ async def test_runner_reward_context_survives_tq_without_changing_training_field
         },
     ]
     assert "runner_reward_info" not in framework._trajectory_meta(trajectories[0])
+
+
+@pytest.mark.cpu
+@pytest.mark.level0
+@pytest.mark.asyncio
+@pytest.mark.parametrize("stage", ["create", "runner", "finalize", "postprocess", "dump"])
+async def test_inline_episode_deadline_covers_completion(monkeypatch, fake_tq, tmp_path, stage):
+    """A silent await anywhere in an admitted episode must release its group."""
+    from uni_agent.framework import framework as framework_module
+
+    reached = asyncio.Event()
+    cancelled = asyncio.Event()
+    events = []
+    finishes = []
+
+    async def stall():
+        reached.set()
+        try:
+            await asyncio.Event().wait()
+        finally:
+            cancelled.set()
+
+    class _Gateway(_FakeGatewayManager):
+        async def create_session(self, session_id, **kwargs):
+            if stage == "create":
+                await stall()
+            return await super().create_session(session_id, **kwargs)
+
+        async def finalize_session(self, session_id):
+            if stage == "finalize":
+                await stall()
+            return await super().finalize_session(session_id)
+
+    async def runner(**kwargs):
+        if stage == "runner":
+            await stall()
+        return TaskResult()
+
+    runtime = _Gateway({"session-sample-0-rollout-0": [_trajectory()]})
+    config = {**_inline_runner_config(runner), "session_timeout_seconds": 0.03}
+    framework = await _build_framework_with_agent_runners(
+        agent_runners={"runner": config}, gateway_manager=runtime, log_dir=str(tmp_path)
+    )
+    if stage == "postprocess":
+
+        async def postprocess(*args):
+            await stall()
+
+        framework._trajectory_postprocessor = object()
+        monkeypatch.setattr(framework, "_apply_trajectory_postprocessor", postprocess)
+    if stage == "dump":
+        # Model a cancellable await on a writer thread; cancellation cannot stop
+        # a synchronous filesystem syscall already running in that thread.
+        async def dump(*args):
+            await stall()
+
+        monkeypatch.setattr(framework_module.asyncio, "to_thread", dump)
+    monkeypatch.setattr(framework_module, "pipeline_event", lambda event, **kwargs: events.append((event, kwargs)))
+    monkeypatch.setattr(
+        framework_module,
+        "agent_loop_session",
+        lambda **kwargs: types.SimpleNamespace(identity={}, finish=lambda **fields: finishes.append(fields)),
+    )
+    task = asyncio.create_task(framework.generate_sequences(_build_prompts(count=1)))
+    try:
+        await asyncio.wait_for(reached.wait(), 1.0)
+        done, _ = await asyncio.wait({task}, timeout=0.25)
+        assert task in done, f"configured episode deadline did not bound {stage}"
+        with pytest.raises(RuntimeError, match="All rollouts failed"):
+            await task
+        assert cancelled.is_set()
+        assert len(runtime.aborted_sessions) == 1
+        assert [fields["status"] for fields in finishes] == ["failure"]
+        episode_events = [(event, fields) for event, fields in events if event.startswith("episode_")]
+        assert [event for event, _ in episode_events] == ["episode_begin", "episode_error"]
+        assert episode_events[-1][1]["error_class"] == "TimeoutError"
+        assert not fake_tq.batch_puts
+    finally:
+        if not task.done():
+            task.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await task
+
+
+@pytest.mark.cpu
+@pytest.mark.level0
+@pytest.mark.asyncio
+@pytest.mark.parametrize("abort_behavior", ["stall", "raise"])
+async def test_episode_timeout_bounds_gateway_abort_without_masking_failure(fake_tq, abort_behavior):
+    abort_cancelled = asyncio.Event()
+    release_abort = asyncio.Event()
+
+    class _Gateway(_FakeGatewayManager):
+        async def abort_session(self, session_id):
+            await super().abort_session(session_id)
+            if abort_behavior == "raise":
+                raise RuntimeError("gateway unavailable")
+            try:
+                await release_abort.wait()
+            finally:
+                abort_cancelled.set()
+
+    async def runner(**kwargs):
+        await asyncio.Event().wait()
+
+    runtime = _Gateway({})
+    framework = await _build_framework_with_agent_runners(
+        agent_runners={"runner": {**_inline_runner_config(runner), "session_timeout_seconds": 0.01}},
+        gateway_manager=runtime,
+    )
+    framework._RUNNER_CANCEL_GRACE_SECONDS = 0.01
+    task = asyncio.create_task(
+        framework._run_agent_episode(
+            sample_fields={"raw_prompt": [], "uid": "uid-0"},
+            sample_index=0,
+            session_index=0,
+            global_steps=7,
+            runner_name="runner",
+            runner_config=framework.runner_registry["runner"],
+            sampling_params={},
+            num_sessions=1,
+        )
+    )
+    try:
+        done, _ = await asyncio.wait({task}, timeout=0.25)
+        assert task in done, "Gateway abort must not hold a timed-out episode forever"
+        with pytest.raises(asyncio.TimeoutError):
+            await task
+        assert len(runtime.aborted_sessions) == 1
+        if abort_behavior == "stall":
+            assert abort_cancelled.is_set()
+    finally:
+        release_abort.set()
+        if not task.done():
+            task.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await task
+
+
+@pytest.mark.cpu
+@pytest.mark.level0
+@pytest.mark.asyncio
+@pytest.mark.parametrize("timeout", [0, -1, float("inf"), float("nan")])
+async def test_episode_deadline_rejects_invalid_budget(timeout):
+    with pytest.raises(ValueError, match="session_timeout_seconds must be finite and positive"):
+        await _build_framework_with_agent_runners(
+            agent_runners={"runner": {**_inline_runner_config(_async_noop_runner), "session_timeout_seconds": timeout}},
+            gateway_manager=_FakeGatewayManager({}),
+        )
+
+
+@pytest.mark.cpu
+@pytest.mark.level0
+@pytest.mark.asyncio
+async def test_inline_parent_cancellation_aborts_completion_without_retry(monkeypatch, fake_tq):
+    finalized = asyncio.Event()
+    runner_calls = []
+
+    class _Gateway(_FakeGatewayManager):
+        async def finalize_session(self, session_id):
+            finalized.set()
+            await asyncio.Event().wait()
+
+    async def runner(**kwargs):
+        runner_calls.append(kwargs["session"].session_id)
+        return TaskResult()
+
+    runtime = _Gateway({})
+    framework = await _build_framework_with_agent_runners(
+        agent_runners={"runner": _inline_runner_config(runner)},
+        gateway_manager=runtime,
+    )
+    task = asyncio.create_task(framework.generate_sequences(_build_prompts(count=1)))
+    await asyncio.wait_for(finalized.wait(), 1)
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await asyncio.wait_for(task, 1)
+    assert len(runner_calls) == 1
+    assert runtime.aborted_sessions == runner_calls
+    assert not fake_tq.batch_puts
+
+
+@pytest.mark.cpu
+@pytest.mark.level0
+@pytest.mark.asyncio
+async def test_timed_out_inline_episode_releases_runner_slot_for_next_group(fake_tq):
+    calls = []
+
+    async def runner(*, sample_index, **kwargs):
+        calls.append(sample_index)
+        if sample_index == 0:
+            await asyncio.Event().wait()
+        return TaskResult(reward=1.0)
+
+    runtime = _FakeGatewayManager({"session-sample-1-rollout-0": [_trajectory(response_logprobs=[-0.1, -0.2])]})
+    framework = await _build_framework_with_agent_runners(
+        agent_runners={
+            "runner": {
+                **_inline_runner_config(runner),
+                "session_timeout_seconds": 0.02,
+                "max_concurrent_sessions": 1,
+            }
+        },
+        gateway_manager=runtime,
+    )
+    await asyncio.wait_for(framework.generate_sequences(_build_prompts(count=2)), 1.0)
+    assert calls == [0, 1]
+    assert len(runtime.aborted_sessions) == 1
+    assert len(fake_tq.batch_puts) == 1
+    assert fake_tq.batch_puts[0]["keys"] == ["uid-1_0_0"]
+    statuses = {put["key"]: put["tag"]["status"] for put in fake_tq.puts}
+    assert statuses == {"uid-0": "failure", "uid-1": "finished"}

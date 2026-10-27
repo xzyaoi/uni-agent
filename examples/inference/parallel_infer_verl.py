@@ -30,6 +30,7 @@ endpoint is the gateway session, bound by the runner, not a flag.
 import argparse
 import json
 import logging
+import math
 import os
 import time
 from collections import defaultdict
@@ -135,6 +136,9 @@ def init_config(args: argparse.Namespace, *, served_model_name: str):
     # --tool-call-parser, e.g. qwen3_coder for Qwen3-Coder, hermes for Qwen3).
     OmegaConf.update(config, "actor_rollout_ref.rollout.multi_turn.format", args.tool_parser, force_add=True)
 
+    session_timeout = getattr(args, "session_timeout_seconds", None)
+    if session_timeout is not None and (not math.isfinite(session_timeout) or session_timeout <= 0):
+        raise ValueError("session_timeout_seconds must be finite and positive")
     agent_framework_cfg = {
         "gateway_count": args.gateway_count,
         "allowed_request_sampling_param_keys": args.allowed_request_sampling_param_keys,
@@ -143,6 +147,7 @@ def init_config(args: argparse.Namespace, *, served_model_name: str):
                 "runner_fqn": "uni_agent.framework.task_runner.run_task",
                 "dispatch_mode": "ray_task",
                 "max_concurrent_sessions": max(0, args.concurrency),
+                "session_timeout_seconds": session_timeout,
                 "runner_kwargs": {
                     "task_config_path": args.task_config,
                     "model_name": served_model_name,
@@ -387,6 +392,15 @@ def main() -> None:
         type=int,
         default=GLOBAL_CONCURRENCY,
         help="Max in-flight gateway sessions for the runner (runner.max_concurrent_sessions; env GLOBAL_CONCURRENCY).",
+    )
+    parser.add_argument(
+        "--session-timeout-seconds",
+        type=float,
+        default=None,
+        help=(
+            "Whole admitted episode deadline, including Gateway finalization and artifact writes; "
+            "unset disables the cap. Cancellation may add bounded runner/Gateway cleanup time."
+        ),
     )
     parser.add_argument(
         "--log-dir",

@@ -43,6 +43,7 @@ class FlashSandboxEnvironment(BaseEnvironment):
             memory_mb=self._effective_memory_mb,
             start_timeout=start_timeout,
             exec_timeout=exec_timeout,
+            env_vars=self._startup_env(),
         )
         self._started = False
 

@@ -64,6 +64,7 @@ class _LogFileDispatch(logging.Handler):
         self.setFormatter(_formatter)
         self._log_ids: set[str] = set()
         self._lock = threading.Lock()
+        self._writer_lock = threading.RLock()
         self._root_windows = 0  # active file-logging runs borrowing root
         self._saved_root_level: int | None = None  # root's level before the first borrow
         self._applied_root_level: int | None = None  # level we set on root while borrowing
@@ -79,7 +80,20 @@ class _LogFileDispatch(logging.Handler):
         self._thread = threading.Thread(target=self._run, name="uni-agent-log-writer", daemon=True)
         self._thread.start()
 
+    def _before_fork(self) -> None:
+        # Buffered I/O locks belong to the writer thread. A child cannot close
+        # or discard those wrappers if fork copied them mid-write/flush. Wait
+        # for all writer I/O to finish before copying the process state.
+        self._writer_lock.acquire()
+
+    def _after_fork_parent(self) -> None:
+        self._writer_lock.release()
+
     def _reinit_after_fork(self) -> None:
+        # The fork thread held the old writer lock, so every inherited buffered
+        # file is quiescent. Routing/queue locks may belong to vanished threads.
+        self._writer_lock = threading.RLock()
+        self._lock = threading.Lock()
         # The child inherited copies of the parent's buffered file objects. Closing them
         # normally would flush the copied buffers and duplicate pre-fork log lines, so
         # close the raw descriptors first and then discard the wrappers.
@@ -97,7 +111,6 @@ class _LogFileDispatch(logging.Handler):
         self._log_ids = set()
         self._root_windows = 0
         self._release_root()  # the parent's runs are gone; root goes back to the host
-        self._lock = threading.Lock()
         self._dropped = 0
         self._dropped_reported = 0
         self._start()
@@ -202,77 +215,81 @@ class _LogFileDispatch(logging.Handler):
                 last_flush = time.monotonic()
 
     def _apply(self, item: tuple) -> None:
-        op, log_id, arg = item
-        if op == "write":
-            file_obj = self._files.get(log_id)
-            if file_obj is not None:
-                try:
-                    file_obj.write(arg)
-                    if _FLUSH_EACH_LINE:
-                        file_obj.flush()
-                    else:
-                        self._dirty.add(file_obj)
-                except (ValueError, OSError):
-                    pass
-        elif op == "open":
-            try:
-                path = Path(arg)
-                path.parent.mkdir(parents=True, exist_ok=True)
-                previous = self._files.pop(log_id, None)
-                if previous is not None:  # replaced an active log ID; close the old file
-                    self._dirty.discard(previous)
+        with self._writer_lock:
+            op, log_id, arg = item
+            if op == "write":
+                file_obj = self._files.get(log_id)
+                if file_obj is not None:
                     try:
-                        previous.close()
+                        file_obj.write(arg)
+                        if _FLUSH_EACH_LINE:
+                            file_obj.flush()
+                        else:
+                            self._dirty.add(file_obj)
+                    except (ValueError, OSError):
+                        pass
+            elif op == "open":
+                try:
+                    path = Path(arg)
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    previous = self._files.pop(log_id, None)
+                    if previous is not None:  # replaced an active log ID; close the old file
+                        self._dirty.discard(previous)
+                        try:
+                            previous.close()
+                        except OSError:
+                            pass
+                    self._files[log_id] = open(path, "a", encoding="utf-8")
+                except OSError:
+                    pass
+            elif op == "close":
+                file_obj = self._files.pop(log_id, None)
+                if file_obj is not None:
+                    self._dirty.discard(file_obj)
+                    try:
+                        file_obj.flush()
+                        file_obj.close()
                     except OSError:
                         pass
-                self._files[log_id] = open(path, "a", encoding="utf-8")
-            except OSError:
-                pass
-        elif op == "close":
-            file_obj = self._files.pop(log_id, None)
-            if file_obj is not None:
-                self._dirty.discard(file_obj)
+
+    def _flush(self) -> None:
+        with self._writer_lock:
+            for file_obj in list(self._dirty):
                 try:
                     file_obj.flush()
+                except OSError:
+                    pass
+            self._dirty.clear()
+            with self._lock:
+                dropped = self._dropped
+            if dropped != self._dropped_reported:  # surface drops (not via logging -> no recursion)
+                print(
+                    f"[uni-agent logging] dropped {dropped} log records (writer/sink can't keep up)",
+                    file=sys.stderr,
+                    flush=True,
+                )
+                self._dropped_reported = dropped
+
+    def _drain(self) -> None:
+        with self._writer_lock:
+            while True:
+                try:
+                    item = self._queue.get_nowait()
+                except queue.Empty:
+                    return
+                if item is not _STOP:
+                    self._apply(item)
+
+    def _close_all(self) -> None:
+        with self._writer_lock:
+            self._flush()
+            for file_obj in list(self._files.values()):
+                try:
                     file_obj.close()
                 except OSError:
                     pass
-
-    def _flush(self) -> None:
-        for file_obj in list(self._dirty):
-            try:
-                file_obj.flush()
-            except OSError:
-                pass
-        self._dirty.clear()
-        with self._lock:
-            dropped = self._dropped
-        if dropped != self._dropped_reported:  # surface drops (not via logging -> no recursion)
-            print(
-                f"[uni-agent logging] dropped {dropped} log records (writer/sink can't keep up)",
-                file=sys.stderr,
-                flush=True,
-            )
-            self._dropped_reported = dropped
-
-    def _drain(self) -> None:
-        while True:
-            try:
-                item = self._queue.get_nowait()
-            except queue.Empty:
-                return
-            if item is not _STOP:
-                self._apply(item)
-
-    def _close_all(self) -> None:
-        self._flush()
-        for file_obj in list(self._files.values()):
-            try:
-                file_obj.close()
-            except OSError:
-                pass
-        self._files.clear()
-        self._dirty.clear()
+            self._files.clear()
+            self._dirty.clear()
 
     def _shutdown(self) -> None:
         """Best-effort drain+flush on normal process exit (daemon thread is killed abruptly otherwise)."""
@@ -287,7 +304,11 @@ _dispatch = _LogFileDispatch()
 
 # A forked child (some Ray/multiprocessing start methods) loses the writer thread; restart it.
 if hasattr(os, "register_at_fork"):
-    os.register_at_fork(after_in_child=_dispatch._reinit_after_fork)
+    os.register_at_fork(
+        before=_dispatch._before_fork,
+        after_in_parent=_dispatch._after_fork_parent,
+        after_in_child=_dispatch._reinit_after_fork,
+    )
 
 
 def _add_file_handler(file_path: Path | str, log_id: str) -> None:

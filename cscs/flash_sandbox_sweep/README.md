@@ -11,6 +11,15 @@ The four group limits 8/16/32/64 correspond to episode concurrency
 two TP4 replicas, and 45 minutes. Model: Qwen3.5-9B; prompt/response limits:
 4096/8192; sampling: temperature=1, top_p=1; max_steps=200.
 
+The common rollout driver now applies a 1,800-second whole-episode deadline,
+covering setup, the agent, verification and result collection. This is separate
+from the agent's 3,600-second budget. The effective deadline is recorded in each
+point's manifest and settings. Direct driver invocations can override it with
+`--session-timeout-seconds`; choose a longer allocation for longer budgets.
+The earlier results used no whole-episode deadline, so report this budget change
+when comparing new runs with those results. Cancellation terminates the owned
+Harbor process group and retains temporary trial artifacts for diagnosis.
+
 The two checked-in cohort pins match the exact parquet paths/hashes, ordered
 128-task selections, task TOML hashes, and model config hash from
 `outputs/pro_singlehost_c64_20261019` and
